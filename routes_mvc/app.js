@@ -38,10 +38,33 @@ const links = [
   { href: "about", text: "About" },
 ];
 
-const users = ["Rose", "Cake", "Biff"];
+const aboutData = {
+  title: "About Us",
+  description: "We are a passionate team dedicated to building great web experiences.",
+  teamMembers: [
+    {
+      name: "Alice Johnson",
+      role: "Frontend Developer",
+      bio: "Alice specializes in responsive web design and accessibility."      
+    },
+    {
+      name: "Bob Smith",
+      role: "Backend Developer",
+      bio: "Bob loves working with databases and building secure APIs."      
+    },
+    {
+      name: "Charlie Lee",
+      role: "UI/UX Designer",
+      bio: "Charlie crafts intuitive interfaces and seamless user experiences."      
+    }
+  ]
+};
 
 app.get("/", (req, res) => {
-  res.render("index", { links: links, users: users });
+  res.render("index", { links: links, users: aboutData.teamMembers });
+});
+app.get("/about", (req, res) => {
+  res.render("about", { links: links, data: aboutData });
 });
 //Declare static assets path
 const assetsPath = path.join(__dirname, "public");

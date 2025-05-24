@@ -1,14 +1,14 @@
 <!-- index.ejs -->
 <html>
   <head>
+    <title>Home Page</title>
     <link rel="stylesheet" href="/styles.css">
   </head>
-  
   <body>
     <%- include('navbar', {links: links}) %>
     <ul>
       <% users.forEach((user) => { %>
-        <%- include('users/user', {user: user}); %>
+        <%- include('users/user', {user: user.name}); %>
         <!-- Take note that include was done per user since -->
         <!-- user.ejs contains li element -->
       <% }); %>

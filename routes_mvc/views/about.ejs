@@ -1,0 +1,17 @@
+<!-- index.ejs -->
+<html>
+  <head>
+    <title><%= data.title%></title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  
+  <body>
+    <%- include('navbar', {links: links}) %>
+    <%= data.description %>
+    <ul>
+      <% data['teamMembers'].forEach((member) => { %>
+        <%- include('users/aboutUser', {name: member.name, role: member.role, bio: member.bio}); %>
+      <% }); %>
+    </ul>
+  </body>
+</html>
