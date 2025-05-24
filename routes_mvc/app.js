@@ -1,0 +1,42 @@
+import express from "express";
+import authorRouter from "./routers/authorRouter.js";
+import bookRouter from "./routers/bookRouter.js";
+import indexRouter from "./routers/indexRouter.js";
+import path from 'node:path';
+import { fileURLToPath } from 'url';
+import {dirname} from 'path';
+
+const app = express();
+const __filename = fileURLToPath(import.meta.url); 
+/* 
+import.meta.url gives you the file URL of the current module meaning this app.js for example then
+fileURLToPath converts the URL to a usable string 
+*/
+const __dirname = dirname(__filename); //returns the directory part of the argument path
+
+app.use("/authors", authorRouter);
+app.use("/books", bookRouter);
+//app.use("/", indexRouter);
+
+//error handling using middleware
+app.use((err, req, res, next) => {
+  console.error(err);
+  // We can now specify the `err.statusCode` that exists in our custom error class and if it does not exist it's probably an internal server error
+  res.status(err.statusCode || 500).send(err.message);
+});
+
+/*app.set() is a method to assign settings or configurations for your app. It takes two arguments:
+  1. The name of the setting (a string).
+  2. The value to assign to that setting.
+ */
+app.set("views", path.join(__dirname, "views")); 
+app.set("view engine", "ejs"); //Tells Express what template engine to use to render views
+
+app.get("/", (req, res) => {
+  res.render("index", { message: "EJS rocks!" });
+});
+
+const PORT = 3000;
+app.listen(PORT, () => {
+  console.log(`My first Express app with routers - listening on port ${PORT}!`);
+});
