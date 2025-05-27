@@ -57,7 +57,21 @@ const messages = [
 
 
 indexRouter.get("/", (req, res) => {
-  res.render("index", { messages: messages });
+  res.render("index", { title: "Mini Message Board", messages: messages });
+});
+
+indexRouter.post("/new", (req,res) => {
+  const { user, text } = req.body;
+
+  // Basic validation
+  if (!user || !text) {
+    return res.status(400).json({ message: 'User and message are required' });
+  }
+  
+  res.status(201).json({
+    message: 'New message posted',
+    post: {user: user, message: text} 
+  });
 });
 
 export default indexRouter;

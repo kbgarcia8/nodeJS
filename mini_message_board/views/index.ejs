@@ -1,9 +1,13 @@
 <!-- index.ejs -->
 <html>
   <head>
-    <title>Home Page</title>
+    <title><%= title %></title>
   </head>
   <body>
-    <%= messages %>
+    <div>
+      <% messages.forEach((message) => { %>
+        <%- include('message_bubble', {text: message.text, user: message.user, date: message.added}); %>
+      <% }); %>
+    </div>
   </body>
 </html>

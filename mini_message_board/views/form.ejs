@@ -1,0 +1,10 @@
+<form method="POST" action="/new">
+   <h3><%= header %></h3>
+    <% inputs.forEach((input) => { %>
+        <label for="<%= input.name%>">
+            <%= input.label%>
+            <input name="<%= input.name%>" type="<%= input.type%>">
+        </label>
+    <% }); %>
+    <button type="submit">Submit</button>
+</form>

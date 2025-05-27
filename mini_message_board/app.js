@@ -11,6 +11,8 @@ const __dirname = dirname(__filename);
 
 app.set("views", path.join(__dirname, "views")); 
 app.set("view engine", "ejs");
+app.use(express.urlencoded({ extended: true })); //express level middleware to parse the form data into req.body
+app.use(express.json()); //express level middleware to parse json
 
 app.use("/new", newRouter);
 app.use("/", indexRouter);
