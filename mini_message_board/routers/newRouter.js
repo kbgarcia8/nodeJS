@@ -4,19 +4,24 @@ const newRouter = Router();
 
 const inputs = [
   {
-    name: "user",
+    name: "messageUser",
     label: "User: ",
     type: "text"
   },
   {
-    name: "message",
+    name: "messageText",
     label: "Message: ",
     type: "textarea"
   }
 ]
 
+const links = [
+  { href: "/", text: "Board" },
+  { href: "new", text: "New Message" },
+];
+
 newRouter.get("/", (req, res) => {
-  res.render("form", { header: "Post your message!", inputs: inputs});
+  res.render("form", {  links: links, header: "Post your message!", inputs: inputs});
 });
 /*newRouter.get("/:newId", (req, res) => {
   const { newId } = req.params;

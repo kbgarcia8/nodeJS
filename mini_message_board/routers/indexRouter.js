@@ -55,23 +55,36 @@ const messages = [
   }
 ];
 
+const links = [
+  { href: "/", text: "Board" },
+  { href: "new", text: "New Message" },
+];
 
 indexRouter.get("/", (req, res) => {
-  res.render("index", { title: "Mini Message Board", messages: messages });
+  res.render("index", { links: links, title: "Mini Message Board", messages: messages });
 });
 
 indexRouter.post("/new", (req,res) => {
-  const { user, text } = req.body;
+  const { messageUser, messageText } = req.body;
 
-  // Basic validation
-  if (!user || !text) {
+  if (!messageUser || !messageText) {
     return res.status(400).json({ message: 'User and message are required' });
   }
   
-  res.status(201).json({
-    message: 'New message posted',
-    post: {user: user, message: text} 
-  });
+  const newMessageEntry = {
+    text: messageText,
+    user: messageUser,
+    addded: new Date()
+  };
+
+  messages.push(newMessageEntry)
+  
+  /*res.status(201).json({
+    messageUser: 'New message posted',
+    post: newMessageEntry
+  });*/
+
+  res.redirect("/")
 });
 
 export default indexRouter;
