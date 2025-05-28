@@ -8,14 +8,18 @@ import newRouter from "./routers/newRouter.js";
 const app = express();
 const __filename = fileURLToPath(import.meta.url); 
 const __dirname = dirname(__filename);
+const assetsPath = path.join(__dirname, "public");
 
 app.set("views", path.join(__dirname, "views")); 
 app.set("view engine", "ejs");
+
+app.use(express.static(assetsPath));
+
 app.use(express.urlencoded({ extended: true })); //express level middleware to parse the form data into req.body
 app.use(express.json()); //express level middleware to parse json
 
-app.use("/new", newRouter);
 app.use("/", indexRouter);
+app.use("/new", newRouter);
 
 //error handling using middleware
 app.use((err, req, res, next) => {

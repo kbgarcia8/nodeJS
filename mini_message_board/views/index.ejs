@@ -1,13 +1,15 @@
 <html>
   <head>
     <title><%= title %></title>
+    <link rel="stylesheet" href="/styles.css">
   </head>
   <body>
     <%- include('navbar', {links: links}) %>
-    <div>
-      <% messages.forEach((message) => { %>
-        <%- include('message_bubble', {text: message.text, user: message.user, date: message.added}); %>
+    <div class="posted-message-space">
+      <% messages.forEach((message, index) => { %>
+        <%- include('message_bubble', {text: message.text, user: message.user, date: message.added, index: index}); %>
       <% }); %>
     </div>
+    <script src="/listener.js" defer></script>
   </body>
 </html>

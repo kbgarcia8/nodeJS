@@ -21,7 +21,7 @@ const links = [
 ];
 
 newRouter.get("/", (req, res) => {
-  res.render("form", {  links: links, header: "Post your message!", inputs: inputs});
+  res.render("form", {  title: "New Message", links: links, header: "Post your message!", inputs: inputs});
 });
 /*newRouter.get("/:newId", (req, res) => {
   const { newId } = req.params;
