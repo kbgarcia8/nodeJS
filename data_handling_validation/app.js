@@ -1,16 +1,11 @@
-import { body, validationResult } from "express-validator";
+import express from "express";
+const app = express();
+import usersRouter from "./routes/userRouter.js";
 
-[
-  body("birthdate", "Must be a valid date.")
-    .optional({ values: "falsy" })
-    .isISO8601() // Enforce a YYYY-MM-DD format.
-];
+app.set("view engine", "ejs");
+app.use(express.urlencoded({ extended: true }));
+//When extended is false, our server will only accept a string or an array of data, so we set it to true for some added flexibility
+app.use("/", usersRouter);
 
-[
-  body("name")
-    .trim()
-    .notEmpty()
-    .withMessage("Name can not be empty.")
-    .isAlpha()
-    .withMessage("Name must only contain alphabet letters."),  
-];
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Express app listening on port ${PORT}!`));
