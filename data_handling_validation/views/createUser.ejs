@@ -6,6 +6,7 @@
 <body>
   <h1><%= title %></h1>
   <%- include("partials/errors.ejs") %>
+  <!--'action' is where the 'method' will be processed-->
   <form action="/create" method="POST">
     <label for="firstName">First Name: </label>
     <input type="text" name="firstName" id="firstName" required>

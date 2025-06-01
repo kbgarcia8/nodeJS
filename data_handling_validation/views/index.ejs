@@ -5,10 +5,16 @@
 </head>
 <body>
   <h1><%= title %></h1>
+  <a href="/create">Create a user</a>
+  <a style="margin-left: 5%;" href="/search">Search a user</a>
   <ul>
     <% if (locals.users) {%>
       <% users.forEach(function(user) { %>
-        <li>ID: <%= user.id %>, Name: <%= user.firstName %> <%= user.lastName %></li>
+        <li>
+          <p>ID: <%= user.id %>, Name: <%= user.firstName %> <%= user.lastName %></p>
+          <p><%= user.userEmail %></p>
+          <p><%= user.userBio %></p>
+        </li>
         <a href="/<%= user.id %>/update">Update</a>
         <!-- This time we're sending a POST request to our route, so we need a form. -->
         <form action="/<%= user.id %>/delete" method="POST" style="display:inline;">
@@ -17,6 +23,5 @@
       <% }); %>
     <% } %>
   </ul>
-  <a href="/create">Create a user</a>
 </body>
 </html>
