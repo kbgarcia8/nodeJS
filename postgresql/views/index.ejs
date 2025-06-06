@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= title %></title>
+</head>
+<body>
+  <a href="/new">Create a user</a>
+  <% if (header == "Searched Users") {%>
+    <a href="/">Back to All Users</a>
+  <% }; %>
+  <%- include("searchForm.ejs") %>
+  <h1><%= header %></h1>
+  <ul>
+    <% if (users && users.length > 0) {%>
+      <% users.forEach(function(user) { %>
+        <li>
+          <p>ID: <%= user.id %> <%= user.username %></p>
+        </li>
+      <% }); %>
+    <% } else { %>
+      <p>No users found.</p>
+    <% } %>
+  </ul>
+</body>
+</html>

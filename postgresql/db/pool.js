@@ -1,14 +1,15 @@
 import { Pool } from "pg";
+import { config } from "dotenv";
+config();
 
-// All of the following properties should be read from environment variables
-// We're hardcoding them here for simplicity
 export default new Pool({
-  host: "localhost", // or wherever the db is hosted
-  user: "kbgarcia",
-  database: "top_users",
-  password: "icandothis151318",
-  port: 5432 // The default port
+  host: process.env.DATABASE_HOST || "localhost",
+  user: process.env.DATABASE_USER,
+  database: process.env.DATABASE_DB,
+  password: process.env.DATABASE_USER_PASSWORD,
+  port: Number(process.env.DATABASE_PORT)
 });
+
 /*
 Alternative -> Connection URL
 
@@ -17,4 +18,4 @@ module.exports = new Pool({
   connectionString: "postgresql://<role_name>:<role_password>@localhost:5432/top_users"
 });
 
-*/
+*/1
