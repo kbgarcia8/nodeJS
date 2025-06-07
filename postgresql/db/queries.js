@@ -14,3 +14,7 @@ export async function searchUsernames(pattern) {
   //when using LIKE the % or _ must be in the actual string
   return result.rows
 }
+
+export async function deleteAllUsernames(){
+    await pool.query("TRUNCATE TABLE usernames");
+}

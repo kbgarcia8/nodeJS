@@ -10,6 +10,10 @@ CREATE TABLE IF NOT EXISTS usernames (
 
 INSERT INTO usernames (username) 
 VALUES
+  ('Mao'),
+  ('nevz'),
+  ('Lofty'),
+  ('karlb'),
   ('Bryan'),
   ('Odin'),
   ('Damon');

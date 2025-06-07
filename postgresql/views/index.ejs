@@ -6,7 +6,12 @@
 <body>
   <a href="/new">Create a user</a>
   <% if (header == "Searched Users") {%>
-    <a href="/">Back to All Users</a>
+    <a href="/">Back to Users Database</a>
+  <% }; %>
+  <% if (users && users.length > 0) {%>
+    <form action="/delete" method="GET">
+      <button type="submit">Delete All Users</button>
+    </form>
   <% }; %>
   <%- include("searchForm.ejs") %>
   <h1><%= header %></h1>

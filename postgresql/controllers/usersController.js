@@ -32,3 +32,11 @@ export async function searchUserGet(req, res) {
       users: searchResult
     });
 }
+
+export async function deleteAllUserGet(req,res) {
+    await db.deleteAllUsernames()
+
+    res.render("deleted", {
+      title: "Delete Database"
+    });
+}

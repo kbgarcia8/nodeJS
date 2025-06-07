@@ -1,7 +1,7 @@
 import { Router } from "express";
 
 const indexRouter = Router();
-import { getUsernames, searchUserGet } from "../controllers/usersController.js";
+import { getUsernames, searchUserGet, deleteAllUserGet } from "../controllers/usersController.js";
 //if you want to use same path for different logic/controller
 
 indexRouter.get("/", async(req, res) => {
@@ -13,6 +13,8 @@ indexRouter.get("/", async(req, res) => {
       return await getUsernames(req, res);
     }
 });
+
+indexRouter.all("/delete", deleteAllUserGet)
 
 
 /*
