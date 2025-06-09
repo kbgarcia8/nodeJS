@@ -1,9 +1,9 @@
-import { Pool } from "pg";
-import pg from "pg";
-import { config } from "dotenv";
-config();
+import dotenv from 'dotenv';
+dotenv.config();
 
-export default new Pool({
+import { Pool } from "pg";
+
+const pool = new Pool({
   host: process.env.DATABASE_HOST || "localhost",
   user: process.env.DATABASE_USER,
   database: process.env.DATABASE_DB,
@@ -14,13 +14,16 @@ export default new Pool({
     ca: process.env.DATABASE_SSL_CA?.replace(/\\n/g, '\n'), // To properly format multi-line certs
   },
 });
-/* Connection tester
+
+
+
+ //Connection tester
 (async () => {
   try {
     const res = await pool.query("SELECT version()");
     console.log("✅ Connected to database:", res.rows[0].version);
+    return
   } catch (error) {
     console.error("❌ Failed to connect to the database:", error.message);
   }
 })();
-*/

@@ -10,62 +10,13 @@ const formatDate = (timestamp) => {
     return date.toLocaleString("en-US", options).replace(",", "");
 };
 
-const messages = [
-  {
-    text: "Hi there!",
-    user: "Amando",
-    added: formatDate(new Date())
-  },
-  {
-    text: "Hello World!",
-    user: "Charles",
-    added: formatDate(new Date())
-  },
-  {
-    text: "How's everyone doing?",
-    user: "Sophia",
-    added: formatDate(new Date())
-  },
-  {
-    text: "Just finished my work!",
-    user: "Liam",
-    added: formatDate(new Date())
-  },
-  {
-    text: "Anyone up for a game later?",
-    user: "Mia",
-    added: formatDate(new Date())
-  },
-  {
-    text: "Good morning!",
-    user: "Noah",
-    added: formatDate(new Date())
-  },
-  {
-    text: "What's the plan for today?",
-    user: "Olivia",
-    added: formatDate(new Date())
-  },
-  {
-    text: "Can't wait for the weekend!",
-    user: "Ethan",
-    added: formatDate(new Date())
-  },
-  {
-    text: "Just saw an amazing movie.",
-    user: "Ava",
-    added: formatDate(new Date())
-  },
-  {
-    text: "Any book recommendations?",
-    user: "James",
-    added: formatDate(new Date())
-  }
-];
 
 const links = [
   { href: "/", text: "Board" },
-  { href: "new", text: "New Message" },
+  { href: "/new", text: "New Message" },
+  { href: "/create", text: "New User" },
+  { href: "/search/user", text: "Search User" },
+  { href: "/search/message", text: "Search Message" },
 ];
 
 indexRouter.get("/", (req, res) => {

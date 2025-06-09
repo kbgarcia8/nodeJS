@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+  </head>
+<body>
+  <h1><%= title %></h1>
+  <%- include("partials/errors.ejs") %>  
+  <a href="/">Back to home</a>
+  <a href="/search">Back to User Search</a>
+  <h4>Matched Users:</h4>
+  <ul>
+    <% if (matches) {%>
+      <% matches.forEach(function(match) { %>
+        <li>
+          <p>ID: <%= match.id %>, Name: <%= match.firstName %> <%= match.lastName %></p>
+          <p><%= match.userEmail %></p>
+          <p><%= match.userBio %></p>
+        </li>
+        <a href="/<%= match.id-1 %>/update">Update</a>        
+      <% }); %>
+    <% } %>
+  </ul>
+</body>
+</html>
