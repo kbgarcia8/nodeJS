@@ -12,10 +12,10 @@ export const usersListGet = async (req, res) => {
   });
 };
 
-/*
 export const usersCreateGet = (req, res) => {
   res.render("createUser", {
     title: "Create user",
+    links: links,
   });
 };
 
@@ -34,7 +34,7 @@ const validateUser = [
 // We can pass an entire array of middleware validations to our controller.
 export const usersCreatePost = [
   validateUser,
-  (req, res) => {
+  async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).render("createUser", {
@@ -43,13 +43,14 @@ export const usersCreatePost = [
       });
     }
     const { username, userEmail } = req.body;
-    usersStorage.addUser({ username, userEmail });
+    await db.insertUser(username, userEmail);
     res.redirect("/");
   }
 ];
 
-export const usersUpdateGet = (req, res) => {
-  const user = usersStorage.getUser(req.params.id);
+export const usersUpdateGet = async (req, res) => {
+  //const user = usersStorage.getUser(req.params.id);
+  const user = await db.searchUserToUpdate(req.params.id);
   res.render("updateUser", {
     title: "Update user",
     user: user,
@@ -58,8 +59,9 @@ export const usersUpdateGet = (req, res) => {
 
 export const usersUpdatePost = [
   validateUser,
-  (req, res) => {
-    const user = usersStorage.getUser(req.params.id);
+  async (req, res) => {
+    const { id } = req.params
+    const { username, userEmail } = req.body;
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).render("updateUser", {
@@ -67,23 +69,19 @@ export const usersUpdatePost = [
         user: user,
         errors: errors.array(),
       });
-    }
-    const { firstName, lastName } = req.body;
-    usersStorage.updateUser(req.params.id, { firstName, lastName });
+    }    
+    await db.updateUser(username, userEmail, id)
     res.redirect("/");
   }
 ];
 
-export const usersDeletePost = (req, res) => {
-  usersStorage.deleteUser(req.params.id);
-  res.redirect("/");
-};
-
-export const usersSearch = (req, res) => {
+export const usersSearch = async (req, res) => {
   let disabled = false;
   let customError = [];
+  const users = await db.getAllUsernames();
+  
 
-  if(usersStorage.getUsers().length === 0) {
+  if(users.length === 0) {
     disabled = true
     customError = [{ msg: "There are no users saved in the storage to search for." }]
   }
@@ -96,15 +94,18 @@ export const usersSearch = (req, res) => {
 };
 
 const validateUserSearch = [
-  query("searchFirstName").optional({checkFalsy: true}).trim(),
-  query("searchLastName").optional({checkFalsy: true}).trim(),
+  query("searchUsername").optional({checkFalsy: true}).trim(),
   query("searchUserEmail").optional({checkFalsy: true}).isEmail().withMessage("Valid email is required"),
 ]
 
 export const usersSearchGet = [
   validateUserSearch,
-  (req, res) => {
+  async (req, res) => {
     const errors = validationResult(req);
+    let customError = [];
+
+    const {searchUsername, searchUserEmail} = req.query
+
     if (!errors.isEmpty()) {
       return res.status(400).render("searchUser", {
         title: "Search user",
@@ -112,28 +113,17 @@ export const usersSearchGet = [
         isDisabled: false
       });
     }
-    let customError = [];
-    let matchedUsers = [];
-    const {searchFirstName, searchLastName, searchUserEmail} = req.query
 
-    if(!searchFirstName && !searchLastName && !searchUserEmail) {
+    if(!searchUsername && !searchUserEmail) {
       customError = [{ msg: "Please provide at least one search field." }]
       return res.status(400).render("searchUser", {
         title: "Search user",
         errors: customError,
         isDisabled: false
       });
-    } else {
-      matchedUsers = usersStorage.storage.filter(user => {
-      //to create dynamic regex based on variable value use new RegExp
-      const firstNameMatch = searchFirstName ? new RegExp(searchFirstName, "i").test(user.firstName) : false;
-      const lastNameMatch = searchLastName ? new RegExp(searchLastName, "i").test(user.lastName) : false;
-      const emailMatch = searchUserEmail ? new RegExp(searchUserEmail, "i").test(user.userEmail) : false;
-
-      return firstNameMatch || lastNameMatch || emailMatch;
-
-      })
     }
+
+    const matchedUsers = await db.searchUsernames(searchUsername, searchUserEmail);
     
     res.render("search", {
       title: "Search Results",
@@ -142,4 +132,11 @@ export const usersSearchGet = [
     //no need for redirect since it will clear the  query
   }
 ]
+
+/*
+export const usersDeletePost = (req, res) => {
+  usersStorage.deleteUser(req.params.id);
+  res.redirect("/");
+};
+
   */
