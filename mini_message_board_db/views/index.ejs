@@ -4,10 +4,11 @@
     <link rel="stylesheet" href="/styles.css">
   </head>
   <body>
+    <%- include("partials/errors.ejs") %>
     <%- include('navbar', {links: links}) %>
     <div class="posted-message-space">
-      <% messages.forEach((message, index) => { %>
-        <%- include('message_bubble', {text: message.text, user: message.user, date: message.added, index: index}); %>
+      <% data.forEach((entry) => { %>
+        <%- include('message_bubble', {message: entry.message, user: entry.user, date: entry.time, email: entry.email, index: entry.user_id}); %>
       <% }); %>
     </div>
     <script src="/listener.js" defer></script>

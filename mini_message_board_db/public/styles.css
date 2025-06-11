@@ -8,11 +8,11 @@ nav{
     display: flex;
     width: 100%;
     align-items: center;
-    justify-content: center;
+    justify-content: space-around;
 }
 ul{
     display: flex;
-    width: 35%;
+    width: 100%;
     height: 100%;
 
 }
@@ -100,7 +100,7 @@ a{
     font-weight: 700;
     height: 50%;
 }
-.date-added{
+.date-added, .user-email{
     font-size: 75%;
     position: relative;
     left: 30%;

@@ -27,3 +27,5 @@ const pool = new Pool({
     console.error("❌ Failed to connect to the database:", error.message);
   }
 })();
+
+export default pool;

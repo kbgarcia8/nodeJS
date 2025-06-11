@@ -3,7 +3,8 @@ import path from 'node:path';
 import { fileURLToPath } from 'url';
 import {dirname} from 'path';
 import indexRouter from "./routers/indexRouter.js";
-import newRouter from "./routers/newRouter.js";
+import usersRouter from "./routers/userRouter.js";
+import messageRouter from "./routers/messageRouter.js";
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url); 
@@ -19,7 +20,8 @@ app.use(express.urlencoded({ extended: true })); //express level middleware to p
 app.use(express.json()); //express level middleware to parse json
 
 app.use("/", indexRouter);
-app.use("/new", newRouter);
+app.use("/users", usersRouter);
+//app.use("/message", messageRouter);
 
 //error handling using middleware
 app.use((err, req, res, next) => {
