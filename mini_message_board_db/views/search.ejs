@@ -2,22 +2,29 @@
 <html>
   <head>
     <title><%= title %></title>
+    <link rel="stylesheet" href="/styles.css">
   </head>
 <body>
   <h1><%= title %></h1>
   <%- include("partials/errors.ejs") %>  
-  <a href="/">Back to home</a>
-  <a href="/search">Back to User Search</a>
   <h4>Matched Users:</h4>
   <ul>
     <% if (matches) {%>
       <% matches.forEach(function(match) { %>
         <li>
-          <p>ID: <%= match.id %>, Name: <%= match.firstName %> <%= match.lastName %></p>
-          <p><%= match.userEmail %></p>
-          <p><%= match.userBio %></p>
+          <p class="user-id">ID: <%= match.id %></p>
+            <p class="user-name">Username: <%= match.username %></p>
+            <p class="user-email">Email: <%= match.email %></p>
+            <form class="button-only" action="/users/<%= match.id %>/update" method="GET">
+              <button class="update-user" type="submit">Update</button>
+            </form>
+            <form class="button-only" action="/users/<%= match.id %>/delete" method="POST">
+              <button class="delete-user" type="submit" onclick="return confirm('Are you sure you want to delete this user?');">Delete</button>
+            </form>
         </li>
-        <a href="/<%= match.id-1 %>/update">Update</a>        
+        <form class="button-only" action="/users" method="GET">
+          <button class="update-user" type="submit">Back to Users List</button>
+        </form>
       <% }); %>
     <% } %>
   </ul>

@@ -40,11 +40,16 @@ export async function updateUser(username,email,id){
 
 export async function searchUsernames(searchUsername, searchUserEmail) {
   if(searchUsername && !searchUserEmail){
-    const { rows } = await pool.query("SELECT * FROM users WHERE username LIKE $1", [`%${searchUsername}%`]);    
+    const { rows } = await pool.query("SELECT * FROM users WHERE username ILIKE $1", [`%${searchUsername}%`]);
+    console.log(`Mathced Username: ${rows}`);
+    return rows 
   } else if(!searchUsername && searchUserEmail){
-    const { rows } = await pool.query("SELECT * FROM users WHERE email LIKE $1", [`%${searchUserEmail}%`]);
+    const { rows } = await pool.query("SELECT * FROM users WHERE email ILIKE $1", [`%${searchUserEmail}%`]);
+    console.log(`Mathced User Email: ${rows}`);
+    return rows
   } else if(searchUsername && searchUserEmail){
-    const { rows } = await pool.query("SELECT * FROM users WHERE username LIKE $1 AND email LIKE $2", [`%${searchUsername}%`,`%${searchUserEmail}%`]);
+    const { rows } = await pool.query("SELECT * FROM users WHERE username ILIKE $1 AND email ILIKE $2", [`%${searchUsername}%`,`%${searchUserEmail}%`]);
+    console.log(`Mathced Username and User Email: ${rows}`);
+    return rows
   }
-  return rows
 }

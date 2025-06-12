@@ -129,7 +129,7 @@ export const usersSearchGet = [
       title: "Search Results",
       matches: matchedUsers
     });
-    //no need for redirect since it will clear the  query
+    //no need for redirect since it will clear the query
   }
 ]
 
