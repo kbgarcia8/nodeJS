@@ -15,7 +15,6 @@ export async function deleteAllData(){
       TRUNCATE TABLE users;
       TRUNCATE TABLE messages;
     `);
-    await pool.query("");
 }
 
 export async function getAllUsernames() {
@@ -52,4 +51,8 @@ export async function searchUsernames(searchUsername, searchUserEmail) {
     console.log(`Mathced Username and User Email: ${rows}`);
     return rows
   }
+}
+
+export async function deleteUsername(id) {
+  await pool.query("DELETE FROM users WHERE id = $1", [id]);
 }

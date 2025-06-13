@@ -133,10 +133,8 @@ export const usersSearchGet = [
   }
 ]
 
-/*
-export const usersDeletePost = (req, res) => {
-  usersStorage.deleteUser(req.params.id);
+
+export const userDeletePost = async (req, res) => {
+  await db.deleteUsername(req.params.id);
   res.redirect("/");
 };
-
-  */
