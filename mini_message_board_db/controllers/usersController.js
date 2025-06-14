@@ -1,6 +1,6 @@
 import { body, query, validationResult } from "express-validator";
 //'body' is for POST method and 'query' is for GET method validation
-import * as db from "../db/queries.js"
+import * as db from "../db/queries.js";
 import { links } from "../constants/constants.js";
 
 export const usersListGet = async (req, res) => {
@@ -124,12 +124,20 @@ export const usersSearchGet = [
     }
 
     const matchedUsers = await db.searchUsernames(searchUsername, searchUserEmail);
+
+    if(matchedUsers==[]) {
+      customError = [{ msg: "No user or email match." }]
+      return res.status(400).render("searchUser", {
+        title: "Search user",
+        errors: customError,
+        isDisabled: false
+      });
+    }
     
     res.render("search", {
       title: "Search Results",
       matches: matchedUsers
     });
-    //no need for redirect since it will clear the query
   }
 ]
 

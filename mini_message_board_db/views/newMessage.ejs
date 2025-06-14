@@ -4,8 +4,9 @@
     <link rel="stylesheet" href="/styles.css">
   </head>
   <body>
+    <%- include("partials/errors.ejs") %> 
     <%- include('navbar', {links: links}) %>
-    <form method="POST" action="/new">
+    <form method="POST" action="/messages/new">
     <h3><%= header %></h3>
         <% inputs.forEach((input) => { %>
             <label for="<%= input.name%>">

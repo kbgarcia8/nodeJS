@@ -21,7 +21,7 @@ app.use(express.json()); //express level middleware to parse json
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
-//app.use("/message", messageRouter);
+app.use("/messages", messageRouter);
 
 //error handling using middleware
 app.use((err, req, res, next) => {
