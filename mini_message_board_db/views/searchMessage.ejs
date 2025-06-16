@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+<body>
+  <h1><%= title %></h1>
+  <%- include("partials/errors.ejs") %>
+  <form action="/messages/search/result" method="GET">
+    <label for="searchPattern">Message Pattern: </label>
+    <input type="text" name="searchPattern" id="searchPattern">
+    <label for="searchSender">Sender: </label>
+    <input type="text" name="searchSender" id="searchSender">
+    <button type="submit" <%= isDisabled ? disabled : "" %> >Search</button>
+  </form>
+  <form class="button-only" action="/" method="GET">
+    <button class="update-user" type="submit">Back to Message Board</button>
+  </form>
+</body>
+</html>

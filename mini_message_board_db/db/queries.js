@@ -10,6 +10,11 @@ export async function getAllData() {
   return rows;
 }
 
+export async function getAllMessages() {
+  const { rows } = await pool.query(`SELECT * FROM messages;`)
+  return rows;
+}
+
 export async function deleteAllData(){
     await pool.query(`
       TRUNCATE TABLE users;
@@ -60,3 +65,53 @@ export async function deleteUsername(id) {
 export async function insertMessage(id, message) {
   await pool.query("INSERT INTO messages (user_id, message) VALUES ($1, $2)", [id, message]);
 }
+
+export async function searchMessages(searchPattern, searchSender) {
+  if(searchPattern && !searchSender){
+    const { rows } = await pool.query(`
+      SELECT users.id AS user_id, messages.id AS message_id, users.username AS user, users.email AS email, messages.message AS message, messages.dateandtime AS time
+      FROM users
+      INNER JOIN messages
+      ON users.id = messages.user_id
+      WHERE messages.message ILIKE $1;  
+    `, [`%${searchPattern}%`]);
+    console.log(`Mathced Search Pattern: ${rows}`);
+    return rows;
+  } else if(!searchPattern && searchSender){
+    const { rows } = await pool.query(`
+      SELECT users.id AS user_id, messages.id AS message_id, users.username AS user, users.email AS email, messages.message AS message, messages.dateandtime AS time
+      FROM users
+      INNER JOIN messages
+      ON users.id = messages.user_id
+      WHERE users.username ILIKE $1;  
+    `, [`%${searchSender}%`]);
+    console.log(`Mathced Message with specified User: ${rows}`);
+    return rows;
+  } else if(searchPattern && searchSender){
+    const { rows } = await pool.query(`
+      SELECT users.id AS user_id, messages.id AS message_id, users.username AS user, users.email AS email, messages.message AS message, messages.dateandtime AS time
+      FROM users
+      INNER JOIN messages
+      ON users.id = messages.user_id
+      WHERE messages.message ILIKE $1 AND users.username ILIKE $2;   
+    `, [`%${searchPattern}%`,`%${searchSender}%`]);
+    console.log(`Mathced Search Pattern and Message with specified User: ${rows}`);
+    return rows;
+  }
+};
+
+export async function viewMessage(id){
+  console.log(id)
+  const { rows } = await pool.query(`
+      SELECT users.id AS user_id, messages.id AS message_id, users.username AS user, users.email AS email, messages.message AS message, messages.dateandtime AS time
+      FROM users
+      INNER JOIN messages ON users.id = messages.user_id
+      WHERE messages.id = $1;  
+    `,[id]);
+    console.log(rows)
+  return rows[0];
+}
+
+export async function deleteMessage(id) {
+  await pool.query("DELETE FROM messages WHERE id = $1", [id]);
+};

@@ -4,5 +4,5 @@ export const links = [
   { href: "/messages/new", text: "New Message" },
   { href: "/users/create", text: "Create User" },  
   { href: "/users/search", text: "Search User" },
-  { href: "/message/search", text: "Search Message" },
+  { href: "/messages/search", text: "Search Message" },
 ];

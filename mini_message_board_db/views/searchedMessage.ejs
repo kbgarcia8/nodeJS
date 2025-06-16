@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+<body>
+  <h1><%= title %></h1>
+  <%- include("partials/errors.ejs") %>  
+  <h4>Matched Messages:</h4>
+  <ul class="message-list">
+    <% if (matches) {%>
+      <% matches.forEach(function(match) { %>
+        <li class="search-mesage-entry">
+            <p class="user-name"><%= match.user %> (<%= match.email %>): </p>
+            <span><%= match.time%></span>
+            <p><%= match.message %></p>
+            <form class="button-only" action="/messages/view/<%= match.message_id %>" method="GET">
+              <button class="update-user" type="submit">View</button>
+            </form>
+            <form class="button-only" action="/messages/delete/<%= match.message_id %>" method="POST">
+              <button class="delete-user" type="submit" onclick="return confirm('Are you sure you want to delete this message?');">Delete</button>
+            </form>
+        </li>
+      <% }); %>
+    <% } %>
+  </ul>
+</body>
+</html>

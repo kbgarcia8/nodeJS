@@ -1,7 +1,9 @@
 <div class="message-bubble">
     <div class="message-bubble-header">
         <h3 class="username"><%= user %></h3>
-        <button class="open-message" type="button" data-index="<%= index %>">Open</button>
+        <form class="button-only" action="/messages/view/<%= id %>" method="GET">
+            <button class="open-message" type="submit">Open</button>
+        </form>
     </div>    
     <p class="text-message"><%= message %></p>
     <p class="user-email">Email: <%= email %></p>

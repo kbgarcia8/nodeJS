@@ -5,11 +5,9 @@ const messageRouter = Router();
 
 messageRouter.get("/new", messageController.newMessageGet);
 messageRouter.post("/new", messageController.newMessagePost);
+messageRouter.get("/search", messageController.messageSearch);
+messageRouter.get("/search/result", messageController.messageSearchGet);
+messageRouter.get("/view/:id", messageController.messageView);
+messageRouter.post("/delete/:id", messageController.messageDeletePost);
 
-/*
-messageRouter.get("/messages/:index", (req, res) => {
-  const index = req.params.index
-  res.render("message", { title: `Message ${index}`, message: messages[index] });
-});
-*/
 export default messageRouter;

@@ -8,7 +8,7 @@
     <%- include('navbar', {links: links}) %>
     <div class="posted-message-space">
       <% data.forEach((entry) => { %>
-        <%- include('message_bubble', {message: entry.message, user: entry.user, date: entry.time, email: entry.email, index: entry.user_id}); %>
+        <%- include('message_bubble', {message: entry.message, user: entry.user, date: entry.time, email: entry.email, id: entry.message_id}); %>
       <% }); %>
     </div>
     <script src="/listener.js" defer></script>

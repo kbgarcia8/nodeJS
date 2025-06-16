@@ -1,0 +1,16 @@
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <h3><%= header %></h3>
+    <%- include('message_bubble2', {user: message.user, email: message.email, text: message.message, date: message.time }) %>
+    <form class="button-only" action="/messages/search" method="GET">
+      <button class="back-to" type="submit">Back to Message Search</button>
+    </form>
+    <form class="button-only" action="/" method="GET">
+      <button class="back-to" type="submit">Back to Message Board</button>
+    </form>
+  </body>
+</html>

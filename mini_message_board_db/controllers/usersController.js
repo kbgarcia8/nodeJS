@@ -83,7 +83,7 @@ export const usersSearch = async (req, res) => {
 
   if(users.length === 0) {
     disabled = true
-    customError = [{ msg: "There are no users saved in the storage to search for." }]
+    customError = [{ msg: "There are no users saved in the database to search for." }]
   }
 
   res.render("searchUser", {
@@ -134,7 +134,7 @@ export const usersSearchGet = [
       });
     }
     
-    res.render("search", {
+    res.render("searchedUser", {
       title: "Search Results",
       matches: matchedUsers
     });

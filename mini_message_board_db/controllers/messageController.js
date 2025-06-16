@@ -31,10 +31,10 @@ export const newMessageGet = (req, res) => {
 };
 
 const messageErr = "can only be up to 300 characters."
-
+const emailErr = "Valid and full email details is required before sending a message or provide username and email instead"
 const validateNewMessage = [
   body("messageUser").optional({checkFalsy: true}).trim(),
-  body("messageUserEmail").optional({checkFalsy: true}).isEmail().withMessage("Valid email is required"),
+  body("messageUserEmail").optional({checkFalsy: true}).isEmail().withMessage(emailErr),
   body("messageText").trim().isLength({ min: 1, max: 300 }).withMessage(`Message ${messageErr}`),
 ]
 
@@ -55,9 +55,15 @@ export const newMessagePost = [
       });
     }
     const { messageUser, messageUserEmail, messageText } = req.body;
-console.log(messageUser, messageUserEmail, messageText);
     if ((!messageUser && !messageUserEmail) || !messageText) {
-      return res.status(400).json({ message: 'User or email and message are required' });
+      customError = [{ msg: "User or email and message are required!"}];
+      return res.status(400).render("newMessage", {
+        title: "New Message",
+        header: "Send a Message",
+        links: links,
+        inputs: inputs,
+        errors: customError
+      });
     }
 
     const user = await db.searchUsernames(messageUser, messageUserEmail);
@@ -88,3 +94,86 @@ console.log(messageUser, messageUserEmail, messageText);
     res.redirect("/");
   }
 ]
+
+export const messageSearch = async (req, res) => {
+  let disabled = false;
+  let customError = [];
+  const messages = await db.getAllMessages();
+  
+
+  if(messages.length === 0) {
+    disabled = true
+    customError = [{ msg: "There are no message saved in the database to search for." }]
+  }
+
+  res.render("searchMessage", {
+    title: "Search Message",
+    isDisabled: disabled,
+    errors: customError
+  });
+};
+
+const validateMessageSearch = [
+  query("searchPattern").optional({checkFalsy: true}).trim(),
+  query("searchSender").optional({checkFalsy: true}).trim(),
+];
+
+export const messageSearchGet = [
+  validateMessageSearch,
+  async (req, res) => {
+    const errors = validationResult(req);
+    let customError = [];
+
+    const {searchPattern, searchSender} = req.query
+
+    if (!errors.isEmpty()) {
+      return res.status(400).render("searchMessage", {
+        title: "Search Message",
+        isDisabled: disabled,
+        errors: errors.array(),
+      });
+    }
+
+    if(!searchPattern && !searchSender) {
+      customError = [{ msg: "Please provide at least one search of the search patterns." }]
+      return res.status(400).render("searchMessage", {
+        title: "Search Message",
+        isDisabled: disabled,
+        isDisabled: false
+      });
+    }
+
+    const matchedMessages = await db.searchMessages(searchPattern, searchSender);
+
+    if(matchedMessages==[]) {
+      customError = [{ msg: "No user or message match." }]
+      return res.status(400).render("searchMessage", {
+        title: "Search Message",
+        isDisabled: disabled,
+        isDisabled: false
+      });
+    }
+    
+    res.render("searchedMessage", {
+      title: "Searched Messages",
+      matches: matchedMessages
+    });
+  }
+]
+
+export const messageDeletePost = async (req, res) => {
+  await db.deleteMessage(req.params.id);
+  res.redirect("/");
+};
+
+export const messageView = async (req, res) => {
+  let customError = [];
+  const message = await db.viewMessage(req.params.id);
+
+  res.render("viewMessage", {
+    title: "View Message",
+    header: `Message ID: ${req.params.id}`,
+    message: message,
+    errors: customError
+  });
+};
