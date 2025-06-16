@@ -2,9 +2,9 @@ import express from "express";
 import path from 'node:path';
 import { fileURLToPath } from 'url';
 import {dirname} from 'path';
-import indexRouter from "./routers/indexRouter.js";
-import usersRouter from "./routers/userRouter.js";
-import messageRouter from "./routers/messageRouter.js";
+import indexRouter from "./routes/indexRouter.js";
+import usersRouter from "./routes/userRouter.js";
+import messageRouter from "./routes/messageRouter.js";
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url); 
