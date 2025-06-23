@@ -5,20 +5,20 @@ dotenv.config();
 import { Client } from "pg";
 
 const SQL = `
-CREATE TABLE IF NOT EXISTS users (
+CREATE TABLE IF NOT EXISTS message_board.users (
   id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
   username VARCHAR ( 30 ) NOT NULL UNIQUE,
   email VARCHAR ( 35 ) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS messages (
+CREATE TABLE IF NOT EXISTS message_board.messages (
   id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-  user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  user_id INTEGER REFERENCES message_board.users(id) ON DELETE CASCADE,
   message VARCHAR ( 300 ),
   dateandtime TEXT DEFAULT TO_CHAR(NOW(), 'YYYY-MM-DD HH12:MI:SS')
 );
 
-INSERT INTO users (username, email)
+INSERT INTO message_board.users (username, email)
 VALUES
   ('Amando', 'amando123@mailinator.com'),
   ('Charles', 'charles.dev@testmail.com'),
@@ -32,7 +32,7 @@ VALUES
   ('James', 'james123@mockmail.io');
 
 
-INSERT INTO messages (user_id, message)
+INSERT INTO message_board.messages (user_id, message)
 VALUES
   (1,'Hi there!"'),
   (2,'Hello World!'),
