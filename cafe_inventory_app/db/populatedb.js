@@ -6,7 +6,7 @@ import { Client } from "pg";
 import * as sql from "./sql_commands.js"
 
 async function main() {
-  const command = sql.ADDPRODCATEGORIES;
+  const command = sql.POPULATEDB;
   console.log(`executing sql command: ${command}`);
   const client = new Client({
     connectionString: process.env.DATABASE_URL,
