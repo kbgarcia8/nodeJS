@@ -8,5 +8,8 @@
     "express-validator": "^7.2.1",
     "pg": "^8.16.0"
   },
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
 }

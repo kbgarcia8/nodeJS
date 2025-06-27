@@ -6,3 +6,10 @@ export async function getCategories() {
   `)
   return rows;
 };
+
+export async function getAllProducts() {
+  const { rows } = await pool.query(`
+      SELECT * FROM cafe_inventory.products;
+  `);
+  return rows;
+}
