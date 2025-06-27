@@ -2,9 +2,9 @@ import express from "express";
 import path from 'node:path';
 import { fileURLToPath } from 'url';
 import {dirname} from 'path';
-import indexRouter from "./routers/indexRouter.js";
-import usersRouter from "./routers/userRouter.js";
-import messageRouter from "./routers/messageRouter.js";
+//Routers
+import indexRouter from "./routes/indexRouter.js";
+import loggedUserRouter from "./routes/loggedUserRouter.js";
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url); 
@@ -20,8 +20,8 @@ app.use(express.urlencoded({ extended: true })); //express level middleware to p
 app.use(express.json()); //express level middleware to parse json
 
 app.use("/", indexRouter);
-app.use("/users", usersRouter);
-app.use("/messages", messageRouter);
+app.use("/user", loggedUserRouter);
+//app.use("/messages", messageRouter);
 
 //error handling using middleware
 app.use((err, req, res, next) => {

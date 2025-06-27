@@ -1,0 +1,12 @@
+<nav class="menu-filter">
+    <ul class="menu-filter-list">
+      <% for (let i = 0; i < filter.length; i++) { %>
+        <li class="menu-filter-entry">
+          <a class="menu-filter-entry-link" href="/user/menu/<%= filter[i].href %>">
+            <span> <%= filter[i].text %> </span>
+          </a>
+        </li>
+      <% } %>
+    </ul>
+  </nav>
+  

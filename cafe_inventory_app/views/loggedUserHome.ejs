@@ -1,0 +1,13 @@
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <%- include("partials/errors.ejs") %>
+    <%- include('partials/navbar.ejs', {links: links}) %>
+    <div class="menu-space">
+        <h2><%= header %></h2>
+    </div>
+  </body>
+</html>
