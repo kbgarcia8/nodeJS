@@ -16,17 +16,27 @@ export async function getAllMenu (req,res){
 
     const menuFilter = filter.map((entry, index)=> {
         const href = entry.trim().replace(/\s+(.)/g, (_, c) => c.toUpperCase()).replace(/^./, c => c.toLowerCase());
-        return {href: href, text: entry, index: index};
+        return {href: href, text: entry};
     })
 
     const products = await db.getAllProducts();
 
-    console.dir(products)
+    let sortedProducts = {};
+
+    for(let i=1; i<=menuFilter.length; i++){
+        sortedProducts[i] = [];
+    }
+
+    products.map((product) => {
+        sortedProducts[product.category].push(product);
+    })
+
+    //console.log(sortedProducts[1]);
 
     res.render("loggedUserMenu", {
         title: "Kape at Kain Menu",
         links: userLinks,
         filter: menuFilter,
-        data: []
+        data: sortedProducts
     })
 }

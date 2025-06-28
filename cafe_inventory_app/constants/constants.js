@@ -17,6 +17,7 @@ export const mainLinks = [
 export const userLinks = [
   { href: "/user/home", text: "Home" },
   { href: "/user/menu", text: "Menu" },
+  { href: "/user/menu/edit", text: "Edit Menu" },
   { href: "/user/cart", text: "Cart" },
   { href: "/user/pending", text: "Pending" },
   { href: "/user/orders", text: "Orders" },

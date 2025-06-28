@@ -5,21 +5,29 @@ dotenv.config();
 import { Client } from "pg";
 import * as sql from "./sql_commands.js"
 
-async function main() {
-  const command = sql.POPULATEDB;
-  console.log(`executing sql command: ${command}`);
-  const client = new Client({
-    connectionString: process.env.DATABASE_URL,
-    ssl: {
-    rejectUnauthorized: true,
-    ca: process.env.DATABASE_SSL_CA?.replace(/\\n/g, '\n'), // To properly format multi-line certs
-  },
-  });
+async function main(command) {
+  
+    const currentCommand = sql[command];
+    console.log(`executing sql command: ${command}`);
+    const client = new Client({
+      connectionString: process.env.DATABASE_URL,
+      ssl: {
+      rejectUnauthorized: true,
+      ca: process.env.DATABASE_SSL_CA?.replace(/\\n/g, '\n'), // To properly format multi-line certs
+    },
+    });
 
-  await client.connect();
-  await client.query(command);
-  await client.end();
-  console.log("done");
+    await client.connect();
+    await client.query(currentCommand);
+    await client.end();
+    console.log("done");
+}
+const commands = ['MAKEMAINTABLES', 'ADDSTATUS', 'ADDPRODCATEGORIES', 'POPULATEPRODUCTS', 'ADDPRODUCTSPRICE'];
+
+async function runCommands() {
+  for (const command of commands) {
+    await main(command);
+  }
 }
 
-main();
+runCommands();
