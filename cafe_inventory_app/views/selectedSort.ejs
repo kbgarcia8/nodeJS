@@ -1,0 +1,14 @@
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <%- include("partials/errors.ejs") %>
+    <%- include('partials/navbar.ejs', {links: links}) %>
+    <h2><%= header %></h2>
+    <div class="sorter-selection">
+        <%- include('partials/sorter.ejs', {sorter: sorter, selectedSorter: selectedSorter, searcher: searcher, searchPattern: searchPattern}) %>
+    </div>
+  </body>
+</html>

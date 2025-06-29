@@ -234,3 +234,12 @@ FROM cafe_inventory.products AS p
 INNER JOIN cafe_inventory.price_variants AS pv ON pv.product_id = p.id;
 
 
+<form action="/products" method="POST">
+    <label for="searcher">Search:</label>
+    <select id="searcher" name="searcher">
+    <% searcher.map((search) => { %>
+        <option value="<%= search %>"><%= search %></option>
+    <% }); %>
+    </select>
+    <button type="submit">Search</button>  
+</form>

@@ -5,6 +5,8 @@ import {dirname} from 'path';
 //Routers
 import indexRouter from "./routes/indexRouter.js";
 import loggedUserRouter from "./routes/loggedUserRouter.js";
+import menuRouter from "./routes/menuRouter.js";
+import productRouter from "./routes/productRouter.js";
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url); 
@@ -21,7 +23,9 @@ app.use(express.json()); //express level middleware to parse json
 
 app.use("/", indexRouter);
 app.use("/user", loggedUserRouter);
-//app.use("/messages", messageRouter);
+app.use("/menu", menuRouter);
+app.use("/products", productRouter);
+
 
 //error handling using middleware
 app.use((err, req, res, next) => {
