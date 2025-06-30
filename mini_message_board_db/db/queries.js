@@ -33,7 +33,6 @@ export async function insertUser(username, email) {
 
 export async function searchUserToUpdate(id) {
   const { rows } = await pool.query("SELECT * FROM message_board.users WHERE message_board.users.id = $1", [id]);
-  //when using LIKE the % or _ must be in the actual string
   return rows[0];
 }
 
@@ -45,6 +44,7 @@ export async function updateUser(username,email,id){
 export async function searchUsernames(searchUsername, searchUserEmail) {
   if(searchUsername && !searchUserEmail){
     const { rows } = await pool.query("SELECT * FROM message_board.users WHERE username ILIKE $1", [`%${searchUsername}%`]);
+    //when using LIKE the % or _ must be in the actual string
     console.log(`Mathced Username: ${rows}`);
     return rows 
   } else if(!searchUsername && searchUserEmail){

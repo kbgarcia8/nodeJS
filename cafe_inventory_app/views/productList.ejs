@@ -8,7 +8,19 @@
     <%- include('partials/navbar.ejs', {links: links}) %>
     <h2><%= header %></h2>
     <div class="sorter-selection">
-        <%- include('partials/sorter.ejs', {sorter: sorter, selectedSorter: selectedSorter, searchPattern: searchPattern}) %>
+        <%- include('partials/sorter.ejs', {sorter: sorter, selectedSorter: selectedSorter, searchPattern: searchPattern}) %>        
+    </div>
+    <div class="product-list-space">
+      <% products.map((product) =>{ %>
+        <div class="product-list-entry">
+          <div class="product-info">
+            <p class="product-info-title">Product Name: <%= product.name %></p>
+            <p class="product-info-p">Product Code: <%= product.code %></p>
+            <p class="product-info-p">Product Status: <%= product.status_name %></p>
+            <p class="product-info-p">Product Category: <%= product.category_name %></p>
+          </div>
+        </div>
+      <% }); %>
     </div>
   </body>
 </html>

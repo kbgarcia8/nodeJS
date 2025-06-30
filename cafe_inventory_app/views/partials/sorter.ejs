@@ -1,3 +1,7 @@
+<!--
+Example of cascading forms, where first form must be submitted since there are elements in the second form dependent on it.
+Since value submitted from the first form is also needed when second form is submitted a hidden input is used
+-->
 <form action="/products" method="POST">
     <label for="sorter">Search by:</label>
     <select id="sorter" name="sorter">
@@ -8,8 +12,9 @@
     </select>
     <button type="submit">Select</button>
 </form>
-<form action="/products/filtered" method="get">
-    <label for="searcher">Pattern/Category:</label>
+<form action="/products/filtered" method="GET">
+    <input type="hidden" name="sorter" value="<%= selectedSorter %>">
+    <label for="searcher">Search Pattern by <%= selectedSorter %>:</label>
     <select id="searcher" name="searcher">
         <option value=""  <%= searchPattern === "" ? 'selected' : '' %>>-- No Pattern Selected --</option>
     <% searcher.map((search) => { %>

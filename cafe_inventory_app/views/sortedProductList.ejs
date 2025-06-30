@@ -8,17 +8,19 @@
     <%- include('partials/navbar.ejs', {links: links}) %>
     <h2><%= header %></h2>
     <div class="sorter-selection">
-        <form action="/products" method="GET">
-            <label for="sorter">Display by:</label>
-            <select id="sorter" name="sorter">
-            <option value="All" <%= selectedSorter === 'All' ? 'selected' : '' %>>All</option>
-            <% sorter.map((sort) => { %>
-                <option value="<%= sort %>" <%= selectedSorter === sort ? 'selected' : '' %>><%= sort %></option>
-            <% }); %>
-            </select>
-            <button type="submit">Sort</button>            
-        </form>
-        
+        <%- include('partials/sorter.ejs', {sorter: sorter, selectedSorter: selectedSorter, searcher: searcher, searchPattern: searchPattern}) %>
+    </div>
+    <div class="product-list-space">
+      <% searchResult.map((product) =>{ %>
+        <div class="product-list-entry">
+          <div class="product-info">
+            <p class="product-info-title">Product Name: <%= product.name %></p>
+            <p class="product-info-p">Product Code: <%= product.code %></p>
+            <p class="product-info-p">Product Status: <%= product.status_name %></p>
+            <p class="product-info-p">Product Category: <%= product.category_name %></p>
+          </div>
+        </div>
+      <% }); %>
     </div>
   </body>
 </html>

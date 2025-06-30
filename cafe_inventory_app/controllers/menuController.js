@@ -4,7 +4,7 @@ import * as db from "../db/queries.js";
 export async function getAllMenu (req,res){
     const filter = await getMenuFilter();
 
-    const menuFilter = filter.map((entry, index)=> {
+    const menuFilter = filter.map((entry)=> {
         //const href = entry.trim().replace(/\s+(.)/g, (_, c) => c.toUpperCase()).replace(/^./, c => c.toLowerCase());
         return {href: entry, text: entry};
     })
@@ -18,8 +18,8 @@ export async function getAllMenu (req,res){
     }
 
     products.map((product) => {
-        sortedProducts[product.category].push(product);
-    })
+        sortedProducts[product.category_code].push(product);
+    });
 
     res.render("allMenu", {
         title: "Kape at Kain Menu",
@@ -33,11 +33,11 @@ export async function getFilteredMenu (req,res){
     const currentFilter = req.params.category;
     const filter = await getMenuFilter();
 
-    const menuFilter = filter.map((entry, index)=> {        
+    const menuFilter = filter.map((entry)=> {        
         return {href: entry, text: entry};
     })
 
-    const filteredProducts = await db.getFilteredProducts(currentFilter);
+    const filteredProducts = await db.getFilteredProductsByCategory(currentFilter);
 
     res.render("filteredMenu", {
         title: `Kape at Kain ${currentFilter}`,
