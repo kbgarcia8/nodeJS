@@ -7,7 +7,7 @@ const productRouter = Router();
 productRouter.get("/", productController.listAllProducts);
 productRouter.post("/", productController.chooseSortOption);
 productRouter.get("/filtered", productController.searchedProducts);
-productRouter.get("/edit/:id", productController.editProductGet);
-productRouter.post("/edit/:id", productController.editProductPost);
+productRouter.get("/edit/:id", productController.editProduct);
+productRouter.post("/update/:id", productController.updateProduct);
 
 export default productRouter;

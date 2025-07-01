@@ -247,3 +247,7 @@ export async function filterProductList(selectedSort, searchPattern) {
       throw new Error(`Invalid sort option: ${selectedSort}`);
   }
 };
+
+export async function updateProduct() {
+  
+}
