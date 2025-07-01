@@ -12,14 +12,7 @@
     </div>
     <div class="product-list-space">
       <% searchResult.map((product) =>{ %>
-        <div class="product-list-entry">
-          <div class="product-info">
-            <p class="product-info-title">Product Name: <%= product.name %></p>
-            <p class="product-info-p">Product Code: <%= product.code %></p>
-            <p class="product-info-p">Product Status: <%= product.status_name %></p>
-            <p class="product-info-p">Product Category: <%= product.category_name %></p>
-          </div>
-        </div>
+        <%- include('partials/productEntry.ejs', {product: product}) %>
       <% }); %>
     </div>
   </body>

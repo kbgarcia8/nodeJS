@@ -6,9 +6,7 @@ import * as db from "../db/queries.js";
 export async function listAllProducts(req,res) {
     const products = await db.getAllProducts();
 
-    const sorter = ['Product Code', 'Product Name', 'Status', 'Category']
-
-    //console.log(products[0]);
+    const sorter = ['Product Code', 'Product Name', 'Status', 'Category'];
 
     res.render("productList", {
         title: "Kape at Kain Products",
@@ -72,8 +70,6 @@ export async function searchedProducts(req,res) {
 
     const searchResult = await db.filterProductList(selectedSort, searchPattern);
 
-    console.log(searchResult)
-
     if (selectedSort === "All") {
         res.redirect("/products");
     } else {
@@ -103,4 +99,24 @@ export async function searchedProducts(req,res) {
             searchResult: searchResult
         });
     }
+}
+
+export async function editProductGet(req,res){
+    const productId = req.params.id;
+
+    const product = await db.getFilteredProductsById(productId);
+    const status = await db.getProductStatus();
+    const categories = await db.getCategories();
+
+    res.render("editProduct", {
+        title: "Edit Product",
+        header: `Edit Product ID No. ${productId}`,
+        product: product,
+        status: status,
+        categories: categories
+    });
+}
+
+export async function editProductPost(req,res){
+
 }

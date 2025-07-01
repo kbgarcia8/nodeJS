@@ -1,0 +1,52 @@
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <%- include("partials/errors.ejs") %>
+    <h2><%= header %></h2>
+    <form class="button-only" action="/products" method="POST">
+        <button class="back-to-product-search" type="submit">Back to Search</button>
+    </form>
+    <div class="product-edit">
+        <div class="product-information-edit-inputs-space">
+            <div class="product-information-edit-input-space">
+                <label for="product-code" class="product-edit-label">Product Code: </label>
+                <input type="text" name="product-code" id="product-code" class="product-edit-input" value="<%= product[0].code %>">
+            </div>
+            <div class="product-information-edit-input-space">
+                <label for="product-name" class="product-edit-label">Product Name: </label>
+                <input type="text" name="product-name" id="product-name" class="product-edit-input" value="<%= product[0].name %>">
+            </div>
+            <div class="product-information-edit-input-space">
+                <label for="product-status" class="product-edit-label">Product Status: </label>
+                <select id="product-status" name="product-status" class="product-edit-input">
+                <% status.map((stat) => { %>
+                    <option value="<%= stat.name %>"  <%= product[0].status_name === stat.name ? 'selected' : '' %>><%= stat.name %></option>
+                <% }); %>
+                </select>
+            </div>
+            <div class="product-information-edit-input-space">
+                <label for="product-category" class="product-edit-label">Product Category: </label>
+                <select id="product-category" name="product-category" class="product-edit-input">
+                <% categories.map((category) => { %>
+                    <option value="<%= category.name %>"  <%= product[0].category === category.name ? 'selected' : '' %>><%= category.name %></option>
+                <% }); %>
+                </select>
+            </div>
+            <div class="product-information-edit-input-space">
+                <label for="product-description" class="product-edit-label">Product Description: </label>
+                <textarea name="product-description" id="product-description" class="product-edit-input" rows="5" cols="40"><%= product[0].description %></textarea>
+            </div>
+            <div class="product-information-edit-input-space">
+                <label for="product-image" class="product-edit-label">Product Image URL: </label>
+                <textarea name="product-image" id="product-image" class="product-edit-input" rows="5" cols="40"><%= product[0].image %></textarea>
+            </div>
+        </div>
+        <form class="button-only" action="/products/<%= product[0].id %>/delete" method="POST">
+            <button class="delete-product" type="submit" onclick="return confirm('This product will be erased from database permanently, proceed?');">Delete</button>
+        </form>
+    </div>
+  </body>
+</html> 
