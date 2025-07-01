@@ -44,9 +44,13 @@
                 <textarea name="product-image" id="product-image" class="product-edit-input" rows="5" cols="40"><%= product[0].image %></textarea>
             </div>
         </div>
-        <form class="button-only" action="/products/<%= product[0].id %>/delete" method="POST">
+        <form class="button-only" action="/products/update/<%= product[0].id %>" method="POST">
+            <button class="update-product" type="submit">Update</button>
+        </form>
+        <form class="button-only" action="/products/delete/<%= product[0].id %>" method="POST">
             <button class="delete-product" type="submit" onclick="return confirm('This product will be erased from database permanently, proceed?');">Delete</button>
         </form>
+        <!--continue to submit POST of UPDATE and DELETE product-->
     </div>
   </body>
 </html> 
