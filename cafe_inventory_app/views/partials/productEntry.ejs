@@ -4,6 +4,8 @@
         <p class="product-info-p">Product Code: <%= product.code %></p>
         <p class="product-info-p">Product Status: <%= product.status_name %></p>
         <p class="product-info-p">Product Category: <%= product.category_name %></p>
+        <p class="product-info-p">Product <%= product.small === null ? 'Solo' : 'Small' %> Price: <%= product.small === null ? product.solo : product.small %></p>
+        <p class="product-info-p">Product <%= product.large === null ? 'For Share' : 'Large' %> Price: <%= product.large === null ? product.for_share : product.large %></p>
     </div>
     <form class="button-only" action="/products/edit/<%= product.id %>" method="GET">
         <button class="edit-product" type="submit" data-id="<%= product.id %>">Edit</button>

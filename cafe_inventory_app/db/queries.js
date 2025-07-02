@@ -248,6 +248,24 @@ export async function filterProductList(selectedSort, searchPattern) {
   }
 };
 
-export async function updateProduct() {
-  
+export async function getStatusCode(status){
+  const { rows } = await pool.query(`
+    SELECT code FROM cafe_inventory.status AS s
+    WHERE s.name = $1;`,[status]);
+    return rows;
+}
+
+export async function getCategoryId(category){
+  const { rows } = await pool.query(`
+    SELECT id FROM cafe_inventory.product_categories AS pc
+    WHERE pc.name = $1;`,[category]);
+    return rows;
+}
+
+export async function updateProduct(code, name, statusId, categoryId, description, photoURL, id) {
+  await pool.query(`UPDATE cafe_inventory.products SET product_code = $1,  name = $2, status_code = $3, product_category_id = $4, description = $5, photo_url = $6 WHERE id = $7;`, [code, name, statusId, categoryId, description, photoURL, id]);  
+}
+
+export async function updateProductPrice(product_id, size, price) {
+  await pool.query(`UPDATE cafe_inventory.price_variants SET price = $3 WHERE product_id = $1 AND size = $2;`,[product_id, size, price]);
 }

@@ -18,6 +18,7 @@ export const userLinks = [
   { href: "/user/home", text: "Home" },
   { href: "/menu", text: "Menu" },
   { href: "/products", text: "Products (Admin Only)" },
+  { href: "/products/add", text: "Add Product (Admin Only)" },
   { href: "/user/cart", text: "Cart" },
   { href: "/user/pending", text: "Pending" },
   { href: "/user/orders", text: "Orders" },

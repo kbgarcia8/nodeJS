@@ -37,6 +37,24 @@
                     </select>
                 </div>
                 <div class="product-information-edit-input-space">
+                    <% if (product[0].small !== null) { %>
+                        <label for="productSmallPrice" class="product-edit-label">Small Price: </label>
+                        <input type="text" name="productSmallPrice" id="productSmallPrice" class="product-edit-input" value="<%= product[0].small %>">
+                    <% } else if (product[0].solo !== null) { %>
+                        <label for="productSoloPrice" class="product-edit-label">Solo Price: </label>
+                        <input type="text" name="productSoloPrice" id="productSoloPrice" class="product-edit-input" value="<%= product[0].solo %>">
+                    <% } %>
+                </div>
+                <div class="product-information-edit-input-space">
+                    <% if (product[0].large !== null) { %>
+                        <label for="productLargePrice" class="product-edit-label">Large Price: </label>
+                        <input type="text" name="productLargePrice" id="productLargePrice" class="product-edit-input" value="<%= product[0].large %>">
+                    <% } else if (product[0].for_share !== null) { %>
+                        <label for="productForSharePrice" class="product-edit-label">For Share Price: </label>
+                        <input type="text" name="productForSharePrice" id="productForSharePrice" class="product-edit-input" value="<%= product[0].for_share %>">
+                    <% } %>
+                </div>
+                <div class="product-information-edit-input-space">
                     <label for="productDescription" class="product-edit-label">Product Description: </label>
                     <textarea name="productDescription" id="productDescription" class="product-edit-input" rows="5" cols="40"><%= product[0].description %></textarea>
                 </div>

@@ -123,25 +123,53 @@ const productImageErr = "must be a valid link";
 
 const validateProductInfo = [
     body("productCode")
-        .exists({ checkFalsy: true }).withMessage("Product Code is required")
+        .exists({ checkFalsy: true })
+        .withMessage("Product Code is required")
         .bail()
         .trim()
         .matches(/^[A-Z0-9-]+$/)
         .withMessage("Product Code must only be consisted of capital letters, numbers and '-' symbol."),
     
     body("productName")
-        .exists({ checkFalsy: true }).withMessage(`Product Code ${productCodeErr}`)
+        .exists({ checkFalsy: true })
+        .withMessage(`Product Name is required`)
         .bail()
         .trim()
         .matches(/^[A-Za-z\s\-']+$/)
         .withMessage(`Product Name ${productNameErr}`),
     
     body("productImage")
-        .exists({ checkFalsy: true }).withMessage("Product Image URL is required")
+        .exists({ checkFalsy: true })
+        .withMessage("Product Image URL is required")
         .bail()
         .trim()
         .isURL({ protocols: ['http', 'https'], require_protocol: true })
-        .withMessage(`Product Image ${productImageErr}`)
+        .withMessage(`Product Image ${productImageErr}`),
+    
+    //price validations
+    body("productSmallPrice")
+    .optional({ checkFalsy: false }) // optional, but only skips if missing or undefined (not if blank)
+    .notEmpty().withMessage("Small price cannot be blank")
+    .bail()
+    .isFloat({ min: 1 }).withMessage("Small price must be a number and at least 1"),
+
+    body("productSoloPrice")
+    .optional({ checkFalsy: false })
+    .notEmpty().withMessage("Solo price cannot be blank")
+    .bail()
+    .isFloat({ min: 1 }).withMessage("Solo price must be a number and at least 1"),
+
+    body("productLargePrice")
+    .optional({ checkFalsy: false })
+    .notEmpty().withMessage("Large price cannot be blank")
+    .bail()
+    .isFloat({ min: 1 }).withMessage("Large price must be a number and at least 1"),
+
+    body("productForSharePrice")
+    .optional({ checkFalsy: false })
+    .notEmpty().withMessage("For Share price cannot be blank")
+    .bail()
+    .isFloat({ min: 1 }).withMessage("For Share price must be a number and at least 1"),
 ];
 
 export const updateProduct = [
@@ -156,7 +184,6 @@ export const updateProduct = [
         const categories = await db.getCategories();
 
         if(!errors.isEmpty()) {
-            console.log("YES")
             return res.status(400).render("editProduct", {
                 title: "Edit Product",
                 header: `Edit Product ID No. ${productId}`,
@@ -167,10 +194,26 @@ export const updateProduct = [
             });
         }
         //extract submitted info
-        const { productCode, productName, productStatus, productCategory, productDescription, productImage } = req.body;
+        const { productCode, productName, productStatus, productCategory, productSmallPrice, productSoloPrice, productLargePrice, productForSharePrice, productDescription, productImage } = req.body;
+        //product informations
+        if(productCode !== product[0].code || productName !== product[0].name || productStatus !== product[0].status_name || productCategory !== product[0].category || productDescription !== product[0].description || productImage !== product[0].image) {
+            const status_code = await db.getStatusCode(productStatus);
+            const category_id = await db.getCategoryId(productCategory);
+            await db.updateProduct(productCode, productName, status_code[0].code, category_id[0].id, productDescription, productImage,productId);
+        }
+        //product prices
+        if(product[0].small !== null && Number(productSmallPrice) !== Number(product[0].small)) {
+            await db.updateProductPrice(productId, 'Small', productSmallPrice);
+        } else if(product[0].solo !== null && Number(productSoloPrice) !== Number(product[0].solo)) {
+            await db.updateProductPrice(productId, 'Solo', productSoloPrice);
+        }
 
-        console.log(productCode, productName, productStatus, productCategory, productDescription, productImage);
-        //CONTINUE HERE
+        if(product[0].large !== null && Number(productLargePrice) !== Number(product[0].large)) {
+            await db.updateProductPrice(productId, 'Large', productLargePrice);
+        } else if(product[0].for_share !== null && Number(productForSharePrice) !== Number(product[0].for_share)) {
+            await db.updateProductPrice(productId, 'For Share', productForSharePrice);
+        }
+        
         return res.redirect("/products");
     }
 ];
