@@ -18,7 +18,7 @@ export async function listAllProducts(req,res) {
         searchPattern: '',
         products: products
     });
-}
+};
 
 export async function chooseSortOption(req,res) {
     const products = await db.getAllProducts();
@@ -58,7 +58,7 @@ export async function chooseSortOption(req,res) {
             products: products
         });
     }
-}
+};
 
 export async function searchedProducts(req,res) {
     const products = await db.getAllProducts();
@@ -99,7 +99,7 @@ export async function searchedProducts(req,res) {
             searchResult: searchResult
         });
     }
-}
+};
 
 export async function editProduct(req,res){
     const productId = req.params.id;
@@ -115,11 +115,7 @@ export async function editProduct(req,res){
         status: status,
         categories: categories
     });
-}
-
-const productCodeErr = "must only be consisted of capital letters, numbers and '-' symbol.";
-const productNameErr = "must only be consisted of alpabhet and '-' or ' only";
-const productImageErr = "must be a valid link";
+};
 
 const validateProductInfo = [
     body("productCode")
@@ -128,7 +124,7 @@ const validateProductInfo = [
         .bail()
         .trim()
         .matches(/^[A-Z0-9-]+$/)
-        .withMessage("Product Code must only be consisted of capital letters, numbers and '-' symbol."),
+        .withMessage("Product Update Error: Product Code must only be consisted of capital letters, numbers and '-' symbol."),
     
     body("productName")
         .exists({ checkFalsy: true })
@@ -136,7 +132,7 @@ const validateProductInfo = [
         .bail()
         .trim()
         .matches(/^[A-Za-z\s\-']+$/)
-        .withMessage(`Product Name ${productNameErr}`),
+        .withMessage("Product Update Error: Product Name must only be consisted of alpabhet and '-' or ' only."),
     
     body("productImage")
         .exists({ checkFalsy: true })
@@ -144,32 +140,32 @@ const validateProductInfo = [
         .bail()
         .trim()
         .isURL({ protocols: ['http', 'https'], require_protocol: true })
-        .withMessage(`Product Image ${productImageErr}`),
+        .withMessage("Product Update Error: Product Image must be a valid link."),
     
     //price validations
     body("productSmallPrice")
     .optional({ checkFalsy: false }) // optional, but only skips if missing or undefined (not if blank)
-    .notEmpty().withMessage("Small price cannot be blank")
+    .notEmpty().withMessage("Product Update Error: Small price cannot be blank")
     .bail()
-    .isFloat({ min: 1 }).withMessage("Small price must be a number and at least 1"),
+    .isFloat({ min: 1 }).withMessage("Product Update Error: Small price must be a number and at least 1"),
 
     body("productSoloPrice")
     .optional({ checkFalsy: false })
-    .notEmpty().withMessage("Solo price cannot be blank")
+    .notEmpty().withMessage("Product Update Error: Solo price cannot be blank")
     .bail()
-    .isFloat({ min: 1 }).withMessage("Solo price must be a number and at least 1"),
+    .isFloat({ min: 1 }).withMessage("Product Update Error: Solo price must be a number and at least 1"),
 
     body("productLargePrice")
     .optional({ checkFalsy: false })
-    .notEmpty().withMessage("Large price cannot be blank")
+    .notEmpty().withMessage("Product Update Error: Large price cannot be blank")
     .bail()
-    .isFloat({ min: 1 }).withMessage("Large price must be a number and at least 1"),
+    .isFloat({ min: 1 }).withMessage("Product Update Error: Large price must be a number and at least 1"),
 
     body("productForSharePrice")
     .optional({ checkFalsy: false })
-    .notEmpty().withMessage("For Share price cannot be blank")
+    .notEmpty().withMessage("Product Update Error: For Share price cannot be blank")
     .bail()
-    .isFloat({ min: 1 }).withMessage("For Share price must be a number and at least 1"),
+    .isFloat({ min: 1 }).withMessage("Product Update Error: For Share price must be a number and at least 1"),
 ];
 
 export const updateProduct = [
@@ -217,3 +213,17 @@ export const updateProduct = [
         return res.redirect("/products");
     }
 ];
+
+export async function addProductGet(req,res) {
+
+    const status = await db.getProductStatus();
+    const categories = await db.getCategories();
+
+    res.render("addProduct", {
+        title: "Kape at Kain Add Product",
+        links: userLinks,
+        header: "Add Product",
+        status: status,
+        categories: categories,
+    });
+};

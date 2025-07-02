@@ -1,13 +1,12 @@
-const buttons = document.querySelectorAll(".menu-filter-entry")
-console.log(buttons)
+const drinkPriceDiv = document.querySelectorAll(".drink-price");
+const mealPriceDiv = document.querySelectorAll(".meal-price");
 
-buttons.forEach(button => {
-    const span = button.querySelector('span')
-    span.addEventListener('click', (e) => {
-    const category = e.currentTarget.textContent;
-        if (category !== 'All') {
-            window.location.href = `/${category}`;
-        }
-       console.log(category);
-    });
-})
+console.log(drinkPriceDiv,mealPriceDiv);
+
+const categorySelect = document.querySelector("#productCategory");
+
+/*
+ADD logic on change where if category is either Iced Drink
+or Hot Drink priceDrinkDiv is visible and value of input in mealPrice
+is null and else vice versas
+*/
