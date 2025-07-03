@@ -1,12 +1,35 @@
-const drinkPriceDiv = document.querySelectorAll(".drink-price");
-const mealPriceDiv = document.querySelectorAll(".meal-price");
+document.addEventListener("DOMContentLoaded", ()=> {
+    const drinkPriceDiv = document.querySelectorAll(".drink-price");
+    const mealPriceDiv = document.querySelectorAll(".meal-price");
+    const categorySelect = document.querySelector("#productCategory");
 
-console.log(drinkPriceDiv,mealPriceDiv);
+    const updatePriceInputVisibility = (selectedValue) => {
+        if (selectedValue === 'Iced Drink' || selectedValue === 'Hot Drink') {
+            mealPriceDiv.forEach((mealDiv) => {
+                mealDiv.style.display = 'none';
+            });
 
-const categorySelect = document.querySelector("#productCategory");
+            drinkPriceDiv.forEach((drinkDiv) => {
+                drinkDiv.style.display = 'flex';
+            });
+        } else {
+            mealPriceDiv.forEach((mealDiv) => {
+                mealDiv.style.display = 'flex';
+            });
 
-/*
-ADD logic on change where if category is either Iced Drink
-or Hot Drink priceDrinkDiv is visible and value of input in mealPrice
-is null and else vice versas
-*/
+            drinkPriceDiv.forEach((drinkDiv) => {
+                drinkDiv.style.display = 'none';
+            });
+        }
+    }
+
+    updatePriceInputVisibility(categorySelect.value);
+
+    categorySelect.addEventListener("change", (e)=> {
+        const selected = e.target.value;
+        updatePriceInputVisibility(selected)
+        
+    });
+
+});
+

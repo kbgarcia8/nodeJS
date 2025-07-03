@@ -253,19 +253,40 @@ export async function getStatusCode(status){
     SELECT code FROM cafe_inventory.status AS s
     WHERE s.name = $1;`,[status]);
     return rows;
-}
+};
 
 export async function getCategoryId(category){
   const { rows } = await pool.query(`
     SELECT id FROM cafe_inventory.product_categories AS pc
     WHERE pc.name = $1;`,[category]);
     return rows;
+};
+
+export async function getProductId(name){
+  const { rows } = await pool.query(`
+    SELECT id FROM cafe_inventory.products AS p
+    WHERE p.name = $1`,[name]);
+    return rows;
 }
 
 export async function updateProduct(code, name, statusId, categoryId, description, photoURL, id) {
   await pool.query(`UPDATE cafe_inventory.products SET product_code = $1,  name = $2, status_code = $3, product_category_id = $4, description = $5, photo_url = $6 WHERE id = $7;`, [code, name, statusId, categoryId, description, photoURL, id]);  
-}
+};
 
 export async function updateProductPrice(product_id, size, price) {
   await pool.query(`UPDATE cafe_inventory.price_variants SET price = $3 WHERE product_id = $1 AND size = $2;`,[product_id, size, price]);
+};
+
+export async function addProductToProductsTable(code, name, status, category, description, image){
+await pool.query(`INSERT INTO cafe_inventory.products (product_code, name, status_code, product_category_id, description, photo_url)
+VALUES
+  ('$1', '$2', $3, $4, '$5', '$6');
+`,[code, name, status, category, description, image]);
+};
+
+export async function addPriceToProduct(id, size, price) {
+  await pool.query(`INSERT INTO cafe_inventory(product_id, size, price)
+  VALUES
+    ($1, '$2', $3);
+  `,[id, size, price])
 }

@@ -133,6 +133,12 @@ const validateProductInfo = [
         .trim()
         .matches(/^[A-Za-z\s\-']+$/)
         .withMessage("Product Update Error: Product Name must only be consisted of alpabhet and '-' or ' only."),
+
+    body("productDescription")
+        .exists({ checkFalsy: true })
+        .withMessage(`Product Description is required`)
+        .isLength({min: 50, max: 300})
+        .withMessage("Product Description should be atleast 50 characters and at max 300 characters"),
     
     body("productImage")
         .exists({ checkFalsy: true })
@@ -227,3 +233,41 @@ export async function addProductGet(req,res) {
         categories: categories,
     });
 };
+
+export const addProductPost=[
+    validateProductInfo,
+    async (req,res) => {
+        const errors = validationResult(req);
+
+        const status = await db.getProductStatus();
+        const categories = await db.getCategories();
+
+        if(!errors.isEmpty()) {
+            return res.render("addProduct", {
+                title: "Kape at Kain Add Product",
+                links: userLinks,
+                header: "Add Product",
+                status: status,
+                categories: categories,
+    });
+        }
+        //extract submitted info
+        const { productCode, productName, productStatus, productCategory, productSmallPrice, productSoloPrice, productLargePrice, productForSharePrice, productDescription, productImage } = req.body;
+        //add product information at products table
+        const statusCode = await db.getStatusCode(productStatus);
+        const categoryId = await db.getCategoryId(productCategory);
+        await db.addProductToProductsTable(productCode, productName, statusCode, categoryId, productDescription, productImage);
+
+        //get created product id then add prices at product_variants table
+        const newProductId = await db.getProductId(productName);
+        if(productSmallPrice !== null && productLargePrice !== null) {
+            await db.addPriceToProduct(newProductId, 'Small', productSmallPrice);
+            await db.addPriceToProduct(newProductId, 'Large', productLargePrice);
+        } else if(productSoloPrice !== null && productForSharePrice !== null) {
+            await db.addPriceToProduct(newProductId, 'Solo', productSoloPrice);
+            await db.addPriceToProduct(newProductId, 'For Share', productForSharePrice);
+        }
+        
+        return res.redirect("/products");
+    }
+];
