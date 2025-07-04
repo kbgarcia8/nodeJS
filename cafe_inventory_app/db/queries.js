@@ -265,7 +265,7 @@ export async function getCategoryId(category){
 export async function getProductId(name){
   const { rows } = await pool.query(`
     SELECT id FROM cafe_inventory.products AS p
-    WHERE p.name = $1`,[name]);
+    WHERE p.name = $1;`,[name]);
     return rows;
 }
 
@@ -280,13 +280,20 @@ export async function updateProductPrice(product_id, size, price) {
 export async function addProductToProductsTable(code, name, status, category, description, image){
 await pool.query(`INSERT INTO cafe_inventory.products (product_code, name, status_code, product_category_id, description, photo_url)
 VALUES
-  ('$1', '$2', $3, $4, '$5', '$6');
+  ($1, $2, $3, $4, $5, $6);
 `,[code, name, status, category, description, image]);
 };
 
 export async function addPriceToProduct(id, size, price) {
-  await pool.query(`INSERT INTO cafe_inventory(product_id, size, price)
+  await pool.query(`INSERT INTO cafe_inventory.price_variants (product_id, size, price)
   VALUES
-    ($1, '$2', $3);
+    ($1, $2, $3);
   `,[id, size, price])
-}
+};
+
+export async function deleteProductById(id) {
+  await pool.query(
+    `DELETE FROM cafe_inventory.products WHERE id = $1;`,
+    [id]
+  );
+};

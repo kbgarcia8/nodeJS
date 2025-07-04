@@ -14,17 +14,17 @@
             <div class="product-information-add-inputs-space">
                 <div class="product-information-add-input-space">
                     <label for="productCode" class="product-add-label">Product Code: </label>
-                    <input type="text" name="productCode" id="productCode" class="product-add-input">
+                    <input type="text" name="productCode" value="<%= formData?.productCode || '' %>" />
                 </div>
                 <div class="product-information-add-input-space">
                     <label for="productName" class="product-add-label">Product Name: </label>
-                    <input type="text" name="productName" id="productName" class="product-add-input">
+                    <input type="text" name="productName" value="<%= formData?.productName || '' %>" />
                 </div>
                 <div class="product-information-add-input-space">
                     <label for="productStatus" class="product-add-label">Product Status: </label>
                     <select id="productStatus" name="productStatus" class="product-add-input">
                     <% status.map((stat) => { %>
-                        <option value="<%= stat.name %>"  <%= status[0] === stat.name ? 'selected' : '' %>><%= stat.name %></option>
+                        <option value="<%= stat.name %>" <%= formData?.productStatus === stat.name ? 'selected' : '' %>><%= stat.name %></option>
                     <% }); %>
                     </select>
                 </div>
@@ -32,33 +32,33 @@
                     <label for="productCategory" class="product-add-label">Product Category: </label>
                     <select id="productCategory" name="productCategory" class="product-add-input">
                     <% categories.map((category) => { %>
-                        <option value="<%= category.name %>"  <%= categories[0] === category.name ? 'selected' : '' %>><%= category.name %></option>
+                        <option value="<%= category.name %>" <%= formData?.productCategory === category.name ? 'selected' : '' %>><%= category.name %></option>
                     <% }); %>
                     </select>
                 </div>
                 <div class="product-information-add-input-space drink-price">
                     <label for="productSmallPrice" class="product-add-label">Small Price: </label>
-                    <input type="text" name="productSmallPrice" id="productSmallPrice" class="product-add-input">
+                    <input type="text" name="productSmallPrice" value="<%= formData?.productSmallPrice || '' %>" />
                 </div>
                 <div class="product-information-add-input-space meal-price">
                     <label for="productSoloPrice" class="product-add-label">Solo Price: </label>
-                    <input type="text" name="productSoloPrice" id="productSoloPrice" class="product-add-input">
+                    <input type="text" name="productSoloPrice" value="<%= formData?.productSoloPrice || '' %>" />
                 </div>
                 <div class="product-information-add-input-space drink-price">
                     <label for="productLargePrice" class="product-add-label">Large Price: </label>
-                    <input type="text" name="productLargePrice" id="productLargePrice" class="product-add-input">
+                    <input type="text" name="productLargePrice" value="<%= formData?.productLargePrice || '' %>" />
                 </div>
                 <div class="product-information-add-input-space meal-price">
                     <label for="productForSharePrice" class="product-add-label">For Share Price: </label>
-                    <input type="text" name="productForSharePrice" id="productForSharePrice" class="product-add-input">
+                    <input type="text" name="productForSharePrice" value="<%= formData?.productForSharePrice || '' %>" />
                 </div>
                 <div class="product-information-add-input-space">
                     <label for="productDescription" class="product-add-label">Product Description: </label>
-                    <textarea name="productDescription" id="productDescription" class="product-add-input" rows="5" cols="40"></textarea>
+                    <input type="text" name="productDescription" value="<%= formData?.productDescription || '' %>" />
                 </div>
                 <div class="product-information-add-input-space">
                     <label for="productImage" class="product-add-label">Product Image URL: </label>
-                    <textarea name="productImage" id="productImage" class="product-add-input" rows="5" cols="40"></textarea>
+                    <input type="text" name="productImage" value="<%= formData?.productImage || '' %>" />
                 </div>
             </div>
             <div class="product-add-buttons-space">

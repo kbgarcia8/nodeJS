@@ -1,10 +1,55 @@
 html, body {
-    max-width: 100%;
-    height: 100%;
+    max-width: 96%;
     display: flex;
     flex-direction: column;
     padding: 1rem;
 }
+/*Logged User Navbar*/
+nav.userlinks-navbar{
+    display: flex;
+    width: 100%;
+    height: 10%;
+    align-items: center;
+    justify-content: space-around;
+}
+ul.userlinks-navbar-list{
+    display: flex;
+    width: 100%;
+    height: 50%;
+}
+li.userlinks-navbar-entry{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    border: 0.25rem solid black;
+    background-color: black;
+    color: wheat;
+    border-radius: 0.5rem;
+    margin: 0.5rem;
+    text-decoration: none;
+}
+li.userlinks-navbar-entry:hover{
+    border: 0.25rem solid wheat;
+    text-decoration: underline;
+}
+a.userlinks-navbar-entry-link,
+a.userlinks-navbar-entry-link>span{
+    text-decoration: none;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
+}
+a.userlinks-navbar-entry-link:hover,
+a.userlinks-navbar-entry-link>span:hover{
+    text-decoration: underline;
+    color: wheat;
+}
+/* Menu Filter Navbar */
 nav.menu-filter{
     display: flex;
     width: 100%;
@@ -23,7 +68,7 @@ li.menu-filter-entry{
     justify-content: center;
     width: 100%;
     height: 90%;
-    border: 2px solid black;
+    border: 0.25rem solid black;
     border-radius: 0.5rem;
     margin: 0.5rem;
     text-decoration: none;
@@ -151,11 +196,23 @@ span.product-price{
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 /*Product List/Search*/
+button.sorter{
+    width: 5%;
+    height: 30%;
+    background-color: black;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    color: whitesmoke;
+    font-weight: 700;
+    cursor: pointer;
+}
 div.product-list-space{
     display: flex;
+    align-items: center;
+    justify-content: center;
     flex-wrap: wrap;
     width: 100%;
-    height: 50%;
+    height: 55%;
+    gap: 1rem;
     overflow-y: auto;
     border-top: 0.25rem dashed black;
     padding: 1.5rem;
@@ -164,15 +221,16 @@ div.product-list-entry {
     display: flex;
     flex-direction: column;
     width: 30%;
-    height: 45%;
+    height: 75%;
     border: 0.25rem solid black;
     border-radius: 0.25rem;
     margin: 0.25rem;
-    padding: 0.25rem;
+    padding: 0.5rem;
 }
 div.product-info {
     display: flex;
     flex-direction: column;
+    margin-bottom: 0.5rem;
 }
 p.product-info-p, p.product-info-title {
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
@@ -185,7 +243,7 @@ p.product-info-title {
     font-weight: 700;
     font-size: 1.25rem;
 }
-/*Edit Product*/
+/*Edit/Add Product*/
 div.product-edit,
 div.product-add{
     display: flex;
@@ -249,7 +307,8 @@ button.form-button-navigator{
     font-weight: 700;
     cursor: pointer;
 }
-form.button-only-submit{
+form.button-only-submit,
+form.button-only{
     width: 50%;
     height: 100%;
     display: flex;
@@ -258,7 +317,7 @@ form.button-only-submit{
 button.update-button,
 button.add-button {
     width: 75%;
-    height: 75%;
+    height: 100%;
     background-color: black;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     color: whitesmoke;
@@ -276,4 +335,22 @@ button.cancel-button {
     color: whitesmoke;
     font-weight: 700;
     cursor: pointer;
+}
+button.delete-button{
+    width: 30%;
+    height: 70%;
+}
+button.edit-button{
+    width: 30%;
+    height: 65%;
+    position: relative;
+    background-color: black;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    color: whitesmoke;
+    font-weight: 700;
+    cursor: pointer;
+}
+button:hover{
+    border: 0.125rem solid wheat;
+    color: wheat;
 }

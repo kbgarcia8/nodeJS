@@ -117,61 +117,94 @@ export async function editProduct(req,res){
     });
 };
 
-const validateProductInfo = [
-    body("productCode")
-        .exists({ checkFalsy: true })
-        .withMessage("Product Code is required")
-        .bail()
-        .trim()
-        .matches(/^[A-Z0-9-]+$/)
-        .withMessage("Product Update Error: Product Code must only be consisted of capital letters, numbers and '-' symbol."),
-    
-    body("productName")
-        .exists({ checkFalsy: true })
-        .withMessage(`Product Name is required`)
-        .bail()
-        .trim()
-        .matches(/^[A-Za-z\s\-']+$/)
-        .withMessage("Product Update Error: Product Name must only be consisted of alpabhet and '-' or ' only."),
-
-    body("productDescription")
-        .exists({ checkFalsy: true })
-        .withMessage(`Product Description is required`)
-        .isLength({min: 50, max: 300})
-        .withMessage("Product Description should be atleast 50 characters and at max 300 characters"),
-    
-    body("productImage")
-        .exists({ checkFalsy: true })
-        .withMessage("Product Image URL is required")
-        .bail()
-        .trim()
-        .isURL({ protocols: ['http', 'https'], require_protocol: true })
-        .withMessage("Product Update Error: Product Image must be a valid link."),
-    
-    //price validations
-    body("productSmallPrice")
-    .optional({ checkFalsy: false }) // optional, but only skips if missing or undefined (not if blank)
-    .notEmpty().withMessage("Product Update Error: Small price cannot be blank")
+export const validateProductInfo = [
+  body("productCode")
+    .exists({ checkFalsy: true })
+    .withMessage("Product Code is required")
     .bail()
-    .isFloat({ min: 1 }).withMessage("Product Update Error: Small price must be a number and at least 1"),
-
-    body("productSoloPrice")
-    .optional({ checkFalsy: false })
-    .notEmpty().withMessage("Product Update Error: Solo price cannot be blank")
+    .trim()
+    .matches(/^[A-Z0-9-]+$/)
+    .withMessage("Product Update Error: Product Code must only consist of capital letters, numbers, and '-' symbol."),
+  
+  body("productName")
+    .exists({ checkFalsy: true })
+    .withMessage("Product Name is required")
     .bail()
-    .isFloat({ min: 1 }).withMessage("Product Update Error: Solo price must be a number and at least 1"),
+    .trim()
+    .matches(/^[A-Za-z\s\-']+$/)
+    .withMessage("Product Update Error: Product Name must only consist of alphabets, space, apostrophes, or hyphens."),
 
-    body("productLargePrice")
-    .optional({ checkFalsy: false })
-    .notEmpty().withMessage("Product Update Error: Large price cannot be blank")
+  body("productDescription")
+    .exists({ checkFalsy: true })
+    .withMessage("Product Description is required")
     .bail()
-    .isFloat({ min: 1 }).withMessage("Product Update Error: Large price must be a number and at least 1"),
+    .isLength({ min: 50, max: 1000 })
+    .withMessage("Product Description must be at least 50 characters and at most 300 characters."),
 
-    body("productForSharePrice")
-    .optional({ checkFalsy: false })
-    .notEmpty().withMessage("Product Update Error: For Share price cannot be blank")
+  body("productImage")
+    .exists({ checkFalsy: true })
+    .withMessage("Product Image URL is required")
     .bail()
-    .isFloat({ min: 1 }).withMessage("Product Update Error: For Share price must be a number and at least 1"),
+    .trim()
+    .isURL({ protocols: ['http', 'https'], require_protocol: true })
+    .withMessage("Product Update Error: Product Image must be a valid URL."),
+
+  // Conditional Price Validation
+  body("productSmallPrice")
+    .custom((value, { req }) => {
+      const category = req.body.productCategory;
+      if (category === 'Iced Drink' || category === 'Hot Drink') {
+        if (value === undefined || value === "") {
+          throw new Error("Small price is required for drink products");
+        }
+        if (isNaN(value) || Number(value) < 1) {
+          throw new Error("Small price must be a number and at least 1");
+        }
+      }
+      return true;
+    }),
+
+  body("productLargePrice")
+    .custom((value, { req }) => {
+      const category = req.body.productCategory;
+      if (category === 'Iced Drink' || category === 'Hot Drink') {
+        if (value === undefined || value === "") {
+          throw new Error("Large price is required for drink products");
+        }
+        if (isNaN(value) || Number(value) < 1) {
+          throw new Error("Large price must be a number and at least 1");
+        }
+      }
+      return true;
+    }),
+
+  body("productSoloPrice")
+    .custom((value, { req }) => {
+      const category = req.body.productCategory;
+      if (category !== 'Iced Drink' && category !== 'Hot Drink') {
+        if (value === undefined || value === "") {
+          throw new Error("Solo price is required for meal products");
+        }
+        if (isNaN(value) || Number(value) < 1) {
+          throw new Error("Solo price must be a number and at least 1");
+        }
+      }
+      return true;
+    }),
+
+  body("productForSharePrice")
+    .custom((value, { req }) => {
+      const category = req.body.productCategory;
+      if (category !== 'Iced Drink' && category !== 'Hot Drink') {
+        if (value === undefined || value === "") {
+          throw new Error("For Share price is required for meal products");
+        }
+        if (isNaN(value) || Number(value) < 1) {
+          throw new Error("For Share price must be a number and at least 1");
+        }
+      }
+      return true;
+    }),
 ];
 
 export const updateProduct = [
@@ -231,43 +264,64 @@ export async function addProductGet(req,res) {
         header: "Add Product",
         status: status,
         categories: categories,
+        formData: req.body
     });
 };
 
 export const addProductPost=[
     validateProductInfo,
-    async (req,res) => {
-        const errors = validationResult(req);
+    async (req,res) => {        
+        try {
+            const errors = validationResult(req);
 
-        const status = await db.getProductStatus();
-        const categories = await db.getCategories();
+            const status = await db.getProductStatus();
+            const categories = await db.getCategories();
+            
+            if(!errors.isEmpty()) {
+                return res.render("addProduct", {
+                    title: "Kape at Kain Add Product",
+                    links: userLinks,
+                    header: "Add Product",
+                    status: status,
+                    categories: categories,
+                    errors: errors.array(),
+                    formData: req.body
+                });
+            }
+            //extract submitted info
+            const { productCode, productName, productStatus, productCategory, productSmallPrice, productSoloPrice, productLargePrice, productForSharePrice, productDescription, productImage } = req.body;
 
-        if(!errors.isEmpty()) {
-            return res.render("addProduct", {
-                title: "Kape at Kain Add Product",
-                links: userLinks,
-                header: "Add Product",
-                status: status,
-                categories: categories,
-    });
+            //add product information at products table
+            const statusCode = await db.getStatusCode(productStatus);
+            const categoryId = await db.getCategoryId(productCategory);
+
+            console.log("Status code:", statusCode[0].code);
+            console.log("Category ID:", categoryId[0].id);
+            await db.addProductToProductsTable(productCode, productName, statusCode[0].code, categoryId[0].id, productDescription, productImage);
+            //get created product id then add prices at product_variants table
+            const newProductId = await db.getProductId(productName);
+            if(productSmallPrice !== undefined && productLargePrice !== "") {
+                await db.addPriceToProduct(newProductId[0].id, 'Small', productSmallPrice);
+                await db.addPriceToProduct(newProductId[0].id, 'Large', productLargePrice);
+            } else if(productSoloPrice !== undefined && productForSharePrice !== "") {
+                await db.addPriceToProduct(newProductId[0].id, 'Solo', productSoloPrice);
+               await db.addPriceToProduct(newProductId[0].id, 'For Share', productForSharePrice);
+            }
+            console.log(productCode, productName, productStatus, productCategory, productSmallPrice, productSoloPrice, productLargePrice, productForSharePrice, productDescription, productImage);
+            return res.redirect("/products");
+        } catch (err) {
+            console.error("Error adding product:", err);
+            res.status(500).send("Internal Server Error");
         }
-        //extract submitted info
-        const { productCode, productName, productStatus, productCategory, productSmallPrice, productSoloPrice, productLargePrice, productForSharePrice, productDescription, productImage } = req.body;
-        //add product information at products table
-        const statusCode = await db.getStatusCode(productStatus);
-        const categoryId = await db.getCategoryId(productCategory);
-        await db.addProductToProductsTable(productCode, productName, statusCode, categoryId, productDescription, productImage);
-
-        //get created product id then add prices at product_variants table
-        const newProductId = await db.getProductId(productName);
-        if(productSmallPrice !== null && productLargePrice !== null) {
-            await db.addPriceToProduct(newProductId, 'Small', productSmallPrice);
-            await db.addPriceToProduct(newProductId, 'Large', productLargePrice);
-        } else if(productSoloPrice !== null && productForSharePrice !== null) {
-            await db.addPriceToProduct(newProductId, 'Solo', productSoloPrice);
-            await db.addPriceToProduct(newProductId, 'For Share', productForSharePrice);
-        }
-        
-        return res.redirect("/products");
     }
 ];
+
+export async function deleteProduct(req,res){
+  const currentProduct = req.params.id;
+
+  await db.deleteProductById(currentProduct);
+
+  console.log(`Product ID No. ${currentProduct} has been successfully deleted.`);
+
+  res.redirect("/products");
+};

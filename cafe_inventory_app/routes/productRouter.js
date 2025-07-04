@@ -11,5 +11,6 @@ productRouter.get("/edit/:id", productController.editProduct);
 productRouter.post("/update/:id", productController.updateProduct);
 productRouter.get("/add", productController.addProductGet);
 productRouter.post("/add", productController.addProductPost);
+productRouter.post("/delete/:id", productController.deleteProduct);
 
 export default productRouter;
