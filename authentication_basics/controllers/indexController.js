@@ -19,7 +19,8 @@ export async function signUpForm(req,res){
 
 export async function signUpFormPost(req,res){
     const { username, password } = req.body;
-    const hashedPassword = bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
+    
     await db.createUser(username, hashedPassword);
     res.redirect("/");
 };

@@ -1,6 +1,7 @@
 import passport from "passport";
 import { Strategy as LocalStrategy } from 'passport-local';
 import * as db from "../db/queries.js";
+import bcrypt from "bcryptjs";
 
 //Configure passport
 passport.use(
@@ -18,10 +19,14 @@ passport.use(
       if (!retrievedUser) {
         return done(null, false, { message: "Incorrect username" });
       }
-      if (retrievedUser.password !== password) {
+      //bcrypt compare
+
+      const match = bcrypt.compare(password, retrievedUser.password)
+
+      if (!match) {
         return done(null, false, { message: "Incorrect password" });
       }
-      //
+      
       return done(null, retrievedUser);
     } catch(err) {
       return done(err);
