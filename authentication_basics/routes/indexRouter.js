@@ -6,5 +6,7 @@ const indexRouter = Router();
 
 indexRouter.get("/", asyncHandler(indexController.indexPage));
 indexRouter.get("/signup", asyncHandler(indexController.signUpForm));
+indexRouter.post("/signup", asyncHandler(indexController.signUpFormPost));
+
 
 export default indexRouter;
