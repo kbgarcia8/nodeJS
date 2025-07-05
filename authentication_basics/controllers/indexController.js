@@ -1,9 +1,11 @@
 import { links } from "../constants/constans.js";
-import * as db from "../db/queries.js"
+import * as db from "../db/queries.js";
+import bcrypt from "bcryptjs";
 
 export async function indexPage(req,res){
     res.render("index", {
         title: "Home Page",
+        user: req.user,
         links: links
     });
 };
@@ -13,11 +15,28 @@ export async function signUpForm(req,res){
         title: "Sign Up Page",
         links: links
     });
-}
+};
 
 export async function signUpFormPost(req,res){
     const { username, password } = req.body;
-
-    await db.createUser(username, password);
+    const hashedPassword = bcrypt.hash(password, 10);
+    await db.createUser(username, hashedPassword);
     res.redirect("/");
+};
+
+export async function loginFormGet(req,res){
+    res.render("login", {
+        title: "Login Page",
+        links: links,
+        user: req.user,
+    });
+};
+
+export async function logOut (req, res, next) {
+  req.logout((err) => {
+    if (err) {
+      return next(err);
+    }
+    res.redirect("/");
+  });
 }
