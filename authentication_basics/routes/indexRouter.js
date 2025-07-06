@@ -9,10 +9,10 @@ indexRouter.get("/", asyncHandler(indexController.indexPage));
 indexRouter.get("/signup", asyncHandler(indexController.signUpForm));
 indexRouter.post("/signup", asyncHandler(indexController.signUpFormPost));
 indexRouter.get("/login", asyncHandler(indexController.loginFormGet));
-indexRouter.post("/login", asyncHandler(passport.authenticate("local", { //"local" is a strategy
+indexRouter.post("/login", passport.authenticate("local", { //"local" is a strategy
     successRedirect: "/login",
-    failureRedirect: "/"
-  }))
+    failureRedirect: "/login"
+  })
 );
 indexRouter.get("/logout", asyncHandler(indexController.logOut));
 
