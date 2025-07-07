@@ -11,7 +11,8 @@ indexRouter.post("/signup", asyncHandler(indexController.signUpFormPost));
 indexRouter.get("/login", asyncHandler(indexController.loginFormGet));
 indexRouter.post("/login", passport.authenticate("local", { //"local" is a strategy
     successRedirect: "/login",
-    failureRedirect: "/login"
+    failureRedirect: "/login",
+    failureFlash: true
   })
 );
 indexRouter.get("/logout", asyncHandler(indexController.logOut));

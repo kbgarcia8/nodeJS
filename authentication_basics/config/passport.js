@@ -17,7 +17,7 @@ passport.use(
         info	Optional extra info (e.g., "Invalid credentials")
       */
       if (!retrievedUser) {
-        return done(null, false, { message: "Incorrect username" });
+        return done(null, false, { message: "User not found" });
       }
       //bcrypt compare
 

@@ -6,6 +6,7 @@ import {dirname} from 'path';
 import session from "express-session";
 import passport from "passport";
 import "./config/passport.js";
+import flash from "connect-flash";
 //db connection
 import pool from "./db/pool.js";
 //Routers
@@ -27,8 +28,9 @@ app.use(express.json()); //express level middleware to parse json
 
 //use session/passport
 app.use(session({ secret: "cats", resave: false, saveUninitialized: false })); //setup
-
 app.use(passport.session()); //enable session
+app.use(flash()); //for error handling of passport after failureRedirect
+
 
 app.use("/", indexRouter);
 

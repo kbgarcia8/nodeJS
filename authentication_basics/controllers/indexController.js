@@ -26,10 +26,16 @@ export async function signUpFormPost(req,res){
 };
 
 export async function loginFormGet(req,res){
+    const flashErrors = req.flash("error"); // array of error strings
+
+    // Map strings to objects with a `.msg` key
+    const errors = flashErrors.map(msg => ({ msg }));
+
     res.render("login", {
         title: "Login Page",
         links: links,
         user: req.user,
+        errors: errors
     });
 };
 
