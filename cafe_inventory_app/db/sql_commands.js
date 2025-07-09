@@ -43,7 +43,7 @@ export const MAKEMAINTABLES = `
     product_id INTEGER REFERENCES cafe_inventory.products(id) ON DELETE CASCADE,
     size VARCHAR ( 10 ) NOT NULL,
     price INTEGER NOT NULL
-  )
+  );
 
 `;
 //format [TIMESTAMP DEFAULT NOW()] to TO_CHAR(<column_name>, 'YYYY-MM-DD HH12:MI:SS') AS <column_alias>
