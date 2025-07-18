@@ -1,0 +1,58 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+body, html {
+    width: 100%;
+    height: 100%;
+    padding: 0.25rem;
+}
+/*Header*/
+nav.not-authenticated {
+    width: 100%;
+    height: 10%;
+    display: flex;
+    align-items: center;
+}
+ul.not-authenticated-navbar-list{
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    height: 100%;
+}
+li.not-authenticated-navbar-entry{
+    width:5%;
+    margin-inline: 0.25rem;
+    list-style: none;
+}
+li a {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+li button {
+    background-color: black;
+    color: whitesmoke;
+    font-weight: 700;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    height: 50%;
+    width: 100%;
+    cursor: pointer;
+}
+h1.home-header{
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    text-decoration: underline;
+}
+/*Message Board*/
+main.message-board{
+    max-width: 100vw;
+    height: 77.5vh;
+    overflow-y: auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-auto-rows: minmax(50%, auto); 
+    gap: 0.75rem;
+    padding: 0.75rem;
+}

@@ -1,30 +1,30 @@
-import { links } from "../constants/constans.js";
+import { notAuthenticatedlinks } from "../constants/constants.js";
 import * as db from "../db/queries.js";
 import bcrypt from "bcryptjs";
 
-export async function indexPage(req,res){
+export async function homePage(req,res){
     res.render("index", {
         title: "Home Page",
         user: req.user,
-        links: links
+        links: notAuthenticatedlinks
     });
 };
 
-export async function signUpForm(req,res){
-    res.render("signUp", {
-        title: "Sign Up Page",
-        links: links
+export async function registerForm(req,res){
+    res.render("register", {
+        title: "Register Page",
+        links: notAuthenticatedlinks
     });
 };
 
-export async function signUpFormPost(req,res){
+export async function registerFormPost(req,res){
     const { username, password } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
     
     await db.createUser(username, hashedPassword);
     res.redirect("/");
 };
-
+/*
 export async function loginFormGet(req,res){
     const flashErrors = req.flash("error"); // array of error strings
 
@@ -47,3 +47,4 @@ export async function logOut (req, res, next) {
     res.redirect("/");
   });
 }
+*/

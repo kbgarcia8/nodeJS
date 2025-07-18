@@ -1,9 +1,9 @@
-<nav>
-    <ul>
+<nav class="not-authenticated">
+    <ul class="not-authenticated-navbar-list">
       <% for (let i = 0; i < links.length; i++) { %>
-        <li>
+        <li class="not-authenticated-navbar-entry">
           <a href="<%= links[i].href %>">
-            <span> <%= links[i].text %> </span>
+            <button> <%= links[i].text %> </button>
           </a>
         </li>
       <% } %>

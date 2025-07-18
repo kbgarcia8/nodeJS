@@ -18,8 +18,8 @@ export const MAKEMAINTABLES = `
   CREATE TABLE IF NOT EXISTS members_only.membership (
     user_id INTEGER PRIMARY KEY,
     status_code INTEGER NOT NULL,
-    CONSTRAINT membership_user_fk FOREIGN KEY (user_id) REFERENCES members_only.users(id),
-    CONSTRAINT membership_status_fk FOREIGN KEY (status_code) REFERENCES members_only.membership_status(code)
+    CONSTRAINT membership_user_fk FOREIGN KEY (user_id) REFERENCES members_only.users(id) ON DELETE CASCADE,
+    CONSTRAINT membership_status_fk FOREIGN KEY (status_code) REFERENCES members_only.membership_status(code) ON DELETE CASCADE
   );
 
   CREATE TABLE IF NOT EXISTS members_only.messages (
@@ -28,8 +28,13 @@ export const MAKEMAINTABLES = `
     title VARCHAR(255) NOT NULL,
     message VARCHAR(255) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT now(),
-    CONSTRAINT messages_user_fk FOREIGN KEY (user_id) REFERENCES members_only.users(id)
+    CONSTRAINT messages_user_fk FOREIGN KEY (user_id) REFERENCES members_only.users(id) ON DELETE CASCADE
   );
+
+  -- Add helpful indexes for faster joins and usually on FKs
+  CREATE INDEX IF NOT EXISTS idx_membership_user_id ON members_only.membership(user_id);
+  CREATE INDEX IF NOT EXISTS idx_membership_status_code ON members_only.membership(status_code);
+  CREATE INDEX IF NOT EXISTS idx_messages_user_id ON members_only.messages(user_id);
 `;
 
 export const INSERTMEMBERSHIPSTATUS =`
@@ -40,7 +45,7 @@ export const INSERTMEMBERSHIPSTATUS =`
     ('Member')
 `;
 
-/*command not yet tested
+
 export const CLEARALLDB = `
     DROP TABLE IF EXISTS 
       members_only.messages, 
@@ -48,4 +53,3 @@ export const CLEARALLDB = `
       members_only.membership_status 
       CASCADE;
 `;
-*/

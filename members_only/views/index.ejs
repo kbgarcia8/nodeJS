@@ -4,8 +4,13 @@
     <link rel="stylesheet" href="/styles.css">
   </head>
   <body>
-    <%- include("partials/errors.ejs") %>
-    <%- include('partials/navbar.ejs', {links: links}) %>
-    <h1>Home Page</h1>
+    <header>
+      <%- include("partials/errors.ejs") %>
+      <%- include('partials/navbar.ejs', {links: links}) %>
+      <h1 class="home-header">→ Members Only Blogspot</h1>
+    </header>
+    <main class="message-board">
+
+    </main>
   </body>
 </html>

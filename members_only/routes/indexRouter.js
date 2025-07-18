@@ -5,9 +5,11 @@ import * as indexController from "../controllers/indexController.js"
 
 const indexRouter = Router();
 
-indexRouter.get("/", asyncHandler(indexController.indexPage));
-indexRouter.get("/signup", asyncHandler(indexController.signUpForm));
-indexRouter.post("/signup", asyncHandler(indexController.signUpFormPost));
+indexRouter.get("/", asyncHandler(indexController.homePage));
+
+indexRouter.get("/register", asyncHandler(indexController.registerForm));
+indexRouter.post("/register", asyncHandler(indexController.registerFormPost));
+/*
 indexRouter.get("/login", asyncHandler(indexController.loginFormGet));
 indexRouter.post("/login", passport.authenticate("local", { //"local" is a strategy
     successRedirect: "/login",
@@ -16,5 +18,6 @@ indexRouter.post("/login", passport.authenticate("local", { //"local" is a strat
   })
 );
 indexRouter.get("/logout", asyncHandler(indexController.logOut));
+*/
 
 export default indexRouter;
