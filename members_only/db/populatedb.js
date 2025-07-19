@@ -22,7 +22,7 @@ async function main(command) {
     await client.end();
     console.log("done");
 }
-const commands = ['CLEARALLDB','MAKEMAINTABLES','INSERTMEMBERSHIPSTATUS'];
+const commands = ['CLEARALLDB','MAKEMAINTABLES','INSERTMEMBERSHIPSTATUS', 'INSERTDEFAULTUSERS', 'INSERTDEFAULTMEMBERSSTAT', 'INSERTFIRSTMESSAGES'];
 
 async function runCommands() {
   for (const command of commands) {

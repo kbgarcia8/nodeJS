@@ -45,6 +45,50 @@ export const INSERTMEMBERSHIPSTATUS =`
     ('Member')
 `;
 
+export const INSERTDEFAULTUSERS = `
+  INSERT INTO members_only.users(first_name, last_name, username, password, created_at)
+  VALUES
+    ('Alice',	'Johnson', 'alice01', '$2b$10$Xh3R0uNfIIIVv2zat48Td.17WdyTIbK1I5ciiMPA3He1/T1h.jNta', '2025-07-20 10:15:00'),
+    ('Bob',	'Smith', 'bobster', '$2b$10$ESF9IKZ3Hmf/UG.RK6Zjfuc46mm015iChx4J6tc1OeKvHuqX.ScLC', '2025-07-20 10:16:00'),
+    ('Charlie',	'Daniels', 'charlie.dev', '$2b$10$j4y8r2EUtw5JtfyzQFjVk.mY8//s9v/PekIFRIUNWKQYBsfMvlwUe', '2025-07-20 10:17:00'),
+    ('Dana',	'Kim', 'dana_k', '$2b$10$PDQkCM9tD.jzxpsIyBvKuOByjIksLYeTif1.XVeFGA1X96TTZ2Jim', '2025-07-20 10:18:00'),
+    ('Eliot',	'Xu', 'eliot_x', '$2b$10$2YZSPzpW.Anqai.tOvDPUOpxzw.Go7rUMBT3RopFaJdBDDKhLEyHu', '2025-07-20 10:19:00'),
+    ('Frankie',	'Torres', 'frankie.tech', '$2b$10$VZQ835GivfmgVXKpsyEkfe0wj/TcZTvFRDekl0jGOS0MvFnMn3Po6', '2025-07-20 10:20:00'),
+    ('Grace',	'Miller', 'grace_77', '$2b$10$W4ipuMp1lsgFcJ77OKdti.stV9qzwV0i6thKCfjhpOkvgLuV81Dy2', '2025-07-20 10:21:00'),
+    ('Henry',	'Hawk', 'henryhawk', '$2b$10$TkQ1q87U2a7AhHc6HGYKWuwGFFBMeRaixCASI2F3mvTs8soZcnVzu', '2025-07-20 10:22:00'),
+    ('Isabella',	'Quinn', 'isabella_q', '$2b$10$4CxbRLm0x9ph8qGUbTROk.96tqkh4sX6vy.dkNQ2gjPEEPBuLmz7C', '2025-07-20 10:23:00'),
+    ('Jake',	'Devlin', 'jake_dev', '$2b$10$WVOq0PFCG/dkDEIPbQCqqur7Pyes9.Zc8XNa5s8e.ksABkgWg3SB.', '2025-07-20 10:24:00');
+`;
+
+export const INSERTDEFAULTMEMBERSSTAT = `
+  INSERT INTO members_only.membership(user_id, status_code)
+  VALUES
+    (1,3),
+    (2,3),
+    (3,3),
+    (4,2),
+    (5,2),
+    (6,3),
+    (7,2),
+    (8,3),
+    (9,2),
+    (10,2);
+`;
+
+export const INSERTFIRSTMESSAGES = `
+  INSERT INTO members_only.messages (user_id, title, message, created_at)
+  VALUES
+    (1, 'Welcome!', 'Just joined the community—excited to be here!', '2025-07-20 11:00:00'),
+    (2, 'Question about rules', 'Are there any posting guidelines?', '2025-07-20 11:01:00'),
+    (3, 'First Post', 'Hey everyone, just testing the waters.', '2025-07-20 11:02:00'),
+    (4, 'Nice to meet you all', 'Looking forward to some great discussions.', '2025-07-20 11:03:00'),
+    (5, 'Tip for new members', 'Check out the FAQ before posting!', '2025-07-20 11:04:00'),
+    (6, 'Site Feedback', 'Dark mode would be amazing!', '2025-07-20 11:05:00'),
+    (7, 'Weekly Check-in', 'Hope everyone is having a good week.', '2025-07-20 11:06:00'),
+    (8, 'Need help with setup', 'Having trouble logging in from mobile.', '2025-07-20 11:07:00'),
+    (9, 'Shoutout!', 'Big thanks to the mods for keeping things clean.', '2025-07-20 11:08:00'),
+    (10, 'See you soon', 'Taking a short break, be back next week.', '2025-07-20 11:09:00');
+`;
 
 export const CLEARALLDB = `
     DROP TABLE IF EXISTS 
