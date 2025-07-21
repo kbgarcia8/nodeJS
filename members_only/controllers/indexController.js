@@ -1,12 +1,17 @@
-import { notAuthenticatedlinks } from "../constants/constants.js";
+import { notAuthenticatedLinks, authenticatedLinks } from "../constants/constants.js";
 import * as db from "../db/queries.js";
 import bcrypt from "bcryptjs";
 
 export async function homePage(req,res){
+    const messages = await db.retrieveAllMessage();
+
     res.render("index", {
         title: "Home Page",
         user: req.user,
-        links: notAuthenticatedlinks
+        notAuthenticatedLinks,
+        authenticatedLinks,
+        messages: messages,
+        access: req.isAuthenticated()
     });
 };
 

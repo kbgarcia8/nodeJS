@@ -1,4 +1,4 @@
-export const notAuthenticatedlinks = [
+export const notAuthenticatedLinks = [
     {href: '/login', text: "Login"},
     {href: '/register', text: "Register"},
 ]

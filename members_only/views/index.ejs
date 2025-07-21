@@ -6,11 +6,17 @@
   <body>
     <header>
       <%- include("partials/errors.ejs") %>
-      <%- include('partials/navbar.ejs', {links: links}) %>
+      <% if (access) { %>
+        <%- include('partials/navbar.ejs', {links: authenticatedLinks}) %>
+      <% } else { %>
+        <%- include('partials/navbar.ejs', {links: notAuthenticatedLinks}) %>
+      <% }; %>
       <h1 class="home-header">→ Members Only Blogspot</h1>
     </header>
     <main class="message-board">
-
+      <% messages.forEach((message) => { %>
+        <%- include('partials/message_bubble.ejs', {message: message, access: access}) %>
+      <% }); %>
     </main>
   </body>
 </html>

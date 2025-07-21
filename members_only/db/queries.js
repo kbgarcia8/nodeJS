@@ -1,6 +1,15 @@
 import pool from "./pool.js";
 //remember to throw an error for every query functions
 
+export async function retrieveAllMessage() {
+    const { rows } = await pool.query(`
+        SELECT u.id AS user_id, u.first_name, u.last_name, u.username, u.email, m.title, m.message, TO_CHAR(m.created_at, 'MM-DD-YYYY HH24:MI') AS created_at_formatted FROM members_only.users AS u JOIN members_only.messages AS m ON u.id = m.user_id;
+    `);
+
+    return rows;
+};
+
+/*
 export async function createUser(username, password) {
     await pool.query(`INSERT INTO authentication_basics.users(username, password) VALUES ($1, $2);`, [username, password]);
     console.log("User created successfully");
@@ -28,3 +37,4 @@ export async function retrieveUserById(id) {
     console.log("User retrieved by id successfully!");
     return rows;
 };
+*/

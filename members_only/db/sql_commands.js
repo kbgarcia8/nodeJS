@@ -6,6 +6,7 @@ export const MAKEMAINTABLES = `
     first_name VARCHAR(150) NOT NULL,
     last_name VARCHAR(150) NOT NULL,
     username VARCHAR(150) NOT NULL UNIQUE,
+    email VARCHAR(150) NOT NULL UNIQUE,
     password VARCHAR(150) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT now()
   );
@@ -16,7 +17,7 @@ export const MAKEMAINTABLES = `
   );
 
   CREATE TABLE IF NOT EXISTS members_only.membership (
-    user_id INTEGER PRIMARY KEY,
+    user_id INTEGER PRIMARY KEY UNIQUE,
     status_code INTEGER NOT NULL,
     CONSTRAINT membership_user_fk FOREIGN KEY (user_id) REFERENCES members_only.users(id) ON DELETE CASCADE,
     CONSTRAINT membership_status_fk FOREIGN KEY (status_code) REFERENCES members_only.membership_status(code) ON DELETE CASCADE
@@ -46,18 +47,18 @@ export const INSERTMEMBERSHIPSTATUS =`
 `;
 
 export const INSERTDEFAULTUSERS = `
-  INSERT INTO members_only.users(first_name, last_name, username, password, created_at)
+  INSERT INTO members_only.users(first_name, last_name, username, email, password, created_at)
   VALUES
-    ('Alice',	'Johnson', 'alice01', '$2b$10$Xh3R0uNfIIIVv2zat48Td.17WdyTIbK1I5ciiMPA3He1/T1h.jNta', '2025-07-20 10:15:00'),
-    ('Bob',	'Smith', 'bobster', '$2b$10$ESF9IKZ3Hmf/UG.RK6Zjfuc46mm015iChx4J6tc1OeKvHuqX.ScLC', '2025-07-20 10:16:00'),
-    ('Charlie',	'Daniels', 'charlie.dev', '$2b$10$j4y8r2EUtw5JtfyzQFjVk.mY8//s9v/PekIFRIUNWKQYBsfMvlwUe', '2025-07-20 10:17:00'),
-    ('Dana',	'Kim', 'dana_k', '$2b$10$PDQkCM9tD.jzxpsIyBvKuOByjIksLYeTif1.XVeFGA1X96TTZ2Jim', '2025-07-20 10:18:00'),
-    ('Eliot',	'Xu', 'eliot_x', '$2b$10$2YZSPzpW.Anqai.tOvDPUOpxzw.Go7rUMBT3RopFaJdBDDKhLEyHu', '2025-07-20 10:19:00'),
-    ('Frankie',	'Torres', 'frankie.tech', '$2b$10$VZQ835GivfmgVXKpsyEkfe0wj/TcZTvFRDekl0jGOS0MvFnMn3Po6', '2025-07-20 10:20:00'),
-    ('Grace',	'Miller', 'grace_77', '$2b$10$W4ipuMp1lsgFcJ77OKdti.stV9qzwV0i6thKCfjhpOkvgLuV81Dy2', '2025-07-20 10:21:00'),
-    ('Henry',	'Hawk', 'henryhawk', '$2b$10$TkQ1q87U2a7AhHc6HGYKWuwGFFBMeRaixCASI2F3mvTs8soZcnVzu', '2025-07-20 10:22:00'),
-    ('Isabella',	'Quinn', 'isabella_q', '$2b$10$4CxbRLm0x9ph8qGUbTROk.96tqkh4sX6vy.dkNQ2gjPEEPBuLmz7C', '2025-07-20 10:23:00'),
-    ('Jake',	'Devlin', 'jake_dev', '$2b$10$WVOq0PFCG/dkDEIPbQCqqur7Pyes9.Zc8XNa5s8e.ksABkgWg3SB.', '2025-07-20 10:24:00');
+    ('Alice',   'Johnson', 'alice01', 'alice01@example.com', '$2b$10$Xh3R0uNfIIIVv2zat48Td.17WdyTIbK1I5ciiMPA3He1/T1h.jNta', '2025-07-20 10:15:00'),
+    ('Bob',     'Smith', 'bobster', 'bobster@example.com', '$2b$10$ESF9IKZ3Hmf/UG.RK6Zjfuc46mm015iChx4J6tc1OeKvHuqX.ScLC', '2025-07-20 10:16:00'),
+    ('Charlie', 'Daniels', 'charlie.dev', 'charlie.dev@example.com', '$2b$10$j4y8r2EUtw5JtfyzQFjVk.mY8//s9v/PekIFRIUNWKQYBsfMvlwUe', '2025-07-20 10:17:00'),
+    ('Dana',    'Kim', 'dana_k', 'dana_k@example.com', '$2b$10$PDQkCM9tD.jzxpsIyBvKuOByjIksLYeTif1.XVeFGA1X96TTZ2Jim', '2025-07-20 10:18:00'),
+    ('Eliot',   'Xu', 'eliot_x', 'eliot_x@example.com', '$2b$10$2YZSPzpW.Anqai.tOvDPUOpxzw.Go7rUMBT3RopFaJdBDDKhLEyHu', '2025-07-20 10:19:00'),
+    ('Frankie', 'Torres', 'frankie.tech', 'frankie.tech@example.com', '$2b$10$VZQ835GivfmgVXKpsyEkfe0wj/TcZTvFRDekl0jGOS0MvFnMn3Po6', '2025-07-20 10:20:00'),
+    ('Grace',   'Miller', 'grace_77', 'grace_77@example.com', '$2b$10$W4ipuMp1lsgFcJ77OKdti.stV9qzwV0i6thKCfjhpOkvgLuV81Dy2', '2025-07-20 10:21:00'),
+    ('Henry',   'Hawk', 'henryhawk', 'henryhawk@example.com', '$2b$10$TkQ1q87U2a7AhHc6HGYKWuwGFFBMeRaixCASI2F3mvTs8soZcnVzu', '2025-07-20 10:22:00'),
+    ('Isabella','Quinn', 'isabella_q', 'isabella_q@example.com', '$2b$10$4CxbRLm0x9ph8qGUbTROk.96tqkh4sX6vy.dkNQ2gjPEEPBuLmz7C', '2025-07-20 10:23:00'),
+    ('Jake',    'Devlin', 'jake_dev', 'jake_dev@example.com', '$2b$10$WVOq0PFCG/dkDEIPbQCqqur7Pyes9.Zc8XNa5s8e.ksABkgWg3SB.', '2025-07-20 10:24:00');
 `;
 
 export const INSERTDEFAULTMEMBERSSTAT = `
@@ -72,7 +73,8 @@ export const INSERTDEFAULTMEMBERSSTAT = `
     (7,2),
     (8,3),
     (9,2),
-    (10,2);
+    (10,2)
+  ON CONFLICT (user_id) DO UPDATE SET status_code = EXCLUDED.status_code;
 `;
 
 export const INSERTFIRSTMESSAGES = `
