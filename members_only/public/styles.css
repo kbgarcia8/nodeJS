@@ -11,7 +11,7 @@ body, html {
 /*Header*/
 nav.not-authenticated {
     width: 100%;
-    height: 10%;
+    height: 7.5vh;
     display: flex;
     align-items: center;
 }
@@ -41,9 +41,15 @@ li button {
     width: 100%;
     cursor: pointer;
 }
-h1.home-header{
+/* Shared Styles */
+h1.page-header{
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     text-decoration: underline;
+}
+div.input-container{
+    display: flex;
+    width: 75%;
+    height: 25%;
 }
 /*Message Board*/
 main.message-board{
@@ -122,4 +128,83 @@ h6.message-username-and-email{
     font-size: 75%;
     height: 10%;
     width: 100%;
+}
+/* Register Page */
+button.register-page-back,
+button.register-page-submit,
+button.login-instead {
+    background-color: black;
+    color: whitesmoke;
+    font-weight: 700;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    height: 100%;
+    width: 10%;
+    cursor: pointer;
+}
+button.register-page-submit{
+    height: 100%;
+    width: 25%;
+}
+button.login-instead {
+    width: 25%;
+    height: 100%;
+}
+main.register-page{
+    width: 97.5vw;
+    height: 80vh;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+p.register-instructions{
+    font-style: italic;
+    font-size: 1.25rem;
+    margin: 0;
+    width: 35%;
+    height: 10%;
+}
+div.register-input{
+    height: 12.5%;
+    margin-block: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 25%;
+}
+div.register-input label {
+    font-weight: 700;
+    text-decoration: underline;
+    font-family: Arial, Helvetica, sans-serif;
+    width: 30%;
+}
+div.register-input input {
+    font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    height: 100%;
+    width: 70%;
+}
+div.submit-button-space{
+    height: 10%;
+    width: 25%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+div.login-instead{
+    height: 5%;
+    width: 25%;
+    margin-top: 5rem;
+}
+div.login-instead form{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+}
+div.login-instead form span{
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-weight: 700;
+    font-size: 0.75rem;
+    font-style: italic;
+    text-decoration: underline;
 }

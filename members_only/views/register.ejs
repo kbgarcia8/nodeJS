@@ -6,21 +6,53 @@
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-  <%- include("partials/errors.ejs") %>
-  <h1>Register to Members Only Blogspot</h1>
-  <form action="/" method="GET">
-      <button type="submit">Back to Home</button>
-  </form>
-  <form action="/signup" method="POST">
-      <label for="username">Username</label>
-      <input id="username" name="username" placeholder="username" type="text" />
-      <label for="password">Password</label>
-      <input id="password" name="password" placeholder="password" type="password" />
-      <button type="submit">Sign Up</button>
-  </form>
-  <form action="/login" method="GET">
-      <span>Already have an account?  </span>
-      <button type="submit">Login</button>
-  </form>
+  <header class="register-page">
+      <%- include("partials/errors.ejs") %>
+      <%- include('partials/navbar.ejs', {links: notAuthenticatedLinks}) %>
+      <h1 class="page-header">→ Members Only Blogspot</h1>
+  </header>
+  <main class="register-page">
+    <form action="/" method="GET">
+        <button type="submit" class="register-page-back">Back to Home</button>
+    </form>
+    <p class="register-instructions">
+        Please provide the details below in order to become a member of Members Only Blogspot!
+    </p>
+    <form action="/signup" method="POST">
+        <div class="input-container register-input">
+          <label for="register-email">Email: </label>
+          <input id="register-email" name="register-email" placeholder="Email Address" type="text" />
+        </div>
+        <div class="input-container register-input">
+          <label for="register-username">Username: </label>
+          <input id="register-username" name="register-username" placeholder="Username" type="text" />
+        </div>
+        <div class="input-container register-input">
+          <label for="register-first-name">First Name: </label>
+          <input id="register-first-name" name="register-first-name" placeholder="First Name" type="text" />
+        </div>
+        <div class="input-container register-input">
+          <label for="register-last-name">Last Name: </label>
+          <input id="register-last-name" name="register-last-name" placeholder="Last Name" type="text" />
+        </div>
+        <div class="input-container register-input">
+          <label for="register-password">Password: </label>
+          <input id="register-password" name="register-password" placeholder="Password" type="password" />
+        </div>
+        <div class="input-container register-input">
+          <label for="register-confirm-password">Confirm Password: </label>
+          <input id="register-confirm-password" name="register-confirm-password" placeholder="Confirm Password" type="password" />
+        </div>
+        <div class="submit-button-space">
+          <button type="submit" class="register-page-submit">Register</button>
+        </div>
+    </form>
+    <div class="login-instead">
+      <form action="/login" method="GET">
+        <span>Already have an account?  </span>
+        <button class="login-instead" type="submit">Login</button>
+      </form>
+    </div>
+  </main>
 </body>
 </html>
