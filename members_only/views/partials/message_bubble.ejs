@@ -1,7 +1,7 @@
 <div class="message-bubble">
     <div class="message-bubble-header">
         <h3 class="message-title"><%= message.title %></h3>
-        <h6 class="message-username-and-email">@<%= message.username %> (<%= message.email %>)</h6>
+        <h6 class="message-username-and-email">@<%= access ? message.username : "*****" %> (<%= access ? message.email : "*****@*****.com" %>)</h6>
         <% if (access) { %>
             <form class="button-only" action="/messages/view/<%= message.user_id %>" method="GET">
                 <button class="open-message" type="submit">Open</button>

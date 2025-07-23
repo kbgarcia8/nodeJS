@@ -1,5 +1,6 @@
 import { check, validationResult } from "express-validator";
 import { notAuthenticatedLinks, authenticatedLinks } from "../constants/constants.js";
+import asyncHandler from "express-async-handler";
 import * as db from "../db/queries.js";
 import bcrypt from "bcryptjs";
 
@@ -61,9 +62,9 @@ export async function registerForm(req,res){
 };
 
 export const registerFormPost = [
-    registerValidation, async (req,res) =>{
+    registerValidation, asyncHandler(async (req,res) =>{
         const errors = validationResult(req);
-        const { 'register-username': username, 'register-password': password } = req.body;
+        const { 'register-first-name': firstName, 'register-last-name': lastName, 'register-username': username, 'register-email': email, 'register-password': password } = req.body;
         const hashedPassword = await bcrypt.hash(password, 10);
 
         if (!errors.isEmpty()) {
@@ -74,10 +75,15 @@ export const registerFormPost = [
                 errors: errors.array()
             });
         }
+        if(username !== "") {
+            await db.createUser(firstName, lastName, username, email, hashedPassword);
+        } else {
+            const extractedUsername = email.split('@')[0];
+            await db.createUser(firstName, lastName, extractedUsername, email, hashedPassword);
+        }
         
-        await db.createUser(username, hashedPassword);
         res.redirect("/");
-    }
+    })
 ];
 
 export async function loginFormGet(req,res){
@@ -87,7 +93,8 @@ export async function loginFormGet(req,res){
 
     res.render("login", {
         title: "Login Page",
-        links: links,
+        notAuthenticatedLinks,
+        authenticatedLinks,
         user: req.user,
         errors: errors
     });

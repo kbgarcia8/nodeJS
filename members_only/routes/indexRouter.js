@@ -8,9 +8,9 @@ const indexRouter = Router();
 indexRouter.get("/", asyncHandler(indexController.homePage));
 
 indexRouter.get("/register", asyncHandler(indexController.registerForm));
-indexRouter.post("/register", asyncHandler(indexController.registerFormPost));
-/*
+indexRouter.post("/register", indexController.registerFormPost);
 indexRouter.get("/login", asyncHandler(indexController.loginFormGet));
+/*
 indexRouter.post("/login", passport.authenticate("local", { //"local" is a strategy
     successRedirect: "/login",
     failureRedirect: "/login",

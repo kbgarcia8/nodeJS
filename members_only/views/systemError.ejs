@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="system-error-page">
+    <h1 class="page-header">→ Members Only Blogspot</h1>
+    <% if (access) { %>
+        <%- include('partials/navbar.ejs', {links: authenticatedLinks}) %>
+      <% } else { %>
+        <%- include('partials/navbar.ejs', {links: notAuthenticatedLinks}) %>
+      <% }; %>
+  </header>
+  <main class="system-error-page">
+    <h3>Status Code: <%= error.statusCode %></h3>
+    <p><%= error.name %>: <%= error.detail %></p>
+    <p><%= error.message %></p>
+    <% if (error.details && error.details.detail) { %>
+        <p>Details: <%= error.details.detail %></p>
+    <% } %>
+  </main>
+</body>
+</html>

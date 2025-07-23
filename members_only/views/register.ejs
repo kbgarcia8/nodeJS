@@ -7,18 +7,18 @@
 </head>
 <body>
   <header class="register-page">
-      <%- include("partials/errors.ejs") %>
-      <%- include('partials/navbar.ejs', {links: notAuthenticatedLinks}) %>
-      <h1 class="page-header">→ Members Only Blogspot</h1>
+    <h1 class="page-header">→ Members Only Blogspot</h1>
+    <%- include('partials/navbar.ejs', {links: notAuthenticatedLinks}) %>
+    <%- include("partials/errors.ejs") %>
   </header>
   <main class="register-page">
-    <form action="/" method="GET">
+    <form class="register-page-button-only" action="/" method="GET">
         <button type="submit" class="register-page-back">Back to Home</button>
     </form>
     <p class="register-instructions">
         Please provide the details below in order to become a member of Members Only Blogspot!
     </p>
-    <form action="/signup" method="POST">
+    <form action="/register" method="POST">
         <div class="input-container register-input">
           <label for="register-email">Email: </label>
           <input id="register-email" name="register-email" placeholder="Email Address" type="text" />
