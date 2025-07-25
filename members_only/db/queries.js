@@ -28,28 +28,45 @@ export async function createUser(firstName, lastName, username, email, password)
         });
     }
 };
-/*
-export async function retrieveUserByUsername(username) {
-    const { rows } = await pool.query(
-        `SELECT * FROM authentication_basics.users WHERE username = $1`,
-        [username]
-    );
 
-    if (rows.length === 0) {
-        return false;
+export async function retrieveUserByEmail(email) {
+    try{
+        const { rows } = await pool.query(`SELECT * FROM members_only.users WHERE email = $1`, [email]);
+        
+        if (rows.length === 0) {
+            throw new DBError("User email not found", 409, "DB_USER_EMAIL_NOT_FOUND", {
+                detail: `No user found with email: ${email}`
+            });
+        }
+
+        console.log("User retrieved by email successfully!");
+        return rows[0]; //since a single user is expected
+    } catch(err) {
+        console.error("Database error in retrieveUserByEmail:", err);
+        throw new DBError("Failed to retrieve user by email", 409, "DB_USER_EMAIL_NOT_FOUND", {
+            detail: err.detail,
+        });
     }
-
-    console.log("User retrieved by username successfully!");
-    return rows;
-}
-export async function retrieveUserById(id) {
-    const { rows } = await pool.query(`SELECT * FROM authentication_basics.users WHERE id = $1`, [id]);
-    
-    if (rows.length === 0) {
-        throw new Error("User not found");
-    }
-
-    console.log("User retrieved by id successfully!");
-    return rows;
 };
-*/
+
+export async function retrieveUserById(id) {
+    try {
+        const { rows } = await pool.query(
+            `SELECT * FROM members_only.users WHERE id = $1`,[id]
+        );
+
+        if (rows.length === 0) {
+            throw new DBError("User id not found", 409, "DB_USER_ID_NOT_FOUND", {
+                detail: `No user found with id: ${id}`
+            });
+        }
+
+        console.log("User retrieved by id successfully!");
+        return rows[0]; //since a single user is expected
+    } catch(err) {
+        console.error("Database error in retrieveUserById:", err);
+        throw new DBError("Failed to retrieve user by id", 409, "DB_USER_ID_NOT_FOUND", {
+            detail: err.detail,
+        });
+    }
+};

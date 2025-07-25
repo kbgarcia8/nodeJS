@@ -1,0 +1,19 @@
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <header>
+        <%- include("partials/errors.ejs") %>
+        <%- include('partials/navbar.ejs', {links: authenticatedLinks}) %>
+        <h1 class="page-header">→ Members Only Blogspot</h1>
+        <h3 class="welcome-user-header"><%= header %></h3>
+    </header>
+    <main class="message-board">
+      <% messages.forEach((message) => { %>
+        <%- include('partials/message_bubble2.ejs', {message: message}) %>
+      <% }); %>
+    </main>
+  </body>
+</html>

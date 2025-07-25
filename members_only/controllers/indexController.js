@@ -3,17 +3,15 @@ import { notAuthenticatedLinks, authenticatedLinks } from "../constants/constant
 import asyncHandler from "express-async-handler";
 import * as db from "../db/queries.js";
 import bcrypt from "bcryptjs";
+import passport from "passport";
 
 export async function homePage(req,res){
     const messages = await db.retrieveAllMessage();
 
-    res.render("index", {
+    return res.render("index", {
         title: "Home Page",
-        user: req.user,
         notAuthenticatedLinks,
-        authenticatedLinks,
-        messages: messages,
-        access: req.isAuthenticated()
+        messages: messages
     });
 };
 
@@ -54,10 +52,9 @@ const registerValidation =[
 ]
 
 export async function registerForm(req,res){
-    res.render("register", {
+    return res.render("register", {
         title: "Register Page",
-        notAuthenticatedLinks,
-        authenticatedLinks,
+        notAuthenticatedLinks
     });
 };
 
@@ -91,12 +88,63 @@ export async function loginFormGet(req,res){
 
     const errors = flashErrors.map(msg => ({ msg }));
 
-    res.render("login", {
+    return res.render("login", {
         title: "Login Page",
         notAuthenticatedLinks,
-        authenticatedLinks,
-        user: req.user,
         errors: errors
+    });
+};
+
+const loginValidation =[
+    check('login-email')
+        .isEmail().withMessage('Please provide a valid email address!').bail()
+        .normalizeEmail(),
+    check('login-password')
+        .notEmpty().withMessage('Please provide a password!')
+];
+
+export const loginFormPost = [
+    loginValidation, asyncHandler(async (req,res,next) =>{
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+            return res.render("login", {
+                title: "Login Page",
+                notAuthenticatedLinks,
+                authenticatedLinks,
+                errors: errors.array()
+            });
+        }
+        //STILL need to call passport.authenticate after login
+        //The error throwing and handling here are only available during login and not meant to be a middleware in protected routes
+        passport.authenticate("local", (err, user, info) => {
+        if (err) return next(err);
+        if (!user) {
+            return res.render("login", {
+                title: "Login Page",
+                notAuthenticatedLinks,
+                errors: [{ msg: info?.message || "Login failed" }]
+            });
+        }
+
+        req.logIn(user, (err) => {
+            if (err) return next(err);
+            return res.redirect("/dashboard");
+        });
+        })(req, res, next);
+    })
+];
+
+export async function dashboardGet(req,res){
+    const messages = await db.retrieveAllMessage();
+
+    return res.render("dashboard", {
+        title: "Dashboard",
+        header: `Hi ${req.user.username}, Welcome back!`,
+        notAuthenticatedLinks,
+        authenticatedLinks,
+        messages: messages,
+        access: req.isAuthenticated()
     });
 };
 

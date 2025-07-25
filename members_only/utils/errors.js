@@ -22,4 +22,9 @@ export class DBError extends AppError {
     super(message, statusCode, code, details);
   }
 };
-
+//For authentication errors
+export class AuthError extends AppError {
+  constructor(message = "Authentication Error", statusCode = 500, code = "AUTH_ERROR", details=null){
+    super(message, statusCode, code, details);
+  }
+}
