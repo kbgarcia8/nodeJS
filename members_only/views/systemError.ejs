@@ -9,7 +9,7 @@
   <header class="system-error-page">
     <h1 class="page-header">→ Members Only Blogspot</h1>
     <% if (access) { %>
-        <%- include('partials/navbar.ejs', {links: authenticatedLinks}) %>
+        <%- include('partials/navbar.ejs', {links: memberAuthenticatedLinks}) %>
       <% } else { %>
         <%- include('partials/navbar.ejs', {links: notAuthenticatedLinks}) %>
       <% }; %>

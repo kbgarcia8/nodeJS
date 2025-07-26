@@ -3,11 +3,12 @@ export const notAuthenticatedLinks = [
     {href: '/register', text: "Register"},
 ]
 
-export const authenticatedLinks = [
+export const memberAuthenticatedLinks = [
   { href: "/", text: "Message Board" },
   { href: "/users", text: "All Users" },
   { href: "/messages/new", text: "New Message" },
   { href: "/users/create", text: "Create User" },  
   { href: "/users/search", text: "Search User" },
   { href: "/messages/search", text: "Search Message" },
+  { href: "/logout", text: "Logout" },
 ];
