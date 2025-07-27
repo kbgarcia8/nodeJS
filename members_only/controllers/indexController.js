@@ -7,11 +7,18 @@ import passport from "passport";
 
 export async function homePage(req,res){
     const messages = await db.retrieveAllMessage();
+    
+
+    const messagesOnly = messages.map((message) => {
+        return message.message;
+    })
+
+    const recentMessages = messagesOnly.slice(-4);
 
     return res.render("index", {
         title: "Home Page",
         notAuthenticatedLinks,
-        messages: messages
+        recentMessages
     });
 };
 
@@ -78,6 +85,8 @@ export const registerFormPost = [
             const extractedUsername = email.split('@')[0];
             await db.createUser(firstName, lastName, extractedUsername, email, hashedPassword);
         }
+        const createdUser = await db.retrieveUserByEmail(email);
+        await db.addDefaultMembership(createdUser.id)
         
         res.redirect("/");
     })

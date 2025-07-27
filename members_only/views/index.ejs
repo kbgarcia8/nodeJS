@@ -7,12 +7,16 @@
     <header>
       <%- include("partials/errors.ejs") %>
       <%- include('partials/navbar.ejs', {links: notAuthenticatedLinks}) %>
-      <h1 class="page-header">→ Members Only Blogspot</h1>
+      <h1 class="page-header">→ What's on your mind? 🧠</h1>
+      <h3 class="index-page-slogan">Share thoughts, make connections and ease boredom!</h3>
     </header>
     <main class="message-board">
-      <% messages.forEach((message) => { %>
-        <%- include('partials/message_bubble.ejs', {message: message}) %>
-      <% }); %>
+      <div class="recent-public-messages-space">
+        <h4 class="recent-public-messages-header">📜Recent Public Messages</h4>
+        <% recentMessages.map((message)=> { %>
+          <p class="public-message"><%= message %></p>
+        <% }); %>
+      </div>
     </main>
   </body>
 </html>

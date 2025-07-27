@@ -70,3 +70,54 @@ export async function retrieveUserById(id) {
         });
     }
 };
+
+export async function addDefaultMembership(userId){
+    try{
+        //check first if user's membership is existent
+        const { rows } = await pool.query(
+            `SELECT * FROM members_only.membership WHERE user_id = $1`,[userId]
+        );
+
+        if (rows.length === 0) { //If user does not exist in membership table then add default membership
+            await pool.query(`INSERT INTO members_only.membership(user_id, status_code) VALUES ($1, 2);`, [userId]);
+            console.log("Default membership successfully added to new user!")
+        } else if (rows.length > 0){ //If user does exist in membership table then update membership
+            console.error("Database error in addDefaultMembership:", err);
+            throw new DBError(`Failed to add default membership for user existing user with id ${userId}!`, 409, "DB_ADD_MEMBERSHIP_FOR_EXISTING_USER_FAILED", {
+                detail: "If user is exising must execute modifyMembership instead!"
+            });
+        }
+
+    } catch(err){
+        console.error("Database error in addDefaultMembership:", err);
+        throw new DBError(`Failed to add membership for new user with id ${userId}`, 409, "DB_ADD_MEMBERSHIP_FOR_NEW_USER_FAILED", {
+            detail: err.detail,
+        });
+    }
+};
+
+export async function modifyMembership(userId, code){
+    try{
+        //check first if user's membership is existent
+        const { rows } = await pool.query(
+            `SELECT * FROM members_only.membership WHERE user_id = $1`,[userId]
+        );
+
+        if (rows.length === 0) { //If user does not exist in membership table
+            console.error("Database error in modifyMembership:", err);
+            throw new DBError(`Failed to modify membership for user with id ${userId}!`, 409, "DB_MODIFY_MEMBERSHIP_FAILED_USER_DOES_NOT_EXIST", {
+                detail: "If user does not exist, please register first!",
+            });
+        } else if (rows.length > 0){ //If user does exist in membership table then update membership
+            await pool.query(`UPDATE members_only.membership
+            SET status_code = $2
+            WHERE user_id = $1;`, [userId, code]);
+        }
+
+    } catch(err){
+        console.error("Database error in modifyMembership:", err);
+        throw new DBError(`Failed to modify membership for user with id ${userId}`, 409, "DB_MODIFY_MEMBERSHIP_FAILED", {
+            detail: err.detail,
+        });
+    }
+};

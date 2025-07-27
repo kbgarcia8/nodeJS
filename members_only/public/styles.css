@@ -33,7 +33,6 @@ li.authenticated-navbar-entry{
     margin-inline: 0.25rem;
     list-style: none;
 }
-
 li a {
     display: flex;
     align-items: center;
@@ -85,83 +84,40 @@ main.system-error-page{
     display: flex;
     flex-direction: column;
 }
-/*Message Board*/
-main.message-board{
-    width: 97.5vw;
-    height: 77.5vh;
-    overflow-y: auto;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    grid-auto-rows: minmax(50%, auto); 
-    gap: 0.75rem;
-    padding: 0.75rem;
-}
-div.message-bubble {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    width: 100%;
-    height: 100%;
-    border: 2px solid black;
-    border-radius: 2rem;
-    padding: 1.5rem;
-    background-color: rgb(255, 247, 176);
-    overflow-y: auto;
-}
-div.message-bubble>*{
-    font-family: system-ui;
-    width: 100%;
-    display: flex;
-}
-div.message-bubble-header{
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    width: 100%;
-    height: 25%;
-    gap: 0.25rem;
-}
-h3.message-title {
-    font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-
-}
-form.button-only{
-    width: 100%;
-    display: flex;
-    align-content: center;
-    justify-content: flex-end;
-}
-.open-message{
-    background-color: black;
-    color: whitesmoke;
-    font-weight: 700;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    width: 35%;
-    cursor: pointer;
-}
-h6.message-username-and-email{
+/* Index Page */
+h3.index-page-slogan{
     font-style: italic;
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
-    height: 100%;
+    font-weight: 700;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    color: rgb(139, 139, 139);
+    margin: 0.5rem;
 }
-p.text-message{
-    align-items: center;
-    justify-content: center;
-    flex-wrap: wrap;
-    font-weight: 500;
-    font-size: 1rem;
-    font-family: Arial, Helvetica, sans-serif;
-    height: 50%;
-    overflow-y: auto;
+div.recent-public-messages-space{
+    width: 40%;
+    height: 45%;
+    border: 0.5rem double rgb(72, 72, 72);
+    padding-block: 0.75rem;
+    padding-inline: 1.25rem;
+    border-radius: 1rem;
 }
-p.date-added{
-    display: flex;
-    align-content: center;
-    justify-content: flex-end;
-    font-size: 75%;
-    height: 10%;
+h4.recent-public-messages-header{
+    font-weight: 700;
+    border-bottom: 0.25rem dashed black;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    width: 50%;
+    height: 15%;
+    margin: 0.5rem;
+}
+p.public-message{
     width: 100%;
+    height: 17.5%;
+    border: 2px solid black;
+    border-radius: 0.25rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+    padding: 0.5rem;
+    margin-block: 0.25rem;
 }
 /* Register Page */
 form.register-page-button-only{
@@ -371,4 +327,82 @@ h3.welcome-user-header{
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     font-weight: 700;
     font-style: italic;
+}
+/*Message Board*/
+main.message-board{
+    width: 97.5vw;
+    height: 77.5vh;
+    overflow-y: auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-auto-rows: minmax(50%, auto); 
+    gap: 0.75rem;
+    padding: 0.75rem;
+}
+div.message-bubble {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    border: 2px solid black;
+    border-radius: 2rem;
+    padding: 1.5rem;
+    background-color: rgb(255, 247, 176);
+    overflow-y: auto;
+}
+div.message-bubble>*{
+    font-family: system-ui;
+    width: 100%;
+    display: flex;
+}
+div.message-bubble-header{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    height: 25%;
+    gap: 0.25rem;
+}
+h3.message-title {
+    font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+
+}
+form.button-only{
+    width: 100%;
+    display: flex;
+    align-content: center;
+    justify-content: flex-end;
+}
+.open-message{
+    background-color: black;
+    color: whitesmoke;
+    font-weight: 700;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    width: 35%;
+    cursor: pointer;
+}
+h6.message-username-and-email{
+    font-style: italic;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    height: 100%;
+}
+p.text-message{
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    font-weight: 500;
+    font-size: 1rem;
+    font-family: Arial, Helvetica, sans-serif;
+    height: 50%;
+    overflow-y: auto;
+}
+p.date-added{
+    display: flex;
+    align-content: center;
+    justify-content: flex-end;
+    font-size: 75%;
+    height: 10%;
+    width: 100%;
 }
