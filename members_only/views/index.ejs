@@ -10,12 +10,18 @@
       <h1 class="page-header">→ What's on your mind? 🧠</h1>
       <h3 class="index-page-slogan">Share thoughts, make connections and ease boredom!</h3>
     </header>
-    <main class="message-board">
+    <main class="index-page">
       <div class="recent-public-messages-space">
         <h4 class="recent-public-messages-header">📜Recent Public Messages</h4>
         <% recentMessages.map((message)=> { %>
           <p class="public-message"><%= message %></p>
         <% }); %>
+      </div>
+      <div class="call-to-action-statements-space">
+        <h4 class="call-to-action-statement-header">🔒 Why join?</h4>
+        <p class="call-to-action-statement">✅ Quick, safe, and anonymous</p>
+        <p class="call-to-action-statement">✅ No spam or ads</p>
+        <p class="call-to-action-statement">✅ Connect with others without judgmen</p>
       </div>
     </main>
   </body>

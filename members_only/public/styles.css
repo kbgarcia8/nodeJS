@@ -92,6 +92,14 @@ h3.index-page-slogan{
     color: rgb(139, 139, 139);
     margin: 0.5rem;
 }
+main.index-page{
+    width: 97.5vw;
+    height: 80vh;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    row-gap: 1rem;
+}
 div.recent-public-messages-space{
     width: 40%;
     height: 45%;
@@ -109,6 +117,35 @@ h4.recent-public-messages-header{
     margin: 0.5rem;
 }
 p.public-message{
+    width: 100%;
+    height: 17.5%;
+    border: 2px solid black;
+    border-radius: 0.25rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+    padding: 0.5rem;
+    margin-block: 0.25rem;
+}
+div.call-to-action-statements-space{
+    width: 40%;
+    height: 50%;
+    border: 0.25rem dashed rgb(72, 72, 72);
+    padding-block: 0.75rem;
+    padding-inline: 1.25rem;
+    border-radius: 1rem;
+}
+h4.call-to-action-statement-header{
+    font-weight: 700;
+    border-bottom: 0.25rem solid black;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    width: 50%;
+    height: 15%;
+    margin: 0.5rem;
+    display: flex;
+    justify-content: center;
+}
+p.call-to-action-statement{
     width: 100%;
     height: 17.5%;
     border: 2px solid black;
