@@ -6,7 +6,7 @@ import bcrypt from "bcryptjs";
 import passport from "passport";
 
 export async function homePage(req,res){
-    const messages = await db.retrieveAllMessage();
+    const messages = await db.retrieveAllMessages();
     
 
     const messagesOnly = messages.map((message) => {
@@ -55,6 +55,17 @@ const registerValidation =[
                 throw new Error('Passwords do not match');
             }
             return true;
+        }),
+    check('register-membership-code')
+        .trim()
+        .optional({ checkFalsy: true })
+        .custom((value, { req }) => {
+            if (value === 'M3mbeRs0nLy4ev3r') {
+                req.isValidMembershipCode = true; 
+            } else {
+                req.isValidMembershipCode = false;
+            }
+            return true; 
         })
 ]
 
@@ -72,7 +83,7 @@ export const registerFormPost = [
         const hashedPassword = await bcrypt.hash(password, 10);
 
         if (!errors.isEmpty()) {
-            res.render("register", {
+            return res.render("register", {
                 title: "Register Page",
                 notAuthenticatedLinks,
                 memberAuthenticatedLinks,
@@ -86,7 +97,12 @@ export const registerFormPost = [
             await db.createUser(firstName, lastName, extractedUsername, email, hashedPassword);
         }
         const createdUser = await db.retrieveUserByEmail(email);
-        await db.addDefaultMembership(createdUser.id)
+        //Because of checkFalsy = true it will skip if no code was provided and req.isValidMembershipCode will be undefined to must set to false if that is the case
+        if (typeof req.isValidMembershipCode === 'undefined') {
+            req.isValidMembershipCode = false;
+        }
+        console.log(req.isValidMembershipCode)
+        await db.addDefaultMembership(createdUser.id, req.isValidMembershipCode)
         
         res.redirect("/");
     })
@@ -145,7 +161,7 @@ export const loginFormPost = [
 ];
 
 export async function dashboardGet(req,res){
-    const messages = await db.retrieveAllMessage();
+    const messages = await db.retrieveAllMessages();
 
     return res.render("dashboard", {
         title: "Dashboard",

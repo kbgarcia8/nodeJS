@@ -2,7 +2,8 @@ import pool from "./pool.js";
 import { DBError } from "../utils/errors.js";
 //remember to throw an error for every query functions
 
-export async function retrieveAllMessage() {
+//Messages
+export async function retrieveAllMessages() {
     try{
         const { rows } = await pool.query(`
             SELECT u.id AS user_id, u.first_name, u.last_name, u.username, u.email, m.title, m.message, TO_CHAR(m.created_at, 'MM-DD-YYYY HH24:MI') AS created_at_formatted FROM members_only.users AS u JOIN members_only.messages AS m ON u.id = m.user_id;
@@ -10,13 +11,28 @@ export async function retrieveAllMessage() {
 
         return rows;
     } catch(err) {
-        console.error("Database error in retrieveAllMessage:", err);
-        throw new DBError("Failed to retrieve all messages in database", 409, "DB_RETRIEVE_ALL_MESSAGE_FAILED", {
+        console.error("Database error in retrieveAllMessages:", err);
+        throw new DBError("Failed to retrieve all messages in database", 409, "DB_RETRIEVE_ALL_MESSAGES_FAILED", {
+            detail: err.detail,
+        });
+    }
+};
+export async function retrieveMessagesBelongToUser(userId) {
+    try{
+        const { rows } = await pool.query(`
+            SELECT u.id AS user_id, u.first_name, u.last_name, u.username, u.email, m.title, m.message, TO_CHAR(m.created_at, 'MM-DD-YYYY HH24:MI') AS created_at_formatted FROM members_only.users AS u JOIN members_only.messages AS m ON u.id = m.user_id WHERE u.id = $1;
+        `,[userId]);
+
+        return rows;
+    } catch(err) {
+        console.error("Database error in retrieveMessagesBelongToUser:", err);
+        throw new DBError(`Failed to retrieve all messages in database belonging to user ${rows[0].username}`, 409, "DB_RETRIEVE_USER_MESSAGES_FAILED", {
             detail: err.detail,
         });
     }
 };
 
+//User
 export async function createUser(firstName, lastName, username, email, password) {
     try{
         await pool.query(`INSERT INTO members_only.users(first_name, last_name, username, email, password) VALUES ($1, $2, $3, $4, $5);`, [firstName, lastName, username, email, password]);
@@ -71,16 +87,21 @@ export async function retrieveUserById(id) {
     }
 };
 
-export async function addDefaultMembership(userId){
+export async function addDefaultMembership(userId, membershipCode){
     try{
         //check first if user's membership is existent
         const { rows } = await pool.query(
             `SELECT * FROM members_only.membership WHERE user_id = $1`,[userId]
         );
 
-        if (rows.length === 0) { //If user does not exist in membership table then add default membership
+        console.log(rows.length, userId)
+
+        if (rows.length === 0 && membershipCode === false) { //If user does not exist in membership table and did not submit correct secret membership code then add default membership
             await pool.query(`INSERT INTO members_only.membership(user_id, status_code) VALUES ($1, 2);`, [userId]);
-            console.log("Default membership successfully added to new user!")
+            console.log("Default membership (Guest) successfully added to new user!");
+        } else if (rows.length === 0 && membershipCode === true) { //If user does not exist in membership table and submit correct secret membership code then add default membership
+            await pool.query(`INSERT INTO members_only.membership(user_id, status_code) VALUES ($1, 3);`, [userId]);
+            console.log("Secret Code correct. Membership (Member) successfully added to new user!");
         } else if (rows.length > 0){ //If user does exist in membership table then update membership
             console.error("Database error in addDefaultMembership:", err);
             throw new DBError(`Failed to add default membership for user existing user with id ${userId}!`, 409, "DB_ADD_MEMBERSHIP_FOR_EXISTING_USER_FAILED", {

@@ -9,10 +9,12 @@ import session from "express-session";
 import passport from "passport";
 import "./config/passport.js"; //run current configurations via passport.use
 import flash from "connect-flash";
+//session persistence
+import pgSession from 'connect-pg-simple';
+import pool from "./db/pool.js";
 //Routers
 import indexRouter from "./routes/indexRouter.js";
-import { access } from "node:fs";
-
+import messageRouter from "./routes/messageRouter.js";
 
 const app = express();
 //declare public as asset path
@@ -32,6 +34,17 @@ app.use(express.json()); //express level middleware to parse json
 app.use(session({ secret: "cats", resave: false, saveUninitialized: false })); //setup
 app.use(passport.session()); //enable session
 app.use(flash()); //for error handling of passport after failureRedirect
+
+//session persistence for development purposes- will have to explore
+const PGStore = pgSession(session);
+
+app.use(session({
+    store: new PGStore({ pool }),
+    secret: 'your-secret-key',
+    resave: false,
+    saveUninitialized: false,
+    cookie: { maxAge: 86400000 }
+}));
 
 
 app.use("/", indexRouter);

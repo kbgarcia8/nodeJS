@@ -1,18 +1,18 @@
 import { body, query, validationResult } from "express-validator";
 import * as db from "../db/queries.js";
-import { authenticatedLinks } from "../constants/constants.js";
+import { memberAuthenticatedLinks } from "../constants/constants.js";
 
-export const newMessageGet = (req, res) => {
-  res.render("newMessage", {
+export const messagesHome = (req, res) => {
+  console.log(req.user)
+
+  res.render("messages", {
     title: "New Message",
-    header: "Send a Message",
-    links: links,
-    inputs: inputs
+    header: "Post a Message",
+    memberAuthenticatedLinks
   });
 };
 
-const messageErr = "can only be up to 300 characters."
-const emailErr = "Valid and full email details is required before sending a message or provide username and email instead"
+/*
 const validateNewMessage = [
   body("messageUser").optional({checkFalsy: true}).trim(),
   body("messageUserEmail").optional({checkFalsy: true}).isEmail().withMessage(emailErr),
@@ -158,3 +158,4 @@ export const messageView = async (req, res) => {
     errors: customError
   });
 };
+*/
