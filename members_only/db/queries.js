@@ -47,7 +47,7 @@ export async function createUser(firstName, lastName, username, email, password)
 
 export async function retrieveUserByEmail(email) {
     try{
-        const { rows } = await pool.query(`SELECT * FROM members_only.users WHERE email = $1`, [email]);
+        const { rows } = await pool.query(`SELECT * FROM members_only.users AS u JOIN members_only.membership AS m ON u.id = m.user_id WHERE u.email = $1`, [email]);
         
         if (rows.length === 0) {
             throw new DBError("User email not found", 409, "DB_USER_EMAIL_NOT_FOUND", {
@@ -68,7 +68,7 @@ export async function retrieveUserByEmail(email) {
 export async function retrieveUserById(id) {
     try {
         const { rows } = await pool.query(
-            `SELECT * FROM members_only.users WHERE id = $1`,[id]
+            `SELECT * FROM members_only.users AS u JOIN members_only.membership AS m ON u.id = m.user_id WHERE u.id = $1`,[id]
         );
 
         if (rows.length === 0) {

@@ -2,15 +2,24 @@ import { body, query, validationResult } from "express-validator";
 import * as db from "../db/queries.js";
 import { memberAuthenticatedLinks } from "../constants/constants.js";
 
-export const messagesHome = (req, res) => {
-  console.log(req.user)
+export async function messagesHome (req, res) {
+  const loggedUserMessages = await db.retrieveMessagesBelongToUser(req.user.id);
 
-  res.render("messages", {
+  return res.render("messages", {
     title: "New Message",
     header: "Post a Message",
-    memberAuthenticatedLinks
+    memberAuthenticatedLinks,
+    user: req.user,
+    messages: loggedUserMessages
   });
 };
+
+export async function newMessageGet (req,res) {
+  const loggedUser = req.user;
+
+  
+
+}
 
 /*
 const validateNewMessage = [

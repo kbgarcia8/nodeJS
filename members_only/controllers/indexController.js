@@ -169,7 +169,7 @@ export async function dashboardGet(req,res){
         notAuthenticatedLinks,
         memberAuthenticatedLinks,
         messages: messages,
-        access: req.isAuthenticated()
+        user: req.user
     });
 };
 

@@ -443,3 +443,10 @@ p.date-added{
     height: 10%;
     width: 100%;
 }
+/* Messages Routes */
+p.no-loggedin-user-messages{
+    font-weight: 700;
+    font-size: 1rem;
+    margin-top: 2rem;
+    font-family: Arial, Helvetica, sans-serif;
+}

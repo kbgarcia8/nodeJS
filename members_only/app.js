@@ -40,7 +40,7 @@ const PGStore = pgSession(session);
 
 app.use(session({
     store: new PGStore({ pool }),
-    secret: 'your-secret-key',
+    secret: 'members-only',
     resave: false,
     saveUninitialized: false,
     cookie: { maxAge: 86400000 }
@@ -48,6 +48,7 @@ app.use(session({
 
 
 app.use("/", indexRouter);
+app.use("/message", messageRouter);
 
 //error handling using middleware
 app.use((err, req, res, next) => {

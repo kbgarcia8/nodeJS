@@ -11,8 +11,13 @@
         <h2 class="welcome-user-header"><%= header %></h2>
     </header>
     <main class="message-board">
+      <!--If membership guest censor author of messages unless belong to user logged in-->
       <% messages.forEach((message) => { %>
-        <%- include('partials/message_bubble2.ejs', {message: message}) %>
+        <% if(user.status_code === 3 || (user.username === message.username)) { %>
+          <%- include('partials/message_bubble2.ejs', {message: message}) %>
+        <% } else if (user.status_code === 2) { %>
+          <%- include('partials/message_bubble.ejs', {message: message}) %>
+        <% } %>
       <% }); %>
     </main>
   </body>

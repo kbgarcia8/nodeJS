@@ -6,13 +6,17 @@
   <body>
     <header>
       <%- include("partials/errors.ejs") %>
-      <%- include('partials/navbar.ejs', {links: notAuthenticatedLinks}) %>
+      <%- include('partials/navbar2.ejs', {links: memberAuthenticatedLinks}) %>
       <h1 class="page-header">→ Members Only Blogspot</h1>
     </header>
     <main class="message-board">
-      <% messages.forEach((message) => { %>
-        <%- include('partials/message_bubble.ejs', {message: message}) %>
-      <% }); %>
+      <% if(messages.length === 0) { %>
+        <p class="no-loggedin-user-messages">You have not post any messages yet! <a href="/message/new">Post a Message now</a></p>
+      <% } else { %>
+        <% messages.forEach((message) => { %>
+          <%- include('partials/message_bubble2.ejs', {message: message}) %>
+        <% }); %>
+      <% } %>
     </main>
   </body>
 </html>

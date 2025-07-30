@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Register</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="new-message-page">
+    <h1 class="page-header">→ What's on your mind? 🧠</h1>
+    <%- include('partials/navbar.ejs', {links: notAuthenticatedLinks}) %>
+    <%- include("partials/errors.ejs") %>
+  </header>
+  <main class="new-message-page">
+    <p class="new-message-instructions">
+        Post a message! 📨
+    </p>
+    <form class="new-message" action="/new-message" method="POST">
+        <div class="input-container new-message-input">
+          <label for="new-message-email">Email: </label>
+          <input id="new-message-email" name="new-message-email" placeholder="Email Address" type="hidden" value="<%= user.email =>"/>
+        </div>
+        <div class="input-container new-message-input">
+          <label for="new-message-password">Password: </label>
+          <input id="new-message-password" name="new-message-password" placeholder="Password" type="password" />
+        </div>
+        <div class="new-message-submit-button-space">
+          <button type="submit" class="new-message-page-submit">Login</button>
+        </div>
+    </form>
+    <div class="register-instead">
+      <form action="/register" method="GET">
+        <span>No account yet?  </span>
+        <button class="register-instead" type="submit">Register</button>
+      </form>
+    </div>
+  </main>
+</body>
+</html>

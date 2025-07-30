@@ -3,7 +3,7 @@
         <h3 class="message-title"><%= message.title %></h3>
         <h6 class="message-username-and-email">@<%= message.username %> (<%= message.email %>)</h6>
         <!--For improvement to grant this only on messages owned by the user with 'Member' membership and all messages by 'Admin' user-->
-        <% if (access) { %>
+        <% if (message.username === user.username) { %>
             <form class="button-only" action="/messages/view/<%= message.user_id %>" method="GET">
                 <button class="open-message" type="submit">Open</button>
             </form>
