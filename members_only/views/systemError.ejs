@@ -6,21 +6,26 @@
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-  <header class="system-error-page">
-    <h1 class="page-header">→ What's on your mind? 🧠</h1>
+  <header class="system-error-page-header">
     <% if (access) { %>
         <%- include('partials/navbar.ejs', {links: memberAuthenticatedLinks}) %>
       <% } else { %>
         <%- include('partials/navbar.ejs', {links: notAuthenticatedLinks}) %>
       <% }; %>
+      <h1 class="page-header">→ What's on your mind? 🧠</h1>
   </header>
   <main class="system-error-page">
-    <h3>Status Code: <%= error.statusCode %></h3>
-    <p><%= error.name %>: <%= error.detail %></p>
-    <p><%= error.message %></p>
-    <% if (error.details && error.details.detail) { %>
-        <p>Details: <%= error.details.detail %></p>
-    <% } %>
+    <div class="error-image-space">
+      <img src="/error.png" alt="error-icon">
+    </div>
+    <div class="error-information-space">
+      <h2 class="error-status-code">‼️Status Code: <%= error.statusCode %></h2>
+      <p class="error-code"><%= error.name %></p>
+      <p><%= error.message %></p>
+      <% if (error.details && error.details.detail) { %>
+          <p class="error-details"><%= error.details.detail %></p>
+      <% } %>
+    </div>
   </main>
 </body>
 </html>

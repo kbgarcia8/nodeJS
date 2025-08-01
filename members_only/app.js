@@ -48,11 +48,12 @@ app.use(session({
 
 
 app.use("/", indexRouter);
-app.use("/message", messageRouter);
+app.use("/messages", messageRouter);
 
 //error handling using middleware
 app.use((err, req, res, next) => {
   console.error(err); //display error on developer options console
+  console.log(err)
   
   res.render("systemError", {
       title: "Error Page",

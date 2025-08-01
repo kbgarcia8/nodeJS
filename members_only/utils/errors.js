@@ -11,6 +11,7 @@ export class AppError extends Error {
     The .name (default is "Error")
     The .stack trace
     */
+    this.statusCode = statusCode;
     this.code = code;
     Error.captureStackTrace(this, this.constructor); //A stack trace shows the path your code took when an error occurred. It lists the sequence of function calls that led to the error — from top-level code down to the exact line that threw it
     this.details = details; //custom variable

@@ -5,7 +5,7 @@ export const notAuthenticatedLinks = [
 
 export const memberAuthenticatedLinks = [
   { href: "/dashboard", text: "Message Board" },
-  { href: "/message", text: "My Messages" },
+  { href: "/messages", text: "My Messages" },
   { href: "/messages/new", text: "New Message" },
   { href: "/messages/search", text: "Search Message" },
   { href: "/users/search", text: "Search User" },

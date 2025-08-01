@@ -1,6 +1,7 @@
 import pool from "./pool.js";
 import { DBError } from "../utils/errors.js";
 //remember to throw an error for every query functions
+/* Substitute err.detail for all function with a message since err.detail is not native/pre-determined*/
 
 //Messages
 export async function retrieveAllMessages() {
@@ -31,7 +32,17 @@ export async function retrieveMessagesBelongToUser(userId) {
         });
     }
 };
-
+export async function insertNewMessage(userId, messageTitle, messageText) {
+    try{
+        await pool.query(`INSERT INTO members_only.messages(user_id, title, message) VALUES ($1, $2, $3)`,[userId, messageTitle, messageText]);
+        console.log(`Message successfully added for user ${userId}`);
+    }catch(err){
+        console.error("Database error in insertNewMessage:", err)
+        throw new DBError(`Failed to add new message under user ${userId}`, 400, "DB_INSERT_MESSAGE_ERROR",{
+            details: err.detail
+        });
+    }
+}
 //User
 export async function createUser(firstName, lastName, username, email, password) {
     try{
@@ -142,3 +153,4 @@ export async function modifyMembership(userId, code){
         });
     }
 };
+

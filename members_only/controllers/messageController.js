@@ -6,8 +6,8 @@ export async function messagesHome (req, res) {
   const loggedUserMessages = await db.retrieveMessagesBelongToUser(req.user.id);
 
   return res.render("messages", {
-    title: "New Message",
-    header: "Post a Message",
+    title: "My Messages",
+    header: `${req.user.username}'s Messages 🗃`,
     memberAuthenticatedLinks,
     user: req.user,
     messages: loggedUserMessages
@@ -17,74 +17,50 @@ export async function messagesHome (req, res) {
 export async function newMessageGet (req,res) {
   const loggedUser = req.user;
 
-  
-
+  return res.render("newMessage", {
+    title: "New Message",
+    header: "Post a new message 📩",
+    memberAuthenticatedLinks,
+  });
 }
 
-/*
+
 const validateNewMessage = [
-  body("messageUser").optional({checkFalsy: true}).trim(),
-  body("messageUserEmail").optional({checkFalsy: true}).isEmail().withMessage(emailErr),
-  body("messageText").trim().isLength({ min: 1, max: 300 }).withMessage(`Message ${messageErr}`),
+  body('new-message-title')
+    .notEmpty().withMessage("Message Title is required!").bail()
+    .trim()
+    .isLength({min: 10, max:70}).withMessage("Message Title should be at least 10 characters and at max 70 characters"),
+  body("new-message")
+    .notEmpty().withMessage("Message Text is required!").bail()
+    .trim()
+    .isLength({ min: 50, max: 500 }).withMessage(`Message must be at least 50 characters and 500 characters at max`),
 ]
+
 
 export const newMessagePost = [
   validateNewMessage,
   async (req, res) => {
-    
-    let customError = [];
+
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
-      return res.status(400).render("newMessage", {
+      return res.render("newMessage", {
         title: "New Message",
-        header: "Send a Message",
-        links: links,
-        inputs: inputs,
+        header: "Post a new message 📩",
+        memberAuthenticatedLinks,
         errors: errors.array(),
       });
     }
-    const { messageUser, messageUserEmail, messageText } = req.body;
-    if ((!messageUser && !messageUserEmail) || !messageText) {
-      customError = [{ msg: "User or email and message are required!"}];
-      return res.status(400).render("newMessage", {
-        title: "New Message",
-        header: "Send a Message",
-        links: links,
-        inputs: inputs,
-        errors: customError
-      });
-    }
+    const {'new-message-title': newMessageTitle, 'new-message': newMessageText } = req.body;
 
-    const user = await db.searchUsernames(messageUser, messageUserEmail);
-    console.log(user[0]);
+    const user = req.user;
 
-    if(user.length == 0) {
-      customError = [{ msg: "User or email does not exist. Please create user first before sending a message" }];
-      return res.status(400).render("newMessage", {
-        title: "New Message",
-        header: "Send a Message",
-        links: links,
-        inputs: inputs,
-        errors: customError,
-      });
-    } else if (user.length>1) {
-      customError = [{ msg: "More than 1 user or email was matched. Please specify a more unique pattern" }]
-      return res.status(400).render("newMessage", {
-        title: "New Message",
-        header: "Send a Message",
-        links: links,
-        inputs: inputs,
-        errors: customError,
-      });
-    }
+    await db.insertNewMessage(user.id, newMessageTitle, newMessageText);
 
-    await db.insertMessage(user[0].id, messageText);
-
-    res.redirect("/");
+    res.redirect("/messages");
   }
 ]
-
+/*
 export const messageSearch = async (req, res) => {
   let disabled = false;
   let customError = [];
