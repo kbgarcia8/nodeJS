@@ -3,7 +3,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'url';
 import {dirname} from 'path';
 //constants
-import { notAuthenticatedLinks, memberAuthenticatedLinks } from "./constants/constants.js";
+import { notAuthenticatedLinks, memberAuthenticatedLinks, guestAuthenticatedLinks, adminAuthenticatedLinks } from "./constants/constants.js";
 //session/passport
 import session from "express-session";
 import passport from "passport";
@@ -59,7 +59,10 @@ app.use((err, req, res, next) => {
       title: "Error Page",
       notAuthenticatedLinks,
       memberAuthenticatedLinks,
+      guestAuthenticatedLinks,
+      adminAuthenticatedLinks,
       access: req.isAuthenticated(),
+      user: req.user,
       error: err
   });
 });

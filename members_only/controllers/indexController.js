@@ -1,5 +1,5 @@
 import { check, validationResult } from "express-validator";
-import { notAuthenticatedLinks, memberAuthenticatedLinks } from "../constants/constants.js";
+import { notAuthenticatedLinks, memberAuthenticatedLinks, guestAuthenticatedLinks, adminAuthenticatedLinks } from "../constants/constants.js";
 import asyncHandler from "express-async-handler";
 import * as db from "../db/queries.js";
 import bcrypt from "bcryptjs";
@@ -87,6 +87,8 @@ export const registerFormPost = [
                 title: "Register Page",
                 notAuthenticatedLinks,
                 memberAuthenticatedLinks,
+                guestAuthenticatedLinks,
+                adminAuthenticatedLinks,
                 errors: errors.array()
             });
         }
@@ -137,6 +139,8 @@ export const loginFormPost = [
                 title: "Login Page",
                 notAuthenticatedLinks,
                 memberAuthenticatedLinks,
+                guestAuthenticatedLinks,
+                adminAuthenticatedLinks,
                 errors: errors.array()
             });
         }
@@ -168,6 +172,8 @@ export async function dashboardGet(req,res){
         header: `Hi ${req.user.username}, Welcome back!`,
         notAuthenticatedLinks,
         memberAuthenticatedLinks,
+        guestAuthenticatedLinks,
+        adminAuthenticatedLinks,
         messages: messages,
         user: req.user
     });

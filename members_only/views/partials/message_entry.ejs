@@ -1,0 +1,19 @@
+<div class="message-entry">
+    <div class="message-entry-header">
+        <h3 class="message-entry-title"><%= message.title %></h3>
+        <h6 class="message-entry-username-and-email">@<%= message.username %> (<%= message.email %>)</h6>
+        <!--For improvement to grant this only on messages owned by the user with 'Member' membership and all messages by 'Admin' user-->
+        <% if (message.username === user.username) { %>
+            <div class="message-entry-button-space">
+                <form class="button-only" action="/messages/edit/<%= message.id %>" method="GET">
+                    <button class="open-message" type="submit">Edit</button>
+                </form>
+                <form class="button-only" action="/messages/delete/<%= message.id %>" method="GET">
+                    <button class="open-message" type="submit">Delete</button>
+                </form>
+            </div>
+        <% } %>
+    </div>
+    <p class="message-entry-text"><%= message.message %></p>
+    <p class="message-entry-date-added"><b>Date added: </b> <%= message.created_at_formatted %></p>
+</div>

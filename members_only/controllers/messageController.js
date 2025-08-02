@@ -1,6 +1,6 @@
 import { body, query, validationResult } from "express-validator";
 import * as db from "../db/queries.js";
-import { memberAuthenticatedLinks } from "../constants/constants.js";
+import { memberAuthenticatedLinks, guestAuthenticatedLinks, adminAuthenticatedLinks } from "../constants/constants.js";
 
 export async function messagesHome (req, res) {
   const loggedUserMessages = await db.retrieveMessagesBelongToUser(req.user.id);
@@ -9,6 +9,8 @@ export async function messagesHome (req, res) {
     title: "My Messages",
     header: `${req.user.username}'s Messages 🗃`,
     memberAuthenticatedLinks,
+    guestAuthenticatedLinks,
+    adminAuthenticatedLinks,
     user: req.user,
     messages: loggedUserMessages
   });
@@ -21,6 +23,8 @@ export async function newMessageGet (req,res) {
     title: "New Message",
     header: "Post a new message 📩",
     memberAuthenticatedLinks,
+    guestAuthenticatedLinks,
+    adminAuthenticatedLinks
   });
 }
 
@@ -48,6 +52,8 @@ export const newMessagePost = [
         title: "New Message",
         header: "Post a new message 📩",
         memberAuthenticatedLinks,
+        guestAuthenticatedLinks,
+        adminAuthenticatedLinks,
         errors: errors.array(),
       });
     }
@@ -55,12 +61,14 @@ export const newMessagePost = [
 
     const user = req.user;
 
+    console.log(user);
+
     await db.insertNewMessage(user.id, newMessageTitle, newMessageText);
 
     res.redirect("/messages");
   }
 ]
-/*
+
 export const messageSearch = async (req, res) => {
   let disabled = false;
   let customError = [];
@@ -78,7 +86,7 @@ export const messageSearch = async (req, res) => {
     errors: customError
   });
 };
-
+/*
 const validateMessageSearch = [
   query("searchPattern").optional({checkFalsy: true}).trim(),
   query("searchSender").optional({checkFalsy: true}).trim(),
