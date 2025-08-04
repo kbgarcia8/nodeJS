@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+<body>
+  <header>
+    <%- include("partials/errors.ejs") %>
+    <% if(user.status_code === 3) { %>
+      <%- include('partials/navbar2.ejs', {links: memberAuthenticatedLinks}) %>
+    <% } else if (user.status_code === 2) { %>
+      <%- include('partials/navbar2.ejs', {links: guestAuthenticatedLinks}) %>
+    <% } else if (user.status_code === 1) { %>
+      <%- include('partials/navbar2.ejs', {links: adminAuthenticatedLinks}) %>
+    <% } %> 
+  </header>
+  <h4>Match Messages:</h4>
+  <main class="searched-messages">
+    <% if(messages.length === 0) { %>
+      <p class="no-searched-messages">You have not post any messages yet! <a href="/messages/new">Post a Message now</a></p>
+    <% } else { %>
+      <% messages.forEach((message) => { %>
+        <%- include('partials/message_entry.ejs', {message: message}) %>
+      <% }); %>
+    <% } %>
+  </main>
+</body>
+</html>

@@ -1,8 +1,9 @@
-import { body, query, validationResult } from "express-validator";
+import { body, header, query, validationResult } from "express-validator";
 import * as db from "../db/queries.js";
 import { memberAuthenticatedLinks, guestAuthenticatedLinks, adminAuthenticatedLinks } from "../constants/constants.js";
+import { ExpressValError } from "../utils/errors.js";
 
-export async function messagesHome (req, res) {
+export async function messagesHomeGet (req, res) {
   const loggedUserMessages = await db.retrieveMessagesBelongToUser(req.user.id);
 
   return res.render("messages", {
@@ -28,18 +29,16 @@ export async function newMessageGet (req,res) {
   });
 }
 
-
 const validateNewMessage = [
-  body('new-message-title')
+  body('newMessageTitle')
     .notEmpty().withMessage("Message Title is required!").bail()
     .trim()
     .isLength({min: 10, max:70}).withMessage("Message Title should be at least 10 characters and at max 70 characters"),
-  body("new-message")
+  body("newMessage")
     .notEmpty().withMessage("Message Text is required!").bail()
     .trim()
     .isLength({ min: 50, max: 500 }).withMessage(`Message must be at least 50 characters and 500 characters at max`),
 ]
-
 
 export const newMessagePost = [
   validateNewMessage,
@@ -70,40 +69,54 @@ export const newMessagePost = [
 ]
 
 export const messageSearch = async (req, res) => {
-  let disabled = false;
-  let customError = [];
-  const messages = await db.getAllMessages();
-  
+  const messages = await db.retrieveAllMessages();
 
-  if(messages.length === 0) {
-    disabled = true
-    customError = [{ msg: "There are no message saved in the database to search for." }]
-  }
-
-  res.render("searchMessage", {
+  return res.render("searchMessage", {
     title: "Search Message",
-    isDisabled: disabled,
-    errors: customError
+    messages,
+    user: req.user,
+    memberAuthenticatedLinks,
+    guestAuthenticatedLinks,
+    adminAuthenticatedLinks
   });
 };
-/*
+
 const validateMessageSearch = [
-  query("searchPattern").optional({checkFalsy: true}).trim(),
-  query("searchSender").optional({checkFalsy: true}).trim(),
+  query("searchMessagePattern").optional({checkFalsy: true}).trim().custom((value, { req }) => { //access req
+      if (req.query['searchSender'] === "" && value === "") {
+          throw new ExpressValError("If search sender pattern is empty must provide a search message pattern at least", 400, "EXPRESS_VAL_ERROR_SEARCH_MESSAGE", {
+              detail: "Search pattern must be provided if search sender is empty!",
+          });
+      }
+      return true;
+  }),
+  query("searchSenderPattern").optional({checkFalsy: true}).trim().custom((value, { req }) => { //access req
+      if (req.query['searchPattern'] === "" && value === "") {
+          throw new ExpressValError("If search message pattern is empty must provide a search sender pattern at least", 400, "EXPRESS_VAL_ERROR_SEARCH_MESSAGE", {
+              detail: "Search sender must be provided if search pattern is empty!",
+          });
+      }
+      return true;
+  }),
 ];
 
 export const messageSearchGet = [
   validateMessageSearch,
   async (req, res) => {
     const errors = validationResult(req);
-    let customError = [];
+
+    const messages = await db.retrieveAllMessages();
 
     const {searchPattern, searchSender} = req.query
 
     if (!errors.isEmpty()) {
       return res.status(400).render("searchMessage", {
         title: "Search Message",
-        isDisabled: disabled,
+        messages,
+        user: req.user,
+        memberAuthenticatedLinks,
+        guestAuthenticatedLinks,
+        adminAuthenticatedLinks,
         errors: errors.array(),
       });
     }
@@ -134,7 +147,7 @@ export const messageSearchGet = [
     });
   }
 ]
-
+/*
 export const messageDeletePost = async (req, res) => {
   await db.deleteMessage(req.params.id);
   res.redirect("/");

@@ -1,5 +1,6 @@
 import { check, validationResult } from "express-validator";
 import { notAuthenticatedLinks, memberAuthenticatedLinks, guestAuthenticatedLinks, adminAuthenticatedLinks } from "../constants/constants.js";
+import { ExpressValError } from "../utils/errors.js";
 import asyncHandler from "express-async-handler";
 import * as db from "../db/queries.js";
 import bcrypt from "bcryptjs";
@@ -23,15 +24,15 @@ export async function homePage(req,res){
 };
 
 const registerValidation =[
-    check('register-email')
+    check('registerEmail')
         .isEmail().withMessage('Please provide a valid email address!').bail()
         .normalizeEmail(),
-    check('register-username')
+    check('registerUsername')
         .trim()
         .optional({ checkFalsy: true })
         .isLength({min: 5, max: 35}).withMessage('Username must be atleast 5 characters and at max 35 characters!')
         .isAlphanumeric().withMessage('Username must contain alphanumeric characters only!'),
-    check('register-first-name')
+    check('registerFirstName')
         .trim()
         .notEmpty().withMessage('First Name is required!').bail()
         .isAlpha().withMessage('First Name must contain alphabetic characters only!'),
@@ -39,7 +40,7 @@ const registerValidation =[
         .trim()
         .notEmpty().withMessage('Last Name is required!').bail()
         .matches(/^[a-zA-Z0-9.]+$/).withMessage('Last Name can only contain letters, numbers, and dots'),
-    check('register-password')
+    check('registerPassword')
         .notEmpty().withMessage('Please provide a password!').bail()
         .isStrongPassword({
             minLength: 8,
@@ -48,15 +49,17 @@ const registerValidation =[
             minSymbols: 1,
             minNumbers: 1,
         }).withMessage('Password must be at least 8 characters and include uppercase, lowercase, and a symbol'),
-    check('register-confirm-password')
+    check('registerConfirmPassword')
         .notEmpty().withMessage('Please confirm password!').bail()
         .custom((value, { req }) => { //access req
-            if (value !== req.body['register-password']) {
-                throw new Error('Passwords do not match');
+            if (value !== req.body['registerPassword']) {
+                throw new ExpressValError("Password do not match", 400, "EXPRESS_VAL_ERROR_REG_PASS_NOT_MATCH", {
+                    detail: "Password during register does not match!",
+                });
             }
             return true;
         }),
-    check('register-membership-code')
+    check('registerMembershipCode')
         .trim()
         .optional({ checkFalsy: true })
         .custom((value, { req }) => {
@@ -79,8 +82,8 @@ export async function registerForm(req,res){
 export const registerFormPost = [
     registerValidation, asyncHandler(async (req,res) =>{
         const errors = validationResult(req);
-        const { 'register-first-name': firstName, 'register-last-name': lastName, 'register-username': username, 'register-email': email, 'register-password': password } = req.body;
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const { registerFirstName, registerLastName, registerUsername, registerEmail, registerPassword } = req.body;
+        const hashedPassword = await bcrypt.hash(registerPassword, 10);
 
         if (!errors.isEmpty()) {
             return res.render("register", {
@@ -93,12 +96,12 @@ export const registerFormPost = [
             });
         }
         if(username !== "") {
-            await db.createUser(firstName, lastName, username, email, hashedPassword);
+            await db.createUser(registerFirstName, registerLastName, registerUsername, registerEmail, hashedPassword);
         } else {
-            const extractedUsername = email.split('@')[0];
-            await db.createUser(firstName, lastName, extractedUsername, email, hashedPassword);
+            const extractedUsername = registerEmail.split('@')[0];
+            await db.createUser(registerFirstName, registerUsername, extractedUsername, registerEmail, hashedPassword);
         }
-        const createdUser = await db.retrieveUserByEmail(email);
+        const createdUser = await db.retrieveUserByEmail(registerEmail);
         //Because of checkFalsy = true it will skip if no code was provided and req.isValidMembershipCode will be undefined to must set to false if that is the case
         if (typeof req.isValidMembershipCode === 'undefined') {
             req.isValidMembershipCode = false;
@@ -123,10 +126,10 @@ export async function loginFormGet(req,res){
 };
 
 const loginValidation =[
-    check('login-email')
+    check('loginEmail')
         .isEmail().withMessage('Please provide a valid email address!').bail()
         .normalizeEmail(),
-    check('login-password')
+    check('loginPassword')
         .notEmpty().withMessage('Please provide a password!')
 ];
 
@@ -146,7 +149,7 @@ export const loginFormPost = [
         }
         //STILL need to call passport.authenticate after login
         //The error throwing and handling here are only available during login and not meant to be a middleware in protected routes
-        passport.authenticate("local", (err, user, info) => {
+        passport.authenticate("local", (err, user, info) => {//logic on how submitted info are processed are in passport.js
         if (err) return next(err);
         if (!user) {
             return res.render("login", {

@@ -1,17 +1,19 @@
-<div class="message-bubble">
-    <div class="message-bubble-header">
-        <h3 class="message-title"><%= message.title %></h3>
-        <h6 class="message-username-and-email">@<%= message.username %> (<%= message.email %>)</h6>
+<div class="message-bubble2">
+    <div class="message-bubble2-header">
+        <h3 class="message-bubble2-title"><%= message.title %></h3>
+        <h6 class="message-bubble2-username-and-email">@<%= message.username %> (<%= message.email %>)</h6>
         <!--For improvement to grant this only on messages owned by the user with 'Member' membership and all messages by 'Admin' user-->
         <% if (message.username === user.username) { %>
-            <form class="button-only" action="/messages/edit/<%= message.id %>" method="GET">
-                <button class="open-message" type="submit">Edit</button>
-            </form>
-            <form class="button-only" action="/messages/delete/<%= message.id %>" method="GET">
-                <button class="open-message" type="submit">Delete</button>
-            </form>
+            <div class="message-bubble2-form-buttons-space">
+                <form class="message-bubble2-button-only" action="/messages/edit/<%= message.id %>" method="GET">
+                    <button class="open-message" type="submit">Edit</button>
+                </form>
+                <form class="message-bubble2-button-only" action="/messages/delete/<%= message.id %>" method="GET">
+                    <button class="delete-message" type="submit">Delete</button>
+                </form>
+            </div>
         <% } %>
     </div>
-    <p class="text-message"><%= message.message %></p>
-    <p class="date-added"><b>Date added:</b> <%= message.created_at_formatted %></p>
+    <p class="message-bubble2-text-message"><%= message.message %></p>
+    <p class="message-bubble2-date-added"><b>Date added:</b> <%= message.created_at_formatted %></p>
 </div>

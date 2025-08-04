@@ -16,7 +16,7 @@
         <h1 class="page-header">→ What's on your mind? 🧠</h1>
         <h2 class="welcome-user-header"><%= header %></h2>
     </header>
-    <main class="message-board">
+    <main class="message-dashboard">
       <!--If membership guest censor author of messages unless belong to user logged in-->
       <% messages.forEach((message) => { %>
         <% if(user.status_code === 3 || (user.username === message.username)) { %>

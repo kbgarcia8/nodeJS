@@ -6,8 +6,8 @@ import bcrypt from "bcryptjs";
 //Configure passport
 passport.use(
   new LocalStrategy({
-  usernameField: 'login-email', // match the name attribute in your form and is read in req.body
-  passwordField: 'login-password'
+  usernameField: 'loginEmail', // match the name attribute in your form and is read in req.body
+  passwordField: 'loginPassword'
 },  async function verify (email, password, done) { //takes up the values in LocalStrategy Object in order as argument in verify so it does not matter what name is assigned
       try {
         const user = await db.retrieveUserByEmail(email);

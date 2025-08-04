@@ -32,6 +32,37 @@ export async function retrieveMessagesBelongToUser(userId) {
         });
     }
 };
+export async function retrieveMatchMessages(searchMessagePattern, searchSenderPattern) {
+    try {
+        if(searchMessagePattern && !searchSenderPattern){
+            const { rows } = await pool.query(`
+            SELECT u.id AS user_id, u.first_name, u.last_name, u.username, u.email, m.title, m.message, TO_CHAR(m.created_at, 'MM-DD-YYYY HH24:MI') AS created_at_formatted FROM members_only.users AS u JOIN members_only.messages AS m ON u.id = m.user_id
+            WHERE m.message ILIKE $1;
+            `, [`%${searchMessagePattern}%`]);
+            console.log(`Mathced Search Pattern: ${rows}`);
+            return rows;
+        } else if(!searchMessagePattern && searchSenderPattern){
+            const { rows } = await pool.query(`
+            SELECT u.id AS user_id, u.first_name, u.last_name, u.username, u.email, m.title, m.message, TO_CHAR(m.created_at, 'MM-DD-YYYY HH24:MI') AS created_at_formatted FROM members_only.users AS u JOIN members_only.messages AS m ON u.id = m.user_id
+            WHERE u.username ILIKE $1;  
+            `, [`%${searchSenderPattern}%`]);
+            console.log(`Mathced Message with specified User: ${rows}`);
+            return rows;
+        } else if(searchMessagePattern && searchSenderPattern){
+            const { rows } = await pool.query(`
+            SELECT u.id AS user_id, u.first_name, u.last_name, u.username, u.email, m.title, m.message, TO_CHAR(m.created_at, 'MM-DD-YYYY HH24:MI') AS created_at_formatted FROM members_only.users AS u JOIN members_only.messages AS m ON u.id = m.user_id
+            WHERE m.message ILIKE $1 AND u.username ILIKE $2;   
+            `, [`%${searchMessagePattern}%`,`%${searchSenderPattern}%`]);
+            console.log(`Mathced Search Pattern and Message with specified User: ${rows}`);
+            return rows;
+        }
+    } catch (err) {
+        console.error("Database error in retrieveMatchMessages:", err);
+        throw new DBError(`Failed to retrieve searched messages in database`, 409, "DB_RETRIEVE_MATCH_MESSAGES_FAILED", {
+            detail: err.detail,
+        });
+    }
+};
 export async function insertNewMessage(userId, messageTitle, messageText) {
     try{
         await pool.query(`INSERT INTO members_only.messages(user_id, title, message) VALUES ($1, $2, $3)`,[userId, messageTitle, messageText]);
@@ -42,7 +73,7 @@ export async function insertNewMessage(userId, messageTitle, messageText) {
             details: err.detail
         });
     }
-}
+};
 //User
 export async function createUser(firstName, lastName, username, email, password) {
     try{

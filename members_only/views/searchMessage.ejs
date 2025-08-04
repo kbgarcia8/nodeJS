@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+<body>
+  <header>
+    <%- include("partials/errors.ejs") %>
+    <% if(user.status_code === 3) { %>
+      <%- include('partials/navbar2.ejs', {links: memberAuthenticatedLinks}) %>
+    <% } else if (user.status_code === 2) { %>
+      <%- include('partials/navbar2.ejs', {links: guestAuthenticatedLinks}) %>
+    <% } else if (user.status_code === 1) { %>
+      <%- include('partials/navbar2.ejs', {links: adminAuthenticatedLinks}) %>
+    <% } %>
+    <h1 class="page-header"><%= title %></h1>
+  </header>
+  <form action="/messages/search/result" method="GET">
+    <div class="search-message-input">
+      <label for="searchMessagePattern">Message Pattern: </label>
+      <input type="text" name="searchMessagePattern" id="searchMessagePattern">
+    </div>
+    <div class="search-message-input">
+      <label for="searchSenderPattern">Sender: </label>
+      <input type="text" name="searchSenderPattern" id="searchSenderPattern">
+    </div>
+    <button class="message-search-submit" type="submit" <%= messages.length === 0 ? disabled : "" %> >Search</button>
+  </form>
+</body>
+</html>
