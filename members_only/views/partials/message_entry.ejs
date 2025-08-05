@@ -5,10 +5,10 @@
         <!--For improvement to grant this only on messages owned by the user with 'Member' membership and all messages by 'Admin' user-->
         <% if (message.username === user.username) { %>
             <div class="message-entry-button-space">
-                <form class="button-only" action="/messages/edit/<%= message.id %>" method="GET">
+                <form class="button-only" action="/messages/edit/<%= message.message_id %>" method="GET">
                     <button class="open-message" type="submit">Edit</button>
                 </form>
-                <form class="button-only" action="/messages/delete/<%= message.id %>" method="GET">
+                <form class="button-only" action="/messages/delete/<%= message.message_id %>" data-id="<%= message.message_id %>" method="POST">
                     <button class="open-message" type="submit" onclick="return confirm('Are you sure you want to delete this message?');">Delete</button>
                 </form>
             </div>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+<body>
+  <h1><%= title %></h1>
+  <%- include("partials/errors.ejs") %>
+  <form action="/users/search/result" method="GET">
+    <label for="searchUsername">First Name: </label>
+    <input type="text" name="searchUsername" id="searchUsername">
+    <label for="searchUserEmail">Email: </label>
+    <input type="text" name="searchUserEmail" id="searchUserEmail">
+    <button type="submit" <%= isDisabled ? disabled : "" %> >Search</button>
+  </form>
+  <form class="button-only" action="/users" method="GET">
+    <button class="update-user" type="submit">Back to Users List</button>
+  </form>
+</body>
+</html>

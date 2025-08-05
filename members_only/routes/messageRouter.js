@@ -8,9 +8,10 @@ messageRouter.get("/", checkAuthentication, messageController.messagesHomeGet);
 messageRouter.get("/new", checkAuthentication, messageController.newMessageGet);
 messageRouter.post("/new", checkAuthentication, messageController.newMessagePost);
 messageRouter.get("/search", checkAuthentication, messageController.messageSearch);
+messageRouter.get("/search/result", checkAuthentication, messageController.messageSearchGet);
+messageRouter.post("/delete/:id", checkAuthentication, messageController.messageDeletePost);
 /*
-messageRouter.get("/search/result", messageController.messageSearchGet);
 messageRouter.get("/view/:id", messageController.messageView);
-messageRouter.post("/delete/:id", messageController.messageDeletePost);
+
 */
 export default messageRouter;

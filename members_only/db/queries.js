@@ -1,56 +1,58 @@
 import pool from "./pool.js";
 import { DBError } from "../utils/errors.js";
 //remember to throw an error for every query functions
-/* Substitute err.detail for all function with a message since err.detail is not native/pre-determined*/
+/* Substitute err.error || err.message for all function with a message since err.error || err.message is not native/pre-determined*/
 
 //Messages
 export async function retrieveAllMessages() {
     try{
         const { rows } = await pool.query(`
-            SELECT u.id AS user_id, u.first_name, u.last_name, u.username, u.email, m.title, m.message, TO_CHAR(m.created_at, 'MM-DD-YYYY HH24:MI') AS created_at_formatted FROM members_only.users AS u JOIN members_only.messages AS m ON u.id = m.user_id;
+            SELECT u.id AS user_id, u.first_name, u.last_name, u.username, u.email, m.id AS message_id, m.title, m.message, TO_CHAR(m.created_at, 'MM-DD-YYYY HH24:MI') AS created_at_formatted FROM members_only.users AS u JOIN members_only.messages AS m ON u.id = m.user_id;
         `);
 
         return rows;
     } catch(err) {
         console.error("Database error in retrieveAllMessages:", err);
         throw new DBError("Failed to retrieve all messages in database", 409, "DB_RETRIEVE_ALL_MESSAGES_FAILED", {
-            detail: err.detail,
+            detail: err.error || err.message,
         });
     }
 };
 export async function retrieveMessagesBelongToUser(userId) {
     try{
         const { rows } = await pool.query(`
-            SELECT u.id AS user_id, u.first_name, u.last_name, u.username, u.email, m.title, m.message, TO_CHAR(m.created_at, 'MM-DD-YYYY HH24:MI') AS created_at_formatted FROM members_only.users AS u JOIN members_only.messages AS m ON u.id = m.user_id WHERE u.id = $1;
+            SELECT u.id AS user_id, u.first_name, u.last_name, u.username, u.email, m.id AS message_id, m.title, m.message, TO_CHAR(m.created_at, 'MM-DD-YYYY HH24:MI') AS created_at_formatted FROM members_only.users AS u JOIN members_only.messages AS m ON u.id = m.user_id WHERE u.id = $1;
         `,[userId]);
 
         return rows;
     } catch(err) {
         console.error("Database error in retrieveMessagesBelongToUser:", err);
         throw new DBError(`Failed to retrieve all messages in database belonging to user ${rows[0].username}`, 409, "DB_RETRIEVE_USER_MESSAGES_FAILED", {
-            detail: err.detail,
+            detail: err.error || err.message,
         });
     }
 };
 export async function retrieveMatchMessages(searchMessagePattern, searchSenderPattern) {
+    //can be improved to have interchangeable WHERE using string concat or switch cases
+    //add first name, last name and message title as search pattern
     try {
         if(searchMessagePattern && !searchSenderPattern){
             const { rows } = await pool.query(`
-            SELECT u.id AS user_id, u.first_name, u.last_name, u.username, u.email, m.title, m.message, TO_CHAR(m.created_at, 'MM-DD-YYYY HH24:MI') AS created_at_formatted FROM members_only.users AS u JOIN members_only.messages AS m ON u.id = m.user_id
+            SELECT u.id AS user_id, u.first_name, u.last_name, u.username, u.email, m.id AS message_id, m.title, m.message, TO_CHAR(m.created_at, 'MM-DD-YYYY HH24:MI') AS created_at_formatted FROM members_only.users AS u JOIN members_only.messages AS m ON u.id = m.user_id
             WHERE m.message ILIKE $1;
             `, [`%${searchMessagePattern}%`]);
             console.log(`Mathced Search Pattern: ${rows}`);
             return rows;
         } else if(!searchMessagePattern && searchSenderPattern){
             const { rows } = await pool.query(`
-            SELECT u.id AS user_id, u.first_name, u.last_name, u.username, u.email, m.title, m.message, TO_CHAR(m.created_at, 'MM-DD-YYYY HH24:MI') AS created_at_formatted FROM members_only.users AS u JOIN members_only.messages AS m ON u.id = m.user_id
+            SELECT u.id AS user_id, u.first_name, u.last_name, u.username, u.email, m.id AS message_id, m.title, m.message, TO_CHAR(m.created_at, 'MM-DD-YYYY HH24:MI') AS created_at_formatted FROM members_only.users AS u JOIN members_only.messages AS m ON u.id = m.user_id
             WHERE u.username ILIKE $1;  
             `, [`%${searchSenderPattern}%`]);
             console.log(`Mathced Message with specified User: ${rows}`);
             return rows;
         } else if(searchMessagePattern && searchSenderPattern){
             const { rows } = await pool.query(`
-            SELECT u.id AS user_id, u.first_name, u.last_name, u.username, u.email, m.title, m.message, TO_CHAR(m.created_at, 'MM-DD-YYYY HH24:MI') AS created_at_formatted FROM members_only.users AS u JOIN members_only.messages AS m ON u.id = m.user_id
+            SELECT u.id AS user_id, u.first_name, u.last_name, u.username, u.email, m.id AS message_id, m.title, m.message, TO_CHAR(m.created_at, 'MM-DD-YYYY HH24:MI') AS created_at_formatted FROM members_only.users AS u JOIN members_only.messages AS m ON u.id = m.user_id
             WHERE m.message ILIKE $1 AND u.username ILIKE $2;   
             `, [`%${searchMessagePattern}%`,`%${searchSenderPattern}%`]);
             console.log(`Mathced Search Pattern and Message with specified User: ${rows}`);
@@ -59,7 +61,7 @@ export async function retrieveMatchMessages(searchMessagePattern, searchSenderPa
     } catch (err) {
         console.error("Database error in retrieveMatchMessages:", err);
         throw new DBError(`Failed to retrieve searched messages in database`, 409, "DB_RETRIEVE_MATCH_MESSAGES_FAILED", {
-            detail: err.detail,
+            detail: err.error || err.message,
         });
     }
 };
@@ -70,7 +72,24 @@ export async function insertNewMessage(userId, messageTitle, messageText) {
     }catch(err){
         console.error("Database error in insertNewMessage:", err)
         throw new DBError(`Failed to add new message under user ${userId}`, 400, "DB_INSERT_MESSAGE_ERROR",{
-            details: err.detail
+            details: err.error || err.message
+        });
+    }
+};
+export async function deleteMessage(messageId) {
+    try {
+        await pool.query(`
+            DELETE FROM members_only.messages
+            WHERE id = $1;
+        `, [messageId]);
+        const user = await pool.query(`
+            SELECT user_id FROM members_only.messages WHERE id = $1;`, [messageId]);
+            console.log(user)
+        //console.log(`Successfully deleted message id: ${messageId} from user: ${user[0].user_id}`);
+    }  catch(err) {
+        console.error("Database error in deleteMessage:", err)
+        throw new DBError(`Failed to delete message under user ${user[0].user_id}`, 400, "DB_DELETE_MESSAGE_ERROR", {
+            details: err.error || err.message
         });
     }
 };
@@ -82,7 +101,7 @@ export async function createUser(firstName, lastName, username, email, password)
     } catch(err) {
         console.error("Database error in createUser:", err);
         throw new DBError("Failed to create user in database", 409, "DB_CREATE_USER_FAILED", {
-            detail: err.detail,
+            detail: err.error || err.message,
         });
     }
 };
@@ -102,7 +121,7 @@ export async function retrieveUserByEmail(email) {
     } catch(err) {
         console.error("Database error in retrieveUserByEmail:", err);
         throw new DBError("Failed to retrieve user by email", 409, "DB_USER_EMAIL_NOT_FOUND", {
-            detail: err.detail,
+            detail: err.error || err.message,
         });
     }
 };
@@ -124,7 +143,7 @@ export async function retrieveUserById(id) {
     } catch(err) {
         console.error("Database error in retrieveUserById:", err);
         throw new DBError("Failed to retrieve user by id", 409, "DB_USER_ID_NOT_FOUND", {
-            detail: err.detail,
+            detail: err.error || err.message,
         });
     }
 };
@@ -154,7 +173,7 @@ export async function addDefaultMembership(userId, membershipCode){
     } catch(err){
         console.error("Database error in addDefaultMembership:", err);
         throw new DBError(`Failed to add membership for new user with id ${userId}`, 409, "DB_ADD_MEMBERSHIP_FOR_NEW_USER_FAILED", {
-            detail: err.detail,
+            detail: err.error || err.message,
         });
     }
 };
@@ -180,7 +199,7 @@ export async function modifyMembership(userId, code){
     } catch(err){
         console.error("Database error in modifyMembership:", err);
         throw new DBError(`Failed to modify membership for user with id ${userId}`, 409, "DB_MODIFY_MEMBERSHIP_FAILED", {
-            detail: err.detail,
+            detail: err.error || err.message,
         });
     }
 };

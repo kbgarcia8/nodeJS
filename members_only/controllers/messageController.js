@@ -6,6 +6,8 @@ import { ExpressValError } from "../utils/errors.js";
 export async function messagesHomeGet (req, res) {
   const loggedUserMessages = await db.retrieveMessagesBelongToUser(req.user.id);
 
+  console.log(loggedUserMessages)
+
   return res.render("messages", {
     title: "My Messages",
     header: `${req.user.username}'s Messages 🗃`,
@@ -23,6 +25,7 @@ export async function newMessageGet (req,res) {
   return res.render("newMessage", {
     title: "New Message",
     header: "Post a new message 📩",
+    user: req.user,
     memberAuthenticatedLinks,
     guestAuthenticatedLinks,
     adminAuthenticatedLinks
@@ -34,7 +37,7 @@ const validateNewMessage = [
     .notEmpty().withMessage("Message Title is required!").bail()
     .trim()
     .isLength({min: 10, max:70}).withMessage("Message Title should be at least 10 characters and at max 70 characters"),
-  body("newMessage")
+  body("newMessageText")
     .notEmpty().withMessage("Message Text is required!").bail()
     .trim()
     .isLength({ min: 50, max: 500 }).withMessage(`Message must be at least 50 characters and 500 characters at max`),
@@ -45,6 +48,7 @@ export const newMessagePost = [
   async (req, res) => {
 
     const errors = validationResult(req);
+    const user = req.user;
 
     if (!errors.isEmpty()) {
       return res.render("newMessage", {
@@ -53,14 +57,11 @@ export const newMessagePost = [
         memberAuthenticatedLinks,
         guestAuthenticatedLinks,
         adminAuthenticatedLinks,
+        user,
         errors: errors.array(),
       });
     }
-    const {'new-message-title': newMessageTitle, 'new-message': newMessageText } = req.body;
-
-    const user = req.user;
-
-    console.log(user);
+    const {newMessageTitle, newMessageText } = req.body;
 
     await db.insertNewMessage(user.id, newMessageTitle, newMessageText);
 
@@ -82,22 +83,27 @@ export const messageSearch = async (req, res) => {
 };
 
 const validateMessageSearch = [
-  query("searchMessagePattern").optional({checkFalsy: true}).trim().custom((value, { req }) => { //access req
-      if (req.query['searchSender'] === "" && value === "") {
-          throw new ExpressValError("If search sender pattern is empty must provide a search message pattern at least", 400, "EXPRESS_VAL_ERROR_SEARCH_MESSAGE", {
-              detail: "Search pattern must be provided if search sender is empty!",
-          });
-      }
-      return true;
-  }),
-  query("searchSenderPattern").optional({checkFalsy: true}).trim().custom((value, { req }) => { //access req
-      if (req.query['searchPattern'] === "" && value === "") {
-          throw new ExpressValError("If search message pattern is empty must provide a search sender pattern at least", 400, "EXPRESS_VAL_ERROR_SEARCH_MESSAGE", {
-              detail: "Search sender must be provided if search pattern is empty!",
-          });
-      }
-      return true;
-  }),
+  // Just basic optional + trimming, no cross-field logic here
+  query("searchMessagePattern").optional({ checkFalsy: true }).trim(),
+  query("searchSenderPattern").optional({ checkFalsy: true }).trim(),
+
+  // Cross-field logic in a separate middleware
+  (req, res, next) => {
+    const { searchMessagePattern = "", searchSenderPattern = "" } = req.query;
+
+    if (!searchMessagePattern && !searchSenderPattern) {
+      return next(new ExpressValError(
+        "At least one of searchMessagePattern or searchSenderPattern must be provided.",
+        400,
+        "EXPRESS_VAL_ERROR_SEARCH_MESSAGE",
+        {
+          detail: "Provide either a message pattern or sender pattern to search.",
+        }
+      ));
+    }
+
+    next();
+  },
 ];
 
 export const messageSearchGet = [
@@ -107,10 +113,10 @@ export const messageSearchGet = [
 
     const messages = await db.retrieveAllMessages();
 
-    const {searchPattern, searchSender} = req.query
+    const {searchMessagePattern, searchSenderPattern} = req.query
 
     if (!errors.isEmpty()) {
-      return res.status(400).render("searchMessage", {
+      return res.status(400).render("searchedMessage", {
         title: "Search Message",
         messages,
         user: req.user,
@@ -121,38 +127,24 @@ export const messageSearchGet = [
       });
     }
 
-    if(!searchPattern && !searchSender) {
-      customError = [{ msg: "Please provide at least one search of the search patterns." }]
-      return res.status(400).render("searchMessage", {
-        title: "Search Message",
-        isDisabled: disabled,
-        isDisabled: false
-      });
-    }
-
-    const matchedMessages = await db.searchMessages(searchPattern, searchSender);
-
-    if(matchedMessages==[]) {
-      customError = [{ msg: "No user or message match." }]
-      return res.status(400).render("searchMessage", {
-        title: "Search Message",
-        isDisabled: disabled,
-        isDisabled: false
-      });
-    }
+    const matchedMessages = await db.retrieveMatchMessages(searchMessagePattern, searchSenderPattern);
     
-    res.render("searchedMessage", {
+    return res.render("searchedMessage", {
       title: "Searched Messages",
-      matches: matchedMessages
+      messages: matchedMessages,
+      user: req.user,
+      memberAuthenticatedLinks,
+      guestAuthenticatedLinks,
+      adminAuthenticatedLinks,
     });
   }
-]
-/*
+];
+
 export const messageDeletePost = async (req, res) => {
   await db.deleteMessage(req.params.id);
-  res.redirect("/");
+  res.redirect("/dashboard");
 };
-
+/*
 export const messageView = async (req, res) => {
   let customError = [];
   const message = await db.viewMessage(req.params.id);

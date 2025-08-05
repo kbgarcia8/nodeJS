@@ -25,12 +25,12 @@
       <img src="/error.png" alt="error-icon">
     </div>
     <div class="error-information-space">
-      <h2 class="error-status-code">‼️Status Code: <%= error.statusCode %></h2>
+      <h2 class="error-status-code">‼️Status Code: <%= error.statusCode ? error.statusCode : 400 %></h2>
       <p class="error-code"><%= error.name %></p>
-      <p><%= error.message %></p>
       <% if (error.details && error.details.detail) { %>
           <p class="error-details"><%= error.details.detail %></p>
       <% } %>
+      <p class="error-message"><%= error.message %></p>
     </div>
   </main>
 </body>

@@ -15,10 +15,10 @@
       <%- include('partials/navbar2.ejs', {links: adminAuthenticatedLinks}) %>
     <% } %> 
   </header>
-  <h4>Match Messages:</h4>
+  <h3 class="message-result-header">Match Messages:</h3>
   <main class="searched-messages">
     <% if(messages.length === 0) { %>
-      <p class="no-searched-messages">You have not post any messages yet! <a href="/messages/new">Post a Message now</a></p>
+      <p class="no-searched-messages">No messages matched!</p>
     <% } else { %>
       <% messages.forEach((message) => { %>
         <%- include('partials/message_entry.ejs', {message: message}) %>

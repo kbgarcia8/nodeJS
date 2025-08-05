@@ -27,7 +27,7 @@ export const MAKEMAINTABLES = `
     id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL,
     title VARCHAR(255) NOT NULL,
-    message VARCHAR(255) NOT NULL,
+    message VARCHAR(500) NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     CONSTRAINT messages_user_fk FOREIGN KEY (user_id) REFERENCES members_only.users(id) ON DELETE CASCADE
   );
