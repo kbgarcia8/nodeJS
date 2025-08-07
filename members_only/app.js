@@ -15,6 +15,7 @@ import pool from "./db/pool.js";
 //Routers
 import indexRouter from "./routes/indexRouter.js";
 import messageRouter from "./routes/messageRouter.js";
+import usersRouter from "./routes/userRouter.js";
 
 const app = express();
 //declare public as asset path
@@ -49,6 +50,7 @@ app.use(session({
 
 app.use("/", indexRouter);
 app.use("/messages", messageRouter);
+app.use("users", usersRouter);
 
 //error handling using middleware
 app.use((err, req, res, next) => {

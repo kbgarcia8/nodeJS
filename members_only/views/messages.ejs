@@ -20,7 +20,7 @@
         <p class="no-loggedin-user-messages">You have not post any messages yet! <a href="/messages/new">Post a Message now</a></p>
       <% } else { %>
         <% messages.forEach((message) => { %>
-          <%- include('partials/message_entry.ejs', {message: message}) %>
+          <%- include('partials/message_entry.ejs', {message: message, editable: message.editable}) %>
         <% }); %>
       <% } %>
     </main>

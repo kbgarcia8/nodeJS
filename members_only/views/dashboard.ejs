@@ -20,7 +20,7 @@
       <!--If membership guest censor author of messages unless belong to user logged in-->
       <% messages.forEach((message) => { %>
         <% if(user.status_code === 3 || (user.username === message.username)) { %>
-          <%- include('partials/message_bubble2.ejs', {message: message}) %>
+          <%- include('partials/message_bubble2.ejs', {message: message, editable: message.editable}) %>
         <% } else if (user.status_code === 2) { %>
           <%- include('partials/message_bubble.ejs', {message: message}) %>
         <% } %>

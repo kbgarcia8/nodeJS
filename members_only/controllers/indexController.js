@@ -5,6 +5,7 @@ import asyncHandler from "express-async-handler";
 import * as db from "../db/queries.js";
 import bcrypt from "bcryptjs";
 import passport from "passport";
+import { isSameDay } from "../utils/utility.js";
 
 export async function homePage(req,res){
     const messages = await db.retrieveAllMessages();
@@ -168,7 +169,12 @@ export const loginFormPost = [
 ];
 
 export async function dashboardGet(req,res){
-    const messages = await db.retrieveAllMessages();
+    const retrievedMessages = await db.retrieveAllMessages();
+
+    const messages = retrievedMessages.map((message) => ({
+        ...message,
+        editable: isSameDay(message.created_at_utc)
+    }))
 
     return res.render("dashboard", {
         title: "Dashboard",

@@ -21,7 +21,7 @@
       <p class="no-searched-messages">No messages matched!</p>
     <% } else { %>
       <% messages.forEach((message) => { %>
-        <%- include('partials/message_entry.ejs', {message: message}) %>
+        <%- include('partials/message_entry.ejs', {message: message, editable: message.editable}) %>
       <% }); %>
     <% } %>
   </main>

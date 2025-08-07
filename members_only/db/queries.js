@@ -7,7 +7,7 @@ import { DBError } from "../utils/errors.js";
 export async function retrieveAllMessages() {
     try{
         const { rows } = await pool.query(`
-            SELECT u.id AS user_id, u.first_name, u.last_name, u.username, u.email, m.id AS message_id, m.title, m.message, TO_CHAR(m.created_at, 'MM-DD-YYYY HH24:MI') AS created_at_formatted FROM members_only.users AS u JOIN members_only.messages AS m ON u.id = m.user_id;
+            SELECT u.id AS user_id, u.first_name, u.last_name, u.username, u.email, m.id AS message_id, m.title, m.message, TO_CHAR(m.created_at, 'MM-DD-YYYY HH24:MI') AS created_at_formatted, m.created_at AT TIME ZONE 'UTC' AS created_at_utc FROM members_only.users AS u JOIN members_only.messages AS m ON u.id = m.user_id;
         `);
 
         return rows;
@@ -21,7 +21,7 @@ export async function retrieveAllMessages() {
 export async function retrieveMessagesBelongToUser(userId) {
     try{
         const { rows } = await pool.query(`
-            SELECT u.id AS user_id, u.first_name, u.last_name, u.username, u.email, m.id AS message_id, m.title, m.message, TO_CHAR(m.created_at, 'MM-DD-YYYY HH24:MI') AS created_at_formatted FROM members_only.users AS u JOIN members_only.messages AS m ON u.id = m.user_id WHERE u.id = $1;
+            SELECT u.id AS user_id, u.first_name, u.last_name, u.username, u.email, m.id AS message_id, m.title, m.message, TO_CHAR(m.created_at, 'MM-DD-YYYY HH24:MI') AS created_at_formatted, m.created_at AT TIME ZONE 'UTC' AS created_at_utc FROM members_only.users AS u JOIN members_only.messages AS m ON u.id = m.user_id WHERE u.id = $1;
         `,[userId]);
 
         return rows;
@@ -32,32 +32,37 @@ export async function retrieveMessagesBelongToUser(userId) {
         });
     }
 };
-export async function retrieveMatchMessages(searchMessagePattern, searchSenderPattern) {
-    //can be improved to have interchangeable WHERE using string concat or switch cases
-    //add first name, last name and message title as search pattern
+export async function retrieveMatchMessages(searchMessagePattern, searchSenderPattern, searchTitlePattern) {
+    const query = `SELECT u.id AS user_id, u.first_name, u.last_name, u.username, u.email, m.id AS message_id, m.title, m.message, TO_CHAR(m.created_at, 'MM-DD-YYYY HH24:MI') AS created_at_formatted, m.created_at AT TIME ZONE 'UTC' AS created_at_utc FROM members_only.users AS u JOIN members_only.messages AS m ON u.id = m.user_id`;
+
+    const conditions = [];
+    const values = [];
+    let index = 1;
+
+    if (searchMessagePattern) {
+        conditions.push(`m.message ILIKE $${index++}`);
+        values.push(`%${searchMessagePattern}%`);
+    }
+
+    if (searchSenderPattern) {
+        conditions.push(`u.username ILIKE $${index++}`);
+        values.push(`%${searchSenderPattern}%`);
+    }
+
+    if (searchTitlePattern) {
+        conditions.push(`m.title ILIKE $${index++}`);
+        values.push(`%${searchTitlePattern}%`);
+    }
+
+    const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+
+    const finalQuery = `${query} ${whereClause};`;
+
     try {
-        if(searchMessagePattern && !searchSenderPattern){
-            const { rows } = await pool.query(`
-            SELECT u.id AS user_id, u.first_name, u.last_name, u.username, u.email, m.id AS message_id, m.title, m.message, TO_CHAR(m.created_at, 'MM-DD-YYYY HH24:MI') AS created_at_formatted FROM members_only.users AS u JOIN members_only.messages AS m ON u.id = m.user_id
-            WHERE m.message ILIKE $1;
-            `, [`%${searchMessagePattern}%`]);
-            console.log(`Mathced Search Pattern: ${rows}`);
-            return rows;
-        } else if(!searchMessagePattern && searchSenderPattern){
-            const { rows } = await pool.query(`
-            SELECT u.id AS user_id, u.first_name, u.last_name, u.username, u.email, m.id AS message_id, m.title, m.message, TO_CHAR(m.created_at, 'MM-DD-YYYY HH24:MI') AS created_at_formatted FROM members_only.users AS u JOIN members_only.messages AS m ON u.id = m.user_id
-            WHERE u.username ILIKE $1;  
-            `, [`%${searchSenderPattern}%`]);
-            console.log(`Mathced Message with specified User: ${rows}`);
-            return rows;
-        } else if(searchMessagePattern && searchSenderPattern){
-            const { rows } = await pool.query(`
-            SELECT u.id AS user_id, u.first_name, u.last_name, u.username, u.email, m.id AS message_id, m.title, m.message, TO_CHAR(m.created_at, 'MM-DD-YYYY HH24:MI') AS created_at_formatted FROM members_only.users AS u JOIN members_only.messages AS m ON u.id = m.user_id
-            WHERE m.message ILIKE $1 AND u.username ILIKE $2;   
-            `, [`%${searchMessagePattern}%`,`%${searchSenderPattern}%`]);
-            console.log(`Mathced Search Pattern and Message with specified User: ${rows}`);
-            return rows;
-        }
+        const { rows } = await pool.query(finalQuery, values);
+        console.log("Message search returned matches successfully!");
+        return rows;
+
     } catch (err) {
         console.error("Database error in retrieveMatchMessages:", err);
         throw new DBError(`Failed to retrieve searched messages in database`, 409, "DB_RETRIEVE_MATCH_MESSAGES_FAILED", {
@@ -65,6 +70,21 @@ export async function retrieveMatchMessages(searchMessagePattern, searchSenderPa
         });
     }
 };
+export async function retrieveMessageById(messageId){
+    try{
+        const { rows } = await pool.query(`
+            SELECT u.id AS user_id, u.first_name, u.last_name, u.username, u.email, m.id AS message_id, m.title, m.message, TO_CHAR(m.created_at, 'MM-DD-YYYY HH24:MI') AS created_at_formatted, m.created_at AT TIME ZONE 'UTC' AS created_at_utc FROM members_only.users AS u JOIN members_only.messages AS m ON u.id = m.user_id WHERE m.id = $1;
+        `,[messageId]);
+
+        console.log(`Message ${messageId} retrieved successfully`);
+        return rows[0];
+    } catch(err) {
+        console.error("Database error in retrieveMessageById:", err);
+        throw new DBError(`Failed to retrieve messages in database with message ID ${messageId}`, 409, "DB_RETRIEVE_MESSAGE_BY_ID_FAILED", {
+            detail: err.error || err.message,
+        });
+    }
+}
 export async function insertNewMessage(userId, messageTitle, messageText) {
     try{
         await pool.query(`INSERT INTO members_only.messages(user_id, title, message) VALUES ($1, $2, $3)`,[userId, messageTitle, messageText]);
@@ -84,11 +104,21 @@ export async function deleteMessage(messageId) {
         `, [messageId]);
         const user = await pool.query(`
             SELECT user_id FROM members_only.messages WHERE id = $1;`, [messageId]);
-            console.log(user)
         //console.log(`Successfully deleted message id: ${messageId} from user: ${user[0].user_id}`);
     }  catch(err) {
         console.error("Database error in deleteMessage:", err)
         throw new DBError(`Failed to delete message under user ${user[0].user_id}`, 400, "DB_DELETE_MESSAGE_ERROR", {
+            details: err.error || err.message
+        });
+    }
+};
+export async function updateMessage(messageId, editMessageTitle, editmessageText) {
+    try{
+        await pool.query(`UPDATE members_only.messages SET title = $2, message = $3 WHERE id = $1;`,[messageId, editMessageTitle, editmessageText]);
+        console.log(`Message with message ID: ${messageId} was succesfully edited!`);
+    }catch(err){
+        console.error("Database error in updateMessage:", err)
+        throw new DBError(`Failed to edit message with ID ${messageId}`, 400, "DB_UPDATE_MESSAGE_ERROR",{
             details: err.error || err.message
         });
     }
@@ -154,8 +184,6 @@ export async function addDefaultMembership(userId, membershipCode){
         const { rows } = await pool.query(
             `SELECT * FROM members_only.membership WHERE user_id = $1`,[userId]
         );
-
-        console.log(rows.length, userId)
 
         if (rows.length === 0 && membershipCode === false) { //If user does not exist in membership table and did not submit correct secret membership code then add default membership
             await pool.query(`INSERT INTO members_only.membership(user_id, status_code) VALUES ($1, 2);`, [userId]);

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="edit-message-page">
+    <%- include("partials/errors.ejs") %>
+    <% if(user.status_code === 3 || (user.username === message.username)) { %>
+      <%- include('partials/navbar2.ejs', {links: memberAuthenticatedLinks}) %>
+    <% } else if (user.status_code === 2) { %>
+      <%- include('partials/navbar2.ejs', {links: guestAuthenticatedLinks}) %>
+    <% } else if (user.status_code === 1) { %>
+      <%- include('partials/navbar2.ejs', {links: adminAuthenticatedLinks}) %>
+    <% } %>
+    <h1 class="page-header"><%= header %></h1>
+  </header>
+  <main class="edit-message-page">
+    <p class="edit-message-instructions">Messages are editable within the day of its posting ✅</p>
+    <form class="edit-message" action="/messages/edit/<%= message.message_id %>" method="POST">
+        <div class="input-container edit-message-input">
+          <label for="editMessageTitle">Title: </label>
+          <input id="editMessageTitle" name="editMessageTitle" placeholder="Message Title" type="text" value="<%= message.title %>"/>
+        </div>
+        <div class="input-container edit-message-input2">
+          <label for="editMessageText">Message: </label>
+          <textarea id="editMessageText" name="editMessageText" placeholder="Message" rows="10" cols="45"><%= message.message %></textarea>
+        </div>
+        <div class="edit-message-submit-button-space">
+          <button type="submit" class="edit-message-page-submit">Save</button>
+        </div>
+        <form class="edit-message-button-only" action="/messages" method="GET">
+            <button class="cancel-edit-message" type="submit">Cancel</button>
+        </form>
+    </form>
+  </main>
+</body>
+</html>

@@ -5,9 +5,11 @@
         <!--For improvement to grant this only on messages owned by the user with 'Member' membership and all messages by 'Admin' user-->
         <% if (message.username === user.username) { %>
             <div class="message-bubble2-form-buttons-space">
-                <form class="message-bubble2-button-only" action="/messages/edit/<%= message.message_id %>" method="GET">
-                    <button class="open-message" type="submit">Edit</button>
-                </form>
+                <% if (editable === true) { %>
+                    <form class="button-only" action="/messages/edit/<%= message.message_id %>" method="GET">
+                        <button class="open-message" type="submit">Edit</button>
+                    </form>
+                <% } %>
                 <form class="message-bubble2-button-only" action="/messages/delete/<%= message.message_id %>" method="POST">
                     <button class="delete-message" type="submit">Delete</button>
                 </form>

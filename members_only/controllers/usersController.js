@@ -1,7 +1,8 @@
 import { body, query, validationResult } from "express-validator";
 //'body' is for POST method and 'query' is for GET method validation
 import * as db from "../db/queries.js";
-import { links } from "../constants/constants.js";
+import { notAuthenticatedLinks, guestAuthenticatedLinks, memberAuthenticatedLinks, adminAuthenticatedLinks } from "../constants/constants.js";
+
 
 export const usersListGet = async (req, res) => {
   const users = await db.getAllUsernames();
@@ -12,6 +13,8 @@ export const usersListGet = async (req, res) => {
   });
 };
 
+
+/*
 export const usersCreateGet = (req, res) => {
   res.render("createUser", {
     title: "Create user",
@@ -75,74 +78,8 @@ export const usersUpdatePost = [
   }
 ];
 
-export const usersSearch = async (req, res) => {
-  let disabled = false;
-  let customError = [];
-  const users = await db.getAllUsernames();
-  
-
-  if(users.length === 0) {
-    disabled = true
-    customError = [{ msg: "There are no users saved in the database to search for." }]
-  }
-
-  res.render("searchUser", {
-    title: "Search User",
-    isDisabled: disabled,
-    errors: customError
-  });
-};
-
-const validateUserSearch = [
-  query("searchUsername").optional({checkFalsy: true}).trim(),
-  query("searchUserEmail").optional({checkFalsy: true}).isEmail().withMessage("Valid email is required"),
-]
-
-export const usersSearchGet = [
-  validateUserSearch,
-  async (req, res) => {
-    const errors = validationResult(req);
-    let customError = [];
-
-    const {searchUsername, searchUserEmail} = req.query
-
-    if (!errors.isEmpty()) {
-      return res.status(400).render("searchUser", {
-        title: "Search user",
-        errors: errors.array(),
-        isDisabled: false
-      });
-    }
-
-    if(!searchUsername && !searchUserEmail) {
-      customError = [{ msg: "Please provide at least one search field." }]
-      return res.status(400).render("searchUser", {
-        title: "Search user",
-        errors: customError,
-        isDisabled: false
-      });
-    }
-
-    const matchedUsers = await db.searchUsernames(searchUsername, searchUserEmail);
-
-    if(matchedUsers==[]) {
-      customError = [{ msg: "No user or email match." }]
-      return res.status(400).render("searchUser", {
-        title: "Search user",
-        errors: customError,
-        isDisabled: false
-      });
-    }
-    
-    res.render("searchedUser", {
-      title: "Search Results",
-      matches: matchedUsers
-    });
-  }
-]
-
-
 export const userDeletePost = async (req, res) => {
   await db.deleteUsername(req.params.id);
   res.redirect("/");
 };
+*/
