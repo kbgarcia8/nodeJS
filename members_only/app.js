@@ -50,7 +50,7 @@ app.use(session({
 
 app.use("/", indexRouter);
 app.use("/messages", messageRouter);
-app.use("users", usersRouter);
+app.use("/users", usersRouter);
 
 //error handling using middleware
 app.use((err, req, res, next) => {

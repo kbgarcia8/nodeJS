@@ -37,7 +37,7 @@ const registerValidation =[
         .trim()
         .notEmpty().withMessage('First Name is required!').bail()
         .isAlpha().withMessage('First Name must contain alphabetic characters only!'),
-    check('register-last-name')
+    check('registerLastName')
         .trim()
         .notEmpty().withMessage('Last Name is required!').bail()
         .matches(/^[a-zA-Z0-9.]+$/).withMessage('Last Name can only contain letters, numbers, and dots'),
@@ -96,18 +96,18 @@ export const registerFormPost = [
                 errors: errors.array()
             });
         }
-        if(username !== "") {
+        if(registerUsername !== "") {
             await db.createUser(registerFirstName, registerLastName, registerUsername, registerEmail, hashedPassword);
         } else {
             const extractedUsername = registerEmail.split('@')[0];
             await db.createUser(registerFirstName, registerUsername, extractedUsername, registerEmail, hashedPassword);
         }
-        const createdUser = await db.retrieveUserByEmail(registerEmail);
+        const createdUser = await db.retrieveNewlyCreatedUser(registerEmail);
         //Because of checkFalsy = true it will skip if no code was provided and req.isValidMembershipCode will be undefined to must set to false if that is the case
         if (typeof req.isValidMembershipCode === 'undefined') {
             req.isValidMembershipCode = false;
         }
-        console.log(req.isValidMembershipCode)
+        
         await db.addDefaultMembership(createdUser.id, req.isValidMembershipCode)
         
         res.redirect("/");

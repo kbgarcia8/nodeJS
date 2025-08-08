@@ -1,10 +1,11 @@
 import { Router } from "express";
 import * as usersController from "../controllers/usersController.js"
+import { checkAuthentication } from "../middlewares/authenticate.js";
 const usersRouter = Router();
 
 //member access
-//usersRouter.get("/search", usersController.usersSearch);
-//usersRouter.get("/search/result", usersController.usersSearchGet);
+usersRouter.get("/search", checkAuthentication, usersController.usersSearch);
+usersRouter.get("/search/result", checkAuthentication, usersController.usersSearchGet);
 /*
 //member and admin access
 usersRouter.get("/", usersController.usersListGet);

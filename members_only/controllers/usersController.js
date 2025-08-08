@@ -1,17 +1,65 @@
 import { body, query, validationResult } from "express-validator";
-//'body' is for POST method and 'query' is for GET method validation
 import * as db from "../db/queries.js";
 import { notAuthenticatedLinks, guestAuthenticatedLinks, memberAuthenticatedLinks, adminAuthenticatedLinks } from "../constants/constants.js";
 
 
-export const usersListGet = async (req, res) => {
-  const users = await db.getAllUsernames();
-  res.render("userList", {
-    title: "User list",
-    links: links,
-    users: users,
+export const usersSearch = async (req, res) => {
+  const users = await db.retrieveAllUsers();
+
+  return res.render("searchUser", {
+    title: "Search User",
+    user: req.user,
+    memberAuthenticatedLinks,
+    guestAuthenticatedLinks,
+    adminAuthenticatedLinks,
+    users: users
   });
 };
+
+const validateUserSearch = [
+  query("searchUsername").optional({checkFalsy: true}).trim(),
+  query("searchFirstName").optional({checkFalsy: true}).trim(),
+  query("searchLastName").optional({checkFalsy: true}).trim(),
+  query("searchUserEmail").optional({checkFalsy: true}).isEmail().withMessage("Valid email is required"),
+];
+
+export const usersSearchGet = [
+  validateUserSearch,
+  async (req, res) => {
+    const errors = validationResult(req);
+
+    const {searchUsername, searchFirstName, searchLastName, searchUserEmail} = req.query
+    const users = await db.retrieveAllUsers();
+
+    if (!errors.isEmpty()) {
+      return res.status(400).render("searchUser", {
+        title: "Search User",
+        user: req.user,
+        memberAuthenticatedLinks,
+        guestAuthenticatedLinks,
+        adminAuthenticatedLinks,
+        users: users,
+        errors: errors.array(),
+      });
+    }
+
+    const matchedUsers = await db.retrieveMatchUsers(searchUsername, searchFirstName, searchLastName, searchUserEmail);
+    
+    const users2 = matchedUsers.map((user) => ({
+      ...user,
+      isAdmin: user.membership === 1 ? true : false
+    }));
+    
+    return res.render("searchedUser", {
+      title: "Searched Users",
+      users: users2,
+      user: req.user,
+      memberAuthenticatedLinks,
+      guestAuthenticatedLinks,
+      adminAuthenticatedLinks,
+    });
+  }
+]
 
 
 /*

@@ -124,6 +124,61 @@ export async function updateMessage(messageId, editMessageTitle, editmessageText
     }
 };
 //User
+export async function retrieveAllUsers() {
+    try{
+        const {rows} = await pool.query(`SELECT * FROM members_only.users AS u JOIN members_only.membership AS m ON u.id = m.user_id;`);
+        console.log("All Users information retrieved successfully");
+        return rows;
+    } catch(err) {
+        console.error("Database error in retrieveAllUsers:", err);
+        throw new DBError("Failed to retrieve all users in database", 409, "DB_RETRIEVE_ALL_USER_FAILED", {
+            detail: err.error || err.message,
+        });
+    }
+}
+export async function retrieveMatchUsers(searchUsername, searchFirstName, searchLastName, searchUserEmail) {
+    const query = `SELECT u.id AS user_id, u.first_name, u.last_name, u.username, u.email, TO_CHAR(u .created_at, 'MM-DD-YYYY HH24:MI') AS created_at_formatted, m.status_code AS membership FROM members_only.users AS u JOIN members_only.membership AS m ON u.id = m.user_id`;
+
+    const conditions = [];
+    const values = [];
+    let index = 1;
+
+    if (searchUsername) {
+        conditions.push(`u.username ILIKE $${index++}`);
+        values.push(`%${searchUsername}%`);
+    }
+
+    if (searchFirstName) {
+        conditions.push(`u.first_name ILIKE $${index++}`);
+        values.push(`%${searchFirstName}%`);
+    }
+
+    if (searchLastName) {
+        conditions.push(`u.last_name ILIKE $${index++}`);
+        values.push(`%${searchLastName}%`);
+    }
+
+    if (searchUserEmail) {
+        conditions.push(`u.email ILIKE $${index++}`);
+        values.push(`%${searchUserEmail}%`);
+    }
+
+    const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+
+    const finalQuery = `${query} ${whereClause};`;
+
+    try {
+        const { rows } = await pool.query(finalQuery, values);
+        console.log("Message search returned matches successfully!");
+        return rows;
+
+    } catch (err) {
+        console.error("Database error in retrieveMatchUsers:", err);
+        throw new DBError(`Failed to retrieve searched users in database`, 409, "DB_RETRIEVE_MATCH_USERS_FAILED", {
+            detail: err.error || err.message,
+        });
+    }
+};
 export async function createUser(firstName, lastName, username, email, password) {
     try{
         await pool.query(`INSERT INTO members_only.users(first_name, last_name, username, email, password) VALUES ($1, $2, $3, $4, $5);`, [firstName, lastName, username, email, password]);
@@ -135,7 +190,25 @@ export async function createUser(firstName, lastName, username, email, password)
         });
     }
 };
+export async function retrieveNewlyCreatedUser(email) {
+    try{
+        const { rows } = await pool.query(`SELECT * FROM members_only.users AS u WHERE u.email = $1`, [email]);
+        
+        if (rows.length === 0) {
+            throw new DBError("User email not found", 409, "DB_USER_EMAIL_NOT_FOUND", {
+                detail: `No user found with email: ${email}`
+            });
+        }
 
+        console.log("Mewly created user retrieved by email successfully!");
+        return rows[0]; //since a single user is expected
+    } catch(err) {
+        console.error("Database error in retrieveNewlyCreatedUser:", err);
+        throw new DBError("Failed to retrieve newly created user by email", 409, "DB_USER_EMAIL_NOT_FOUND", {
+            detail: err.error || err.message,
+        });
+    }
+};
 export async function retrieveUserByEmail(email) {
     try{
         const { rows } = await pool.query(`SELECT * FROM members_only.users AS u JOIN members_only.membership AS m ON u.id = m.user_id WHERE u.email = $1`, [email]);
@@ -155,7 +228,6 @@ export async function retrieveUserByEmail(email) {
         });
     }
 };
-
 export async function retrieveUserById(id) {
     try {
         const { rows } = await pool.query(
@@ -177,7 +249,6 @@ export async function retrieveUserById(id) {
         });
     }
 };
-
 export async function addDefaultMembership(userId, membershipCode){
     try{
         //check first if user's membership is existent
@@ -205,7 +276,6 @@ export async function addDefaultMembership(userId, membershipCode){
         });
     }
 };
-
 export async function modifyMembership(userId, code){
     try{
         //check first if user's membership is existent

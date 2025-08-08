@@ -5,17 +5,35 @@
     <link rel="stylesheet" href="/styles.css">
   </head>
 <body>
-  <h1><%= title %></h1>
-  <%- include("partials/errors.ejs") %>
+  <header>
+    <%- include("partials/errors.ejs") %>
+    <% if(user.status_code === 3) { %>
+      <%- include('partials/navbar2.ejs', {links: memberAuthenticatedLinks}) %>
+    <% } else if (user.status_code === 2) { %>
+      <%- include('partials/navbar2.ejs', {links: guestAuthenticatedLinks}) %>
+    <% } else if (user.status_code === 1) { %>
+      <%- include('partials/navbar2.ejs', {links: adminAuthenticatedLinks}) %>
+    <% } %>
+    <h1 class="page-header"><%= title %></h1>
+  </header>
   <form action="/users/search/result" method="GET">
-    <label for="searchUsername">First Name: </label>
-    <input type="text" name="searchUsername" id="searchUsername">
-    <label for="searchUserEmail">Email: </label>
-    <input type="text" name="searchUserEmail" id="searchUserEmail">
-    <button type="submit" <%= isDisabled ? disabled : "" %> >Search</button>
-  </form>
-  <form class="button-only" action="/users" method="GET">
-    <button class="update-user" type="submit">Back to Users List</button>
+    <div class="search-user-input">
+      <label for="searchUsername">Username: </label>
+      <input type="text" name="searchUsername" id="searchUsername">
+    </div>
+    <div class="search-user-input">
+      <label for="searchFirstName">First Name: </label>
+      <input type="text" name="searchFirstName" id="searchFirstName">
+    </div>
+    <div class="search-user-input">
+      <label for="searchLastName">Last Name: </label>
+      <input type="text" name="searchLastName" id="searchLastName">
+    </div>
+     <div class="search-user-input">
+      <label for="searchUserEmail">User Email: </label>
+      <input type="text" name="searchUserEmail" id="searchUserEmail">
+    </div>
+    <button class="user-search-submit" type="submit" <%= users.length === 0 ? disabled : "" %> >Search</button>
   </form>
 </body>
 </html>

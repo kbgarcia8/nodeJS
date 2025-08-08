@@ -5,28 +5,25 @@
     <link rel="stylesheet" href="/styles.css">
   </head>
 <body>
-  <h1><%= title %></h1>
-  <%- include("partials/errors.ejs") %>  
-  <form class="button-only" action="/users" method="GET">
-    <button class="update-user" type="submit">Back to Users List</button>
-  </form>
-  <h4>Matched Users:</h4>
-  <ul class="user-list">
-    <% if (matches) {%>
-      <% matches.forEach(function(match) { %>
-        <li class="search-user-entry">
-          <p class="user-id">ID: <%= match.id %></p>
-            <p class="user-name">Username: <%= match.username %></p>
-            <p class="user-email">Email: <%= match.email %></p>
-            <form class="button-only" action="/users/update/<%= match.id %>" method="GET">
-              <button class="update-user" type="submit">Update</button>
-            </form>
-            <form class="button-only" action="/users/delete/<%= match.id %>" method="POST">
-              <button class="delete-user" type="submit" onclick="return confirm('Are you sure you want to delete this user?');">Delete</button>
-            </form>
-        </li>
+  <header>
+    <%- include("partials/errors.ejs") %>
+    <% if(user.status_code === 3) { %>
+      <%- include('partials/navbar2.ejs', {links: memberAuthenticatedLinks}) %>
+    <% } else if (user.status_code === 2) { %>
+      <%- include('partials/navbar2.ejs', {links: guestAuthenticatedLinks}) %>
+    <% } else if (user.status_code === 1) { %>
+      <%- include('partials/navbar2.ejs', {links: adminAuthenticatedLinks}) %>
+    <% } %> 
+  </header>
+  <h3 class="user-result-header">Match users:</h3>
+  <main class="searched-users">
+    <% if(users.length === 0) { %>
+      <p class="no-searched-users">No users matched!</p>
+    <% } else { %>
+      <% users.forEach((user) => { %>
+        <%- include('partials/user_entry.ejs', {user: user, editable: user.editable}) %>
       <% }); %>
     <% } %>
-  </ul>
+  </main>
 </body>
 </html>
