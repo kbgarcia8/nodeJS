@@ -15,10 +15,10 @@
       <%- include('partials/navbar2.ejs', {links: adminAuthenticatedLinks}) %>
     <% } %> 
   </header>
-  <h3 class="user-result-header">Match users:</h3>
-  <main class="searched-users">
+  <h2 class="user-list-header">All users:</h2>
+  <main class="users-list">
     <% if(users.length === 0) { %>
-      <p class="no-searched-users">No users matched!</p>
+      <p class="no-users">No users created yet!</p>
     <% } else { %>
       <% users.forEach((user) => { %>
         <%- include('partials/user_entry.ejs', {user: user, isAdmin: isAdmin}) %>

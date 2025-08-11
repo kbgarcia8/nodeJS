@@ -40,7 +40,7 @@ const registerValidation =[
     check('registerLastName')
         .trim()
         .notEmpty().withMessage('Last Name is required!').bail()
-        .matches(/^[a-zA-Z0-9.]+$/).withMessage('Last Name can only contain letters, numbers, and dots'),
+        .matches(/^[a-zA-Z0-9.\-]+$/).withMessage('Last Name can only contain letters, numbers, hypen and dots'),
     check('registerPassword')
         .notEmpty().withMessage('Please provide a password!').bail()
         .isStrongPassword({
@@ -71,7 +71,7 @@ const registerValidation =[
             }
             return true; 
         })
-]
+];
 
 export async function registerForm(req,res){
     return res.render("register", {

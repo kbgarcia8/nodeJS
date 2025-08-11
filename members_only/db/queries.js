@@ -126,7 +126,7 @@ export async function updateMessage(messageId, editMessageTitle, editmessageText
 //User
 export async function retrieveAllUsers() {
     try{
-        const {rows} = await pool.query(`SELECT * FROM members_only.users AS u JOIN members_only.membership AS m ON u.id = m.user_id;`);
+        const {rows} = await pool.query(`SELECT u.id AS user_id, u.first_name, u.last_name, u.username, u.email, TO_CHAR(u .created_at, 'MM-DD-YYYY HH24:MI') AS created_at_formatted, m.status_code AS membership FROM members_only.users AS u JOIN members_only.membership AS m ON u.id = m.user_id;`);
         console.log("All Users information retrieved successfully");
         return rows;
     } catch(err) {
@@ -211,7 +211,7 @@ export async function retrieveNewlyCreatedUser(email) {
 };
 export async function retrieveUserByEmail(email) {
     try{
-        const { rows } = await pool.query(`SELECT * FROM members_only.users AS u JOIN members_only.membership AS m ON u.id = m.user_id WHERE u.email = $1`, [email]);
+        const { rows } = await pool.query(`SELECT u.id AS user_id, u.first_name, u.last_name, u.username, u.email, u.password, TO_CHAR(u .created_at, 'MM-DD-YYYY HH24:MI') AS created_at_formatted, m.status_code AS membership FROM members_only.users AS u JOIN members_only.membership AS m ON u.id = m.user_id WHERE u.email = $1`, [email]);
         
         if (rows.length === 0) {
             throw new DBError("User email not found", 409, "DB_USER_EMAIL_NOT_FOUND", {
@@ -220,6 +220,7 @@ export async function retrieveUserByEmail(email) {
         }
 
         console.log("User retrieved by email successfully!");
+        console.log(rows[0])
         return rows[0]; //since a single user is expected
     } catch(err) {
         console.error("Database error in retrieveUserByEmail:", err);
@@ -276,6 +277,29 @@ export async function addDefaultMembership(userId, membershipCode){
         });
     }
 };
+export async function addMembershipToCreatedUser(userId, membershipCode){
+    try{
+        //check first if user's membership is existent
+        const { rows } = await pool.query(
+            `SELECT * FROM members_only.membership WHERE user_id = $1`,[userId]
+        );
+
+        if (rows.length === 0) { //If user does not exist in membership table
+            await pool.query(`INSERT INTO members_only.membership(user_id, status_code) VALUES ($1, $2);`, [userId, membershipCode]);
+            console.log(` successfully added to new user!`);
+        } else if (rows.length > 0){ //If user does exist in membership table then update membership
+             throw new DBError(`Failed to add default membership for user existing user with id ${userId}!`, 409, "DB_ADD_MEMBERSHIP_FOR_EXISTING_USER_FAILED", {
+                detail: "If user is exising must execute modifyMembership instead!"}
+            );
+        }
+
+    } catch(err){
+        console.error("Database error in addMembershipToCreatedUser:", err);
+        throw new DBError(`Failed to add membership for created user with id ${userId}`, 409, "DB_ADD_MEMBERSHIP_FOR_CREATE_USER_FAILED", {
+            detail: err.error || err.message,
+        });
+    }
+};
 export async function modifyMembership(userId, code){
     try{
         //check first if user's membership is existent
@@ -286,7 +310,7 @@ export async function modifyMembership(userId, code){
         if (rows.length === 0) { //If user does not exist in membership table
             console.error("Database error in modifyMembership:", err);
             throw new DBError(`Failed to modify membership for user with id ${userId}!`, 409, "DB_MODIFY_MEMBERSHIP_FAILED_USER_DOES_NOT_EXIST", {
-                detail: "If user does not exist, please register first!",
+                detail: "If user does not exist, please register first or have an admin create it!",
             });
         } else if (rows.length > 0){ //If user does exist in membership table then update membership
             await pool.query(`UPDATE members_only.membership

@@ -1,7 +1,24 @@
-import { body, query, validationResult } from "express-validator";
+import { body, check, query, validationResult } from "express-validator";
 import * as db from "../db/queries.js";
-import { notAuthenticatedLinks, guestAuthenticatedLinks, memberAuthenticatedLinks, adminAuthenticatedLinks } from "../constants/constants.js";
+import { guestAuthenticatedLinks, memberAuthenticatedLinks, adminAuthenticatedLinks } from "../constants/constants.js";
+import asyncHandler from "express-async-handler";
+import bcrypt from "bcryptjs";
 
+export const usersList = async (req, res) => {
+  const users = await db.retrieveAllUsers();
+
+  const isAdmin = req.user.status_code === 1 ? true : false;
+
+  return res.render("usersList", {
+    title: "Search User",
+    user: req.user,
+    memberAuthenticatedLinks,
+    guestAuthenticatedLinks,
+    adminAuthenticatedLinks,
+    isAdmin,
+    users: users
+  });
+};
 
 export const usersSearch = async (req, res) => {
   const users = await db.retrieveAllUsers();
@@ -45,69 +62,128 @@ export const usersSearchGet = [
 
     const matchedUsers = await db.retrieveMatchUsers(searchUsername, searchFirstName, searchLastName, searchUserEmail);
     
-    const users2 = matchedUsers.map((user) => ({
-      ...user,
-      isAdmin: user.membership === 1 ? true : false
-    }));
+    const isAdmin = req.user.membership === 1 ? true : false;
     
     return res.render("searchedUser", {
       title: "Searched Users",
-      users: users2,
+      users: matchedUsers,
       user: req.user,
       memberAuthenticatedLinks,
       guestAuthenticatedLinks,
       adminAuthenticatedLinks,
+      isAdmin
     });
   }
 ]
 
-
-/*
 export const usersCreateGet = (req, res) => {
   res.render("createUser", {
     title: "Create user",
-    links: links,
+    user: req.user,
+    memberAuthenticatedLinks,
+    guestAuthenticatedLinks,
+    adminAuthenticatedLinks
   });
 };
 
-const alphaErr = "must only be alphanumeric and and can include @, _, ., and - symbols.";
-const lengthErr = "must be between 1 and 30 characters.";
-const emailErr = "must be a valid email address.";
-
-const validateUser = [
-  body("username").trim()
-    .matches(/^[A-Za-z0-9@_.-]+$/).withMessage(`Username ${alphaErr}`)
-    .isLength({ min: 1, max: 30 }).withMessage(`First name ${lengthErr}`),
-  body("userEmail").trim()
-    .isEmail().withMessage(`Email ${emailErr}`)
+const createUserValidation = [
+    check('createUserEmail')
+        .isEmail().withMessage('Please provide a valid email address!').bail()
+        .normalizeEmail(),
+    check('createUserUsername')
+        .trim()
+        .optional({ checkFalsy: true })
+        .isLength({min: 5, max: 35}).withMessage('Username must be atleast 5 characters and at max 35 characters!')
+        .isAlphanumeric().withMessage('Username must contain alphanumeric characters only!'),
+    check('createUserFirstName')
+        .trim()
+        .notEmpty().withMessage('First Name is required!').bail()
+        .isAlpha().withMessage('First Name must contain alphabetic characters only!'),
+    check('createUserLastName')
+        .trim()
+        .notEmpty().withMessage('Last Name is required!').bail()
+        .matches(/^[a-zA-Z0-9.\-]+$/).withMessage('Last Name can only contain letters, numbers, hypen and dots'),
+    check('createUserPassword')
+        .notEmpty().withMessage('Please provide a password!').bail()
+        .isStrongPassword({
+            minLength: 8,
+            minLowercase: 1,
+            minUppercase: 1,
+            minSymbols: 1,
+            minNumbers: 1,
+        }).withMessage('Password must be at least 8 characters and include uppercase, lowercase, and a symbol'),
+    check('createUserMembershipCode')
+        .trim()
+        .notEmpty()
 ];
 
-// We can pass an entire array of middleware validations to our controller.
 export const usersCreatePost = [
-  validateUser,
-  async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).render("createUser", {
-        title: "Create user",
-        errors: errors.array(),
-      });
-    }
-    const { username, userEmail } = req.body;
-    await db.insertUser(username, userEmail);
-    res.redirect("/");
-  }
+    createUserValidation, asyncHandler(async (req,res) =>{
+        const errors = validationResult(req);
+        const { createUserEmail, createUserUsername, createUserFirstName, createUserLastName, createUserPassword, createUserMembershipCode } = req.body;
+        const hashedPassword = await bcrypt.hash(createUserPassword, 10);
+        console.log(req.body);
+        if (!errors.isEmpty()) {
+            return res.render("createUser", {
+                title: "Create user",
+                user: req.user,
+                memberAuthenticatedLinks,
+                guestAuthenticatedLinks,
+                adminAuthenticatedLinks,
+                errors: errors.array()
+            });
+        }
+        if(createUserUsername !== "") {
+            await db.createUser(createUserFirstName, createUserLastName, createUserUsername, createUserEmail, hashedPassword);
+        } else {
+            const extractedUsername = createUserEmail.split('@')[0];
+            await db.createUser(createUserFirstName, createUserLastName, createUserUsername, createUserEmail, hashedPassword);
+        }
+        const createdUser = await db.retrieveNewlyCreatedUser(createUserEmail);
+        
+        await db.addMembershipToCreatedUser(createdUser.id, parseInt(createUserMembershipCode));
+        
+        res.redirect("/users");
+    })
 ];
+
 
 export const usersUpdateGet = async (req, res) => {
   //const user = usersStorage.getUser(req.params.id);
-  const user = await db.searchUserToUpdate(req.params.id);
-  res.render("updateUser", {
+  const userInfo = await db.retrieveUserById(req.params.id);
+ return res.render("updateUser", {
     title: "Update user",
-    user: user,
+    user: req.user,
+    userInfo,
+    memberAuthenticatedLinks,
+    guestAuthenticatedLinks,
+    adminAuthenticatedLinks,
   });
 };
 
+const updateUserValidation = [
+    check('updateUserEmail')
+        .isEmail().withMessage('Please provide a valid email address!').bail()
+        .normalizeEmail(),
+    check('updateUserUsername')
+        .trim()
+        .optional({ checkFalsy: true })
+        .isLength({min: 5, max: 35}).withMessage('Username must be atleast 5 characters and at max 35 characters!')
+        .isAlphanumeric().withMessage('Username must contain alphanumeric characters only!'),
+    check('updateUserFirstName')
+        .trim()
+        .notEmpty().withMessage('First Name is required!').bail()
+        .isAlpha().withMessage('First Name must contain alphabetic characters only!'),
+    check('updateUserLastName')
+        .trim()
+        .notEmpty().withMessage('Last Name is required!').bail()
+        .matches(/^[a-zA-Z0-9.\-]+$/).withMessage('Last Name can only contain letters, numbers, hypen and dots'),
+    check('updateUserMembershipCode')
+        .trim()
+        .notEmpty()
+];
+
+/*
 export const usersUpdatePost = [
   validateUser,
   async (req, res) => {

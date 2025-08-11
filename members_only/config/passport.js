@@ -38,14 +38,14 @@ passport.use(
 /*serializer
 Turning a complex object (like a user record) into a simpler format (like an ID or token) that can be stored — typically in a session or cookie.*/
 passport.serializeUser((user, done) => {
-  done(null, user.id);
+  done(null, user.user_id);
 });
 /*de-serializer
 Taking that simple format (like a user ID from the session) and turning it back into the full object (like the full user info from the database).
 */
-passport.deserializeUser(async (id, done) => {
+passport.deserializeUser(async (user_id, done) => {
   try {
-    const user = await db.retrieveUserById(id);
+    const user = await db.retrieveUserById(user_id);
 
     done(null, user);
   } catch(err) {
