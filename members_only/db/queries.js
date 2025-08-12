@@ -190,6 +190,28 @@ export async function createUser(firstName, lastName, username, email, password)
         });
     }
 };
+export async function updateUser(userId, firstName, lastName, username, email) {
+    try{
+        await pool.query(`UPDATE members_only.users SET first_name = $2, last_name = $3, username = $4, email = $5 WHERE id = $1;`, [userId, firstName, lastName, username, email]);
+        console.log("User updated successfully");
+    } catch(err) {
+        console.error("Database error in updateUser:", err);
+        throw new DBError("Failed to update user in database", 409, "DB_UPDATE_USER_FAILED", {
+            detail: err.error || err.message,
+        });
+    }
+};
+export async function deleteUser(userId) {
+    try{
+        await pool.query(`DELETE FROM members_only.users WHERE id = $1;`, [userId]);
+        console.log("User deleted successfully");
+    } catch(err) {
+        console.error("Database error in deleteUser:", err);
+        throw new DBError("Failed to delete user in database", 409, "DB_DELETE_USER_FAILED", {
+            detail: err.error || err.message,
+        });
+    }
+};
 export async function retrieveNewlyCreatedUser(email) {
     try{
         const { rows } = await pool.query(`SELECT * FROM members_only.users AS u WHERE u.email = $1`, [email]);

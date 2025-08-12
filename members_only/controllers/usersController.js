@@ -183,27 +183,41 @@ const updateUserValidation = [
         .notEmpty()
 ];
 
-/*
 export const usersUpdatePost = [
-  validateUser,
-  async (req, res) => {
-    const { id } = req.params
-    const { username, userEmail } = req.body;
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).render("updateUser", {
-        title: "Update user",
-        user: user,
-        errors: errors.array(),
-      });
-    }    
-    await db.updateUser(username, userEmail, id)
-    res.redirect("/");
-  }
+  updateUserValidation,
+  asyncHandler(async (req,res) =>{
+        const errors = validationResult(req);
+        const { updateUserEmail, updateUserUsername, updateUserFirstName, updateUserLastName, updateUserMembershipCode } = req.body;
+        
+        
+        if (!errors.isEmpty()) {
+            return res.render("updateUser", {
+                title: "Update user",
+                user: req.user,
+                userInfo,
+                memberAuthenticatedLinks,
+                guestAuthenticatedLinks,
+                adminAuthenticatedLinks,
+                errors: errors.array()
+            });
+        }
+        const userId = req.params.id;
+
+        if(updateUserUsername !== "") {
+            await db.updateUser(userId, updateUserFirstName, updateUserLastName, updateUserUsername, updateUserEmail);
+        } else {
+            const extractedUsername = updateUserEmail.split('@')[0];
+            await db.updateUser(userId, updateUserFirstName, updateUserLastName, updateUserUsername, updateUserEmail);
+        }
+        const updatedUser = await db.retrieveNewlyCreatedUser(updateUserEmail);
+        
+        await db.modifyMembership(userId, parseInt(updateUserMembershipCode));
+        
+        res.redirect("/users");
+    })
 ];
 
-export const userDeletePost = async (req, res) => {
-  await db.deleteUsername(req.params.id);
-  res.redirect("/");
+export const userDelete = async (req, res) => {
+  await db.deleteUser(req.params.id);
+  res.redirect("/users");
 };
-*/

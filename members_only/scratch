@@ -1,30 +1,29 @@
-const createUserValidation =[
-    check('createUserEmail')
-        .isEmail().withMessage('Please provide a valid email address!').bail()
-        .normalizeEmail(),
-    check('createUserUsername')
-        .trim()
-        .optional({ checkFalsy: true })
-        .isLength({min: 5, max: 35}).withMessage('Username must be atleast 5 characters and at max 35 characters!')
-        .isAlphanumeric().withMessage('Username must contain alphanumeric characters only!'),
-    check('createUserFirstName')
-        .trim()
-        .notEmpty().withMessage('First Name is required!').bail()
-        .isAlpha().withMessage('First Name must contain alphabetic characters only!'),
-    check('createUserLastName')
-        .trim()
-        .notEmpty().withMessage('Last Name is required!').bail()
-        .matches(/^[a-zA-Z0-9.]+$/).withMessage('Last Name can only contain letters, numbers, and dots'),
-    check('createUserPassword')
-        .notEmpty().withMessage('Please provide a password!').bail()
-        .isStrongPassword({
-            minLength: 8,
-            minLowercase: 1,
-            minUppercase: 1,
-            minSymbols: 1,
-            minNumbers: 1,
-        }).withMessage('Password must be at least 8 characters and include uppercase, lowercase, and a symbol'),
-    check('createUserMembershipCode')
-        .trim()
-        .notEmpty()
+export const usersCreatePost = [
+    updateUserValidation, asyncHandler(async (req,res) =>{
+        const errors = validationResult(req);
+        const { updateUserEmail, updateUserUsername, updateUserFirstName, updateUserLastName, updateUserPassword, updateUserMembershipCode } = req.body;
+        const hashedPassword = await bcrypt.hash(updateUserPassword, 10);
+        console.log(req.body);
+        if (!errors.isEmpty()) {
+            return res.render("updateUser", {
+                title: "Create user",
+                user: req.user,
+                memberAuthenticatedLinks,
+                guestAuthenticatedLinks,
+                adminAuthenticatedLinks,
+                errors: errors.array()
+            });
+        }
+        if(updateUserUsername !== "") {
+            await db.updateUser(updateUserFirstName, updateUserLastName, updateUserUsername, updateUserEmail, hashedPassword);
+        } else {
+            const extractedUsername = updateUserEmail.split('@')[0];
+            await db.updateUser(updateUserFirstName, updateUserLastName, updateUserUsername, updateUserEmail, hashedPassword);
+        }
+        const updatedUser = await db.retrieveNewlyCreatedUser(updateUserEmail);
+        
+        await db.addMembershipToCreatedUser(updatedUser.id, parseInt(updateUserMembershipCode));
+        
+        res.redirect("/users");
+    })
 ];

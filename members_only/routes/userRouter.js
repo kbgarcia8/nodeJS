@@ -12,8 +12,7 @@ usersRouter.get("/", checkAuthentication, usersController.usersList);
 usersRouter.get("/create", checkAuthentication, usersController.usersCreateGet);
 usersRouter.post("/create", checkAuthentication, usersController.usersCreatePost);
 usersRouter.get("/update/:id", checkAuthentication, usersController.usersUpdateGet);
-/*
-usersRouter.post("/update/:id", usersController.usersUpdatePost);
-usersRouter.post("/delete/:id", usersController.userDeletePost);
-*/
+usersRouter.post("/update/:id", checkAuthentication, usersController.usersUpdatePost);
+usersRouter.post("/delete/:id", checkAuthentication, usersController.userDelete);
+
 export default usersRouter;
