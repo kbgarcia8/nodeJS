@@ -8,7 +8,7 @@
 <body>
   <header class="new-message-page">
     <%- include("partials/errors.ejs") %>
-    <% if(user.status_code === 3 || (user.username === message.username)) { %>
+    <% if(user.status_code === 3) { %>
       <%- include('partials/navbar2.ejs', {links: memberAuthenticatedLinks}) %>
     <% } else if (user.status_code === 2) { %>
       <%- include('partials/navbar2.ejs', {links: guestAuthenticatedLinks}) %>

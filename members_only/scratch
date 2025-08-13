@@ -1,29 +1,87 @@
-export const usersCreatePost = [
-    updateUserValidation, asyncHandler(async (req,res) =>{
-        const errors = validationResult(req);
-        const { updateUserEmail, updateUserUsername, updateUserFirstName, updateUserLastName, updateUserPassword, updateUserMembershipCode } = req.body;
-        const hashedPassword = await bcrypt.hash(updateUserPassword, 10);
-        console.log(req.body);
-        if (!errors.isEmpty()) {
-            return res.render("updateUser", {
-                title: "Create user",
-                user: req.user,
-                memberAuthenticatedLinks,
-                guestAuthenticatedLinks,
-                adminAuthenticatedLinks,
-                errors: errors.array()
-            });
-        }
-        if(updateUserUsername !== "") {
-            await db.updateUser(updateUserFirstName, updateUserLastName, updateUserUsername, updateUserEmail, hashedPassword);
-        } else {
-            const extractedUsername = updateUserEmail.split('@')[0];
-            await db.updateUser(updateUserFirstName, updateUserLastName, updateUserUsername, updateUserEmail, hashedPassword);
-        }
-        const updatedUser = await db.retrieveNewlyCreatedUser(updateUserEmail);
-        
-        await db.addMembershipToCreatedUser(updatedUser.id, parseInt(updateUserMembershipCode));
-        
-        res.redirect("/users");
-    })
-];
+p.upgrade-membership-instructions{
+    font-style: italic;
+    font-size: 1rem;
+    margin: 0;
+    width: 50%;
+    height: 10%;
+    display: flex;
+    padding-left: 1rem;
+    align-items: center;
+    font-family: Arial, Helvetica, sans-serif;
+}
+main.upgrade-membership-page{
+    width: 97.5vw;
+    height: 80vh;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+form.upgrade-membership {
+    height: 75%;
+    width: 35%;
+    border: 0.5rem double white;
+    background-color: black;
+    border-radius: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+div.upgrade-membership-input,
+div.upgrade-membership-input2 {
+    height: 20%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    margin-block: 0.5rem;
+}
+div.upgrade-membership-input2 {
+    height: 35%;
+}
+div.upgrade-membership-input label,
+div.upgrade-membership-input2 label {
+    font-weight: 700;
+    text-decoration: underline;
+    font-family: Arial, Helvetica, sans-serif;
+    display: flex;
+    align-items: center;
+    width: 75%;
+    color: rgb(209, 209, 209);
+    margin-bottom: 0.25rem;
+}
+div.upgrade-membership-input input {
+    font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    height: 50%;
+    width: 75%;
+    padding: 0.75rem;
+}
+div.upgrade-membership-input2 textarea{
+    resize: none;
+    overflow-y: auto;
+    width: 75%;
+    padding: 0.75rem;
+    font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+div.upgrade-membership-submit-button-space{
+    height: 10%;
+    width: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    border: 2px solid white;
+    border-radius: 1rem;
+    margin-top: 1rem;
+}
+button.upgrade-membership-page-submit{
+    background-color: azure;
+    color: black;
+    border-radius: 0.85rem;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-weight: 700;
+}

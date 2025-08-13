@@ -7,6 +7,7 @@ export const guestAuthenticatedLinks = [
   { href: "/dashboard", text: "Message Board" },
   { href: "/messages", text: "My Messages" },
   { href: "/messages/new", text: "New Message" },
+  { href: "/users/upgrade", text: "Upgrade" },
   { href: "/logout", text: "Logout" },
 ];
 

@@ -15,7 +15,11 @@
     <p class="update-user-instructions">
         Admin privelege to update user of Members Only Blogspot!
     </p>
-    <form action="/users/update" method="POST">
+    <form action="/users/update/<%= currentUserId %>" method="POST">
+        <div class="input-container update-user-input" style="display: none;">
+          <label for="updateUserId">Email: </label>
+          <input id="updateUserId" name="updateUserId" type="number" value="<%= currentUserId %>"/>
+        </div>
         <div class="input-container update-user-input">
           <label for="updateUserEmail">Email: </label>
           <input id="updateUserEmail" name="updateUserEmail" placeholder="Email Address" type="text" value="<%= userInfo.email %>"/>
@@ -35,10 +39,10 @@
         <div class="input-container update-user-input">
           <label for="updateUserMembershipCode">Membership Code: </label>
           <select id="updateUserMembershipCode" name="updateUserMembershipCode">
-          <option value="2" <%= userInfo.statusCode === 2 ? selected : '' %> >Guest</option>
-          <option value="3" <%= userInfo.statusCode === 3 ? selected : '' %> >Member</option>
-          <option value="1" <%= userInfo.statusCode === 1 ? selected : '' %> >Admin</option>
-        </select>
+            <option value="2" <%= userInfo.status_code == 2 ? 'selected' : '' %> >Guest</option>
+            <option value="3" <%= userInfo.status_code == 3 ? 'selected' : '' %> >Member</option>
+            <option value="1" <%= userInfo.status_code == 1 ? 'selected' : '' %> >Admin</option>
+          </select>
         </div>
         <div class="update-user-submit-button-space">
           <button type="submit" class="update-user-page-submit">Update User</button>

@@ -3,6 +3,9 @@ import * as usersController from "../controllers/usersController.js"
 import { checkAuthentication } from "../middlewares/authenticate.js";
 const usersRouter = Router();
 
+//guest access
+usersRouter.get("/upgrade", checkAuthentication, usersController.upgradeMembershipGet);
+usersRouter.post("/upgrade", checkAuthentication, usersController.upgradeMembershipPost);
 //member access
 usersRouter.get("/search", checkAuthentication, usersController.usersSearch);
 usersRouter.get("/search/result", checkAuthentication, usersController.usersSearchGet);

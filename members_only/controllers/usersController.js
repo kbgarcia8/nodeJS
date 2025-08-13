@@ -149,11 +149,12 @@ export const usersCreatePost = [
 
 
 export const usersUpdateGet = async (req, res) => {
-  //const user = usersStorage.getUser(req.params.id);
   const userInfo = await db.retrieveUserById(req.params.id);
- return res.render("updateUser", {
+  console.dir(userInfo)
+  return res.render("updateUser", {
     title: "Update user",
     user: req.user,
+    currentUserId: req.params.id,
     userInfo,
     memberAuthenticatedLinks,
     guestAuthenticatedLinks,
@@ -162,6 +163,8 @@ export const usersUpdateGet = async (req, res) => {
 };
 
 const updateUserValidation = [
+    check('updateUserId')
+        .notEmpty(),
     check('updateUserEmail')
         .isEmail().withMessage('Please provide a valid email address!').bail()
         .normalizeEmail(),
@@ -187,7 +190,7 @@ export const usersUpdatePost = [
   updateUserValidation,
   asyncHandler(async (req,res) =>{
         const errors = validationResult(req);
-        const { updateUserEmail, updateUserUsername, updateUserFirstName, updateUserLastName, updateUserMembershipCode } = req.body;
+        const { updateUserId, updateUserEmail, updateUserUsername, updateUserFirstName, updateUserLastName, updateUserMembershipCode } = req.body;
         
         
         if (!errors.isEmpty()) {
@@ -203,6 +206,10 @@ export const usersUpdatePost = [
         }
         const userId = req.params.id;
 
+        const currentUser = await db.retrieveUserById(userId);
+
+        console.log(`current user: ${currentUser}`)
+
         if(updateUserUsername !== "") {
             await db.updateUser(userId, updateUserFirstName, updateUserLastName, updateUserUsername, updateUserEmail);
         } else {
@@ -214,10 +221,61 @@ export const usersUpdatePost = [
         await db.modifyMembership(userId, parseInt(updateUserMembershipCode));
         
         res.redirect("/users");
-    })
+  })
 ];
 
 export const userDelete = async (req, res) => {
   await db.deleteUser(req.params.id);
   res.redirect("/users");
 };
+
+export const upgradeMembershipGet = async (req,res) => {
+  return res.render("membershipUpgrade", {
+    title: "Membersip Upgrade",
+    header: "Guest to Member",
+    user: req.user,
+    memberAuthenticatedLinks,
+    guestAuthenticatedLinks,
+    adminAuthenticatedLinks,
+  });
+};
+
+const updateMembershipValidation = [
+  check('membershipSecretCode')
+    .trim()
+    .optional({ checkFalsy: true })
+    .custom((value, { req }) => {
+        if (value === 'M3mbeRs0nLy4ev3r') {
+            req.isValidMembershipCode = true; 
+        } else {
+            req.isValidMembershipCode = false;
+        }
+        return true; 
+    })
+]
+
+export const upgradeMembershipPost = [
+  updateMembershipValidation,
+  asyncHandler(async (req,res) =>{
+        const errors = validationResult(req);
+        const currentUser = req.user;
+        
+        if (!errors.isEmpty()) {
+            return res.render("membershipUpgrade", {
+                title: "Membersip Upgrade",
+                header: "Guest to Member",
+                user: req.user,
+                memberAuthenticatedLinks,
+                guestAuthenticatedLinks,
+                adminAuthenticatedLinks,
+                errors: errors.array()
+            });
+        }
+        if(req.isValidMembershipCode === true){
+          await db.modifyMembership(currentUser.id, 3);
+        } else {
+          res.redirect("/dashboard");
+        }
+        res.redirect("/dashboard");
+  })
+];

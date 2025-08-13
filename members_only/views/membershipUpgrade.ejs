@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="upgrade-membership-page">
+    <%- include("partials/errors.ejs") %>
+    <% if(user.status_code === 3) { %>
+      <%- include('partials/navbar2.ejs', {links: memberAuthenticatedLinks}) %>
+    <% } else if (user.status_code === 2) { %>
+      <%- include('partials/navbar2.ejs', {links: guestAuthenticatedLinks}) %>
+    <% } else if (user.status_code === 1) { %>
+      <%- include('partials/navbar2.ejs', {links: adminAuthenticatedLinks}) %>
+    <% } %>
+    <h1 class="page-header"><%= header %></h1>
+  </header>
+  <main class="upgrade-membership-page">
+    <p class="upgrade-membership-instructions">Input the secret code to be upgraded from Guest to Member 💯</p>
+    <form class="upgrade-membership" action="/users/upgrade" method="POST">
+        <div class="input-container upgrade-membership-input">
+          <label for="membershipSecretCode">Upgrade Membership: </label>
+          <input id="membershipSecretCode" name="membershipSecretCode" placeholder="Secret Code" type="password"></input>
+        </div>
+        <div class="upgrade-membership-submit-button-space">
+          <button type="submit" class="upgrade-membership-page-submit">Upgrade</button>
+        </div>
+    </form>
+  </main>
+</body>
+</html>
