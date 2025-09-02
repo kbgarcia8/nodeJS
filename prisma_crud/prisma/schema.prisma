@@ -1,0 +1,61 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas = ["prisma_crud"]
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+model ExtendedProfile {
+  id        Int    @id @default(autoincrement())
+  biography String
+  user      User   @relation(fields: [userId], references: [id])
+  userId    Int    @unique
+
+  @@schema("prisma_crud")
+}
+
+model User {
+  id           Int              @id @default(autoincrement())
+  name         String?
+  email        String           @unique
+  profileViews Int              @default(0)
+  role         Role             @default(USER)
+  coinflips    Boolean[]
+  posts        Post[]
+  profile      ExtendedProfile?
+
+  @@schema("prisma_crud")
+}
+
+model Post {
+  id         Int        @id @default(autoincrement())
+  title      String
+  published  Boolean    @default(true)
+  author     User       @relation(fields: [authorId], references: [id])
+  authorId   Int
+  comments   Json?
+  views      Int        @default(0)
+  likes      Int        @default(0)
+  categories Category[]
+
+  @@schema("prisma_crud")
+}
+
+model Category {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  posts Post[]
+
+  @@schema("prisma_crud")
+}
+
+enum Role {
+  USER
+  ADMIN
+
+  @@schema("prisma_crud")
+}
