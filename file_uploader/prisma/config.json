@@ -1,0 +1,10 @@
+{
+  "extends": [],
+  "composite": {
+    "output": "prisma/schema/main.prisma",
+    "sources": [
+        "prisma/schema/schema.prisma",
+        "prisma/schema/models/user.prisma"
+    ]
+  }
+}

@@ -4,10 +4,11 @@
   "main": "index.js",
   "scripts": {
     "dev": "node app.js",
-    "setup": "npx prisma init --datasource-provider postgresql --output ./generated/prisma",
-    "migrate": "npx prisma migrate dev --name init --schema ./prisma/schema/schema.prisma",
-    "pull": "npx prisma db pull --schema ./prisma/schema/schema.prisma",
-    "studio": "npx prisma studio --schema ./prisma/schema/schema.prisma"
+    "prisma:setup": "npx prisma init --datasource-provider postgresql --output ./generated/prisma",
+    "prisma:merge": "npx prisma merge",
+    "prisma:migrate": "npx prisma migrate dev --name init --schema ./prisma/schema/schema.prisma",
+    "prisma:pull": "npx prisma db pull --schema ./prisma/schema/schema.prisma",
+    "prisma:studio": "npx prisma studio --schema ./prisma/schema/schema.prisma"
   },
   "keywords": [],
   "author": "",

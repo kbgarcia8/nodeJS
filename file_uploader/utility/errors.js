@@ -18,7 +18,7 @@ export class AppError extends Error {
   }
 };
 //For query related errors
-export class DBError extends AppError {
+export class PrismaError extends AppError {
   constructor(message = "Database Error", statusCode = 500, code = "DB_ERROR", details=null) {
     super(message, statusCode, code, details);
   }
