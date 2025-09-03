@@ -1,0 +1,9 @@
+{
+  "app": {
+    "inputs": [
+      "prisma/schema/schema.prisma",
+      "prisma/schema/models/users.prisma"
+    ],
+    "output": "prisma/schema/main.prisma"
+  }
+}

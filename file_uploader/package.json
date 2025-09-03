@@ -5,13 +5,16 @@
   "scripts": {
     "dev": "node app.js",
     "prisma:setup": "npx prisma init --datasource-provider postgresql --output ./generated/prisma",
-    "prisma:merge": "npx prisma merge",
-    "prisma:migrate": "npx prisma migrate dev --name init --schema ./prisma/schema/schema.prisma",
-    "prisma:pull": "npx prisma db pull --schema ./prisma/schema/schema.prisma",
-    "prisma:studio": "npx prisma studio --schema ./prisma/schema/schema.prisma"
+    "prisma:merge": "npx prismerge -i prisma/prismerge.json",
+    "prisma:migrate": "npx prisma migrate dev --name init --schema ./prisma/schema/main.prisma",
+    "prisma:pull": "npx prisma db pull --schema ./prisma/schema/main.prisma",
+    "prisma:studio": "npx prisma studio --schema ./prisma/schema/main.prisma"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "@prisma-utils/prismerge": "^1.7.0"
+  }
 }
