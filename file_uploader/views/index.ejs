@@ -1,0 +1,38 @@
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <header>
+      <%- include("partials/errors.ejs") %>
+      <%- include("partials/navbar.ejs", { links: notAuthenticatedLinks }) %>
+      <h1 class="page-header">⤴️⤵️ File Uploader</h1>
+      <h3 class="index-page-slogan">Simple and secure file storage — anytime, anywhere.</h3>
+    </header>
+
+    <main class="index-page">
+      <div class="feature-highlights-space">
+        <h4 class="feature-highlights-header">🚀 What You Get</h4>
+        <p class="feature">🛡️ Encrypted file storage</p>
+        <p class="feature">📁 Unlimited uploads</p>
+        <p class="feature">🔄 Download anytime</p>
+        <p class="feature">📱 Access from any device</p>
+      </div>
+
+      <div class="call-to-action-statements-space">
+        <h4 class="call-to-action-statement-header">💡 Why use this?</h4>
+        <p class="call-to-action-statement">✅ Upload files and store in own folder via an account</p>
+        <p class="call-to-action-statement">✅ No ads, no nonsense</p>
+        <p class="call-to-action-statement">✅ Accessible from any device</p>
+      </div>
+
+      <div class="membership-perks-space">
+        <h4 class="membership-perks-header">👤 Why create an account?</h4>
+        <p class="membership-perks-statement">📂 View and manage your uploaded files</p>
+        <p class="membership-perks-statement">🔍 Search and organize your files</p>
+        <p class="membership-perks-statement">⏳ Keep a history of uploads and downloads</p>
+      </div>
+    </main>
+  </body>
+</html>

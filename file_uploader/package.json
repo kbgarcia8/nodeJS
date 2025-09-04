@@ -2,6 +2,7 @@
   "name": "file_uploader",
   "version": "1.0.0",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "dev": "node app.js",
     "prisma:setup": "npx prisma init --datasource-provider postgresql --output ./generated/prisma",

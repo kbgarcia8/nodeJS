@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="system-error-page-header">
+    <% if (access) { %>
+      <% if(user.status_code === 3) { %>
+        <%- include('partials/navbar2.ejs', {links: memberAuthenticatedLinks}) %>
+      <% } else if (user.status_code === 2) { %>
+        <%- include('partials/navbar2.ejs', {links: guestAuthenticatedLinks}) %>
+      <% } else if (user.status_code === 1) { %>
+        <%- include('partials/navbar2.ejs', {links: adminAuthenticatedLinks}) %>
+      <% } %>
+    <% } else { %>
+      <%- include('partials/navbar.ejs', {links: notAuthenticatedLinks}) %>
+    <% }; %>
+      <h1 class="page-header">→ What's on your mind? 🧠</h1>
+  </header>
+  <main class="system-error-page">
+    <div class="error-image-space">
+      <img src="/error.png" alt="error-icon">
+    </div>
+    <div class="error-information-space">
+      <h2 class="error-status-code">‼️Status Code: <%= error.statusCode ? error.statusCode : 400 %></h2>
+      <p class="error-code"><%= error.name %></p>
+      <% if (error.details && error.details.detail) { %>
+          <p class="error-details"><%= error.details.detail %></p>
+      <% } %>
+      <p class="error-message"><%= error.message %></p>
+    </div>
+  </main>
+</body>
+</html>
