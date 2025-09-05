@@ -7,6 +7,7 @@
     "dev": "node app.js",
     "prisma:setup": "npx prisma init --datasource-provider postgresql --output ./generated/prisma",
     "prisma:merge": "npx prismerge -i prisma/prismerge.json",
+    "prisma:generate": "prisma generate --schema=./prisma/schema/main.prisma",
     "prisma:migrate": "npx prisma migrate dev --name init --schema ./prisma/schema/main.prisma",
     "prisma:pull": "npx prisma db pull --schema ./prisma/schema/main.prisma",
     "prisma:studio": "npx prisma studio --schema ./prisma/schema/main.prisma"
@@ -16,6 +17,8 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
-    "@prisma-utils/prismerge": "^1.7.0"
+    "@prisma-utils/prismerge": "^1.7.0",
+    "@prisma/client": "^6.15.0",
+    "prisma": "^6.15.0"
   }
 }

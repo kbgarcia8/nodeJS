@@ -48,17 +48,6 @@ const registerValidation =[
                 });
             }
             return true;
-        }),
-    check('registerMembershipCode')
-        .trim()
-        .optional({ checkFalsy: true })
-        .custom((value, { req }) => {
-            if (value === 'M3mbeRs0nLy4ev3r') {
-                req.isValidMembershipCode = true; 
-            } else {
-                req.isValidMembershipCode = false;
-            }
-            return true; 
         })
 ];
 
@@ -86,19 +75,11 @@ export const registerFormPost = [
             });
         }
         if(registerUsername !== "") {
-            await db.createUser(registerFirstName, registerLastName, registerUsername, registerEmail, hashedPassword);
+            await prisma.createUser(registerFirstName, registerLastName, registerUsername, registerEmail, hashedPassword);
         } else {
             const extractedUsername = registerEmail.split('@')[0];
-            await db.createUser(registerFirstName, registerUsername, extractedUsername, registerEmail, hashedPassword);
+            await prisma.createUser(registerFirstName, registerUsername, extractedUsername, registerEmail, hashedPassword);
         }
-        const createdUser = await db.retrieveNewlyCreatedUser(registerEmail);
-        //Because of checkFalsy = true it will skip if no code was provided and req.isValidMembershipCode will be undefined to must set to false if that is the case
-        if (typeof req.isValidMembershipCode === 'undefined') {
-            req.isValidMembershipCode = false;
-        }
-        
-        await db.addDefaultMembership(createdUser.id, req.isValidMembershipCode)
-        
         res.redirect("/");
     })
 ];

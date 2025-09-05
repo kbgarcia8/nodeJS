@@ -1,19 +1,22 @@
-import { PrismaClient } from '@prisma/client'
-import { PrismaError } from '../utils/errors.js';
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient({})
 /* -- USERS -- */
-export async function createUser(firstName, lastName, username, email, password){
+export async function createUser(firstName, lastName, username, email, password, role){
     try {
-        const newUser = await prisma.user.create({
-            data: {
-                firstName: firstName,
-                lastName: lastName,
-                username: username,
-                email: email,
-                password: password
-            },
-        });
+        const data= {
+          firstName: firstName,
+          lastName: lastName,
+          username: username,
+          email: email,
+          password: password,
+        }
+        //This is advised rather than including role: role || USER since if role will be undefined prisma will consider it as null. So now if role is not provided it will not be included in data and the default value in the schema will be used
+        if (role !== undefined) {
+          data.role = role;
+        }
+
+        const newUser = await prisma.user.create({ data });
         console.log("User created successfully!")
     } catch (err){
         console.error("Database error in createUser:", err);
@@ -22,60 +25,14 @@ export async function createUser(firstName, lastName, username, email, password)
         });
     }
 }
-// A `main` function so that you can use async/await
+/* -- END USERS -- */
+/*
 async function main() {
-  const u = await prisma.user.create({
-    include: {
-      posts: {
-        include: {
-          categories: true,
-        },
-      },
-    },
-    data: {
-      email: 'emma@prisma.io',
-      posts: {
-        create: [
-          {
-            title: 'My first post',
-            categories: {
-              connectOrCreate: [
-                {
-                  create: { name: 'Introductions' },
-                  where: {
-                    name: 'Introductions',
-                  },
-                },
-                {
-                  create: { name: 'Social' },
-                  where: {
-                    name: 'Social',
-                  },
-                },
-              ],
-            },
-          },
-          {
-            title: 'How to make cookies',
-            categories: {
-              connectOrCreate: [
-                {
-                  create: { name: 'Social' },
-                  where: {
-                    name: 'Social',
-                  },
-                },
-                {
-                  create: { name: 'Cooking' },
-                  where: {
-                    name: 'Cooking',
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  })
+  const users = await prisma.user.findMany();
+  console.log(users);
 }
+
+main().catch((e) => {
+  console.error('Error:', e);
+});
+*/

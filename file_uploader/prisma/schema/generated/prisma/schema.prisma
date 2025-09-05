@@ -28,7 +28,15 @@ model User {
   username   String?  @unique @db.VarChar(30)
   email      String   @unique @db.VarChar(254)
   password   String   @db.VarChar(72)
+  role       Role     @default(USER)
   created_at DateTime @default(now())
+
+  @@schema("file_uploader")
+}
+
+enum Role {
+  USER
+  ADMIN
 
   @@schema("file_uploader")
 }
