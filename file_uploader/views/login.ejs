@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Register</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="login-page">
+    <h1 class="page-header">→ What's on your mind? 🧠</h1>
+    <%- include('partials/navbar.ejs', {links: notAuthenticatedLinks}) %>
+    <%- include("partials/errors.ejs") %>
+  </header>
+  <main class="login-page">
+    <form class="login-page-button-only" action="/" method="GET">
+        <button type="submit" class="login-page-back">Back to Home</button>
+    </form>
+    <p class="login-instructions">
+        Welcome to Members Only Blogspot! Please login your account
+    </p>
+    <form class="login" action="/login" method="POST">
+        <div class="input-container login-input">
+          <label for="loginEmail">Email: </label>
+          <input id="loginEmail" name="loginEmail" placeholder="Email Address" type="text" />
+        </div>
+        <div class="input-container login-input">
+          <label for="loginPassword">Password: </label>
+          <input id="loginPassword" name="loginPassword" placeholder="Password" type="password" />
+        </div>
+        <div class="login-submit-button-space">
+          <button type="submit" class="login-page-submit">Login</button>
+        </div>
+    </form>
+    <div class="register-instead">
+      <form action="/register" method="GET">
+        <span>No account yet?  </span>
+        <button class="register-instead" type="submit">Register</button>
+      </form>
+    </div>
+  </main>
+</body>
+</html>

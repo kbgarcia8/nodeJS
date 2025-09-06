@@ -32,20 +32,20 @@ app.use(express.urlencoded({ extended: true })); //express level middleware to p
 app.use(express.json()); //express level middleware to parse json
 
 //use session/passport
-app.use(session({ secret: "cats", resave: false, saveUninitialized: false })); //setup
-app.use(passport.session()); //enable session
-app.use(flash()); //for error handling of passport after failureRedirect
+//app.use(session({ secret: "cats", resave: false, saveUninitialized: false })); //setup
 
 //session persistence for development purposes- will have to explore
 const PGStore = pgSession(session);
 
 app.use(session({
-    store: new PGStore({ pool }),
+    store: new PGStore({ pool: pool, createTableIfMissing: true }),
     secret: 'members-only',
     resave: false,
     saveUninitialized: false,
     cookie: { maxAge: 86400000 }
 }));
+app.use(passport.session()); //enable session
+app.use(flash()); //for error handling of passport after failureRedirect
 
 
 app.use("/", indexRouter);

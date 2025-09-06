@@ -7,7 +7,7 @@ import { notAuthenticatedLinks, memberAuthenticatedLinks, guestAuthenticatedLink
 //session/passport
 import session from "express-session";
 import passport from "passport";
-//import "./config/passport.js"; //run current configurations via passport.use
+import "./config/passport.js"; //run current configurations via passport.use
 import flash from "connect-flash";
 //session persistence
 import pgSession from 'connect-pg-simple';
@@ -38,11 +38,20 @@ app.use(express.json()); //express level middleware to parse json
 const PGStore = pgSession(session);
 //pool instance
 const pgPool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+  host: process.env.DATABASE_HOST || "localhost",
+  user: process.env.DATABASE_USER,
+  database: process.env.DATABASE_DB,
+  password: process.env.DATABASE_USER_PASSWORD?.trim(),
+  port: Number(process.env.DATABASE_PORT),
+  ssl: {
+    rejectUnauthorized: true,
+    ca: process.env.DATABASE_SSL_CA?.replace(/\\n/g, '\n'), // To properly format multi-line certs
+  },
 });
 
+
 app.use(session({
-    store: new PGStore({ pgPool }),
+    store: new PGStore({ pool: pgPool, createTableIfMissing: true }), //createTableIfMissing resolves Error: relation "session" does not exist
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
@@ -52,7 +61,7 @@ app.use(session({
 //use session in passport
 app.use(passport.initialize());
 app.use(passport.session()); //enable session
-//app.use(flash()); //for error handling of passport after failureRedirect
+app.use(flash()); //for error handling of passport after failureRedirect
 
 
 app.use("/", indexRouter);
@@ -63,14 +72,16 @@ app.use("/", indexRouter);
 app.use((err, req, res, next) => {
   console.error(err); //display error on developer options console
   console.log(err)
+  //failsafe incase passport still has an error and render req.isAuthenticated undefined
+  const isAuthenticated = typeof req.isAuthenticated === 'function' ? req.isAuthenticated() : false;
   
   res.render("systemError", {
       title: "Error Page",
       notAuthenticatedLinks,
-      memberAuthenticatedLinks,
-      guestAuthenticatedLinks,
-      adminAuthenticatedLinks,
-      access: req.isAuthenticated(),
+      //memberAuthenticatedLinks,
+      //guestAuthenticatedLinks,
+      //adminAuthenticatedLinks,
+      access: isAuthenticated,
       user: req.user,
       error: err
   });

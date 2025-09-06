@@ -1,6 +1,6 @@
 import passport from "passport";
 import { Strategy as LocalStrategy } from 'passport-local';
-import * as db from "../db/queries.js";
+import * as prisma from "../prisma/prisma.js"
 import bcrypt from "bcryptjs";
 
 //Configure passport
@@ -10,7 +10,7 @@ passport.use(
   passwordField: 'loginPassword'
 },  async function verify (email, password, done) { //takes up the values in LocalStrategy Object in order as argument in verify so it does not matter what name is assigned
       try {
-        const user = await db.retrieveUserByEmail(email);
+        const user = await prisma.findUserByEmail(email);
         /*done function in Passport.js is a callback that you must call to complete a step in the Passport flow — whether it's authentication, serialization, or deserialization
         Syntax: done(error, user, info)
           Argument	Meaning
@@ -38,14 +38,14 @@ passport.use(
 /*serializer
 Turning a complex object (like a user record) into a simpler format (like an ID or token) that can be stored — typically in a session or cookie.*/
 passport.serializeUser((user, done) => {
-  done(null, user.user_id);
+  done(null, user.id);
 });
 /*de-serializer
 Taking that simple format (like a user ID from the session) and turning it back into the full object (like the full user info from the database).
 */
-passport.deserializeUser(async (user_id, done) => {
+passport.deserializeUser(async (id, done) => {
   try {
-    const user = await db.retrieveUserById(user_id);
+    const user = await prisma.findUserById(id);
 
     done(null, user);
   } catch(err) {

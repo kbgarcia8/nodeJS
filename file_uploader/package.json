@@ -4,7 +4,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "node app.js",
+    "dev": "nodemon app.js",
     "prisma:setup": "npx prisma init --datasource-provider postgresql --output ./generated/prisma",
     "prisma:merge": "npx prismerge -i prisma/prismerge.json",
     "prisma:generate": "prisma generate --schema=./prisma/schema/main.prisma",

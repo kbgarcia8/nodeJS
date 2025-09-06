@@ -25,6 +25,40 @@ export async function createUser(firstName, lastName, username, email, password,
         });
     }
 }
+export async function findUserByEmail(email){
+  try {
+    const retrievedUser = await prisma.user.findUnique({
+      where: {
+        email: email
+      }
+    });
+
+    return retrievedUser;
+
+  } catch(err){
+    console.error("Database error in findUserByEmail:", err);
+      throw new PrismaError("Failed to create user in database", 409, "PRISMA_FIND_USER_BYEMAIL_FAILED", {
+          detail: err.error || err.message,
+      });
+  }
+}
+export async function findUserById(id){
+  try {
+    const retrievedUser = await prisma.user.findUnique({
+      where: {
+        id: id
+      }
+    });
+
+    return retrievedUser;
+
+  } catch(err){
+    console.error("Database error in findUserByEmail:", err);
+      throw new PrismaError("Failed to create user in database", 409, "PRISMA_FIND_USER_BYEMAIL_FAILED", {
+          detail: err.error || err.message,
+      });
+  }
+}
 /* -- END USERS -- */
 /*
 async function main() {

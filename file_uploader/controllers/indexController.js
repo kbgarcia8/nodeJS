@@ -83,7 +83,7 @@ export const registerFormPost = [
         res.redirect("/");
     })
 ];
-/*
+
 export async function loginFormGet(req,res){
     const flashErrors = req.flash("error"); // array of error strings
 
@@ -94,7 +94,7 @@ export async function loginFormGet(req,res){
         notAuthenticatedLinks,
         errors: errors
     });
-};
+}; 
 
 const loginValidation =[
     check('loginEmail')
@@ -112,16 +112,18 @@ export const loginFormPost = [
             return res.render("login", {
                 title: "Login Page",
                 notAuthenticatedLinks,
-                memberAuthenticatedLinks,
-                guestAuthenticatedLinks,
-                adminAuthenticatedLinks,
+                //memberAuthenticatedLinks,
+                //guestAuthenticatedLinks,
+                //adminAuthenticatedLinks,
                 errors: errors.array()
             });
         }
         //STILL need to call passport.authenticate after login
         //The error throwing and handling here are only available during login and not meant to be a middleware in protected routes
-        passport.authenticate("local", (err, user, info) => {//logic on how submitted info are processed are in passport.js
+        passport.authenticate("local", (err, user, info) => { 
+        //Below is the logic on how submitted info are processed are in passport.js
         if (err) return next(err);
+
         if (!user) {
             return res.render("login", {
                 title: "Login Page",
@@ -132,12 +134,13 @@ export const loginFormPost = [
 
         req.logIn(user, (err) => {
             if (err) return next(err);
-            return res.redirect("/dashboard");
+            //return res.redirect("/dashboard");
+            res.send("User login successful")
         });
         })(req, res, next);
     })
 ];
-
+/*
 export async function dashboardGet(req,res){
     const retrievedMessages = await db.retrieveAllMessages();
 
