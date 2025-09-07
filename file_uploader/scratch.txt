@@ -8,3 +8,27 @@ Only admin can create an admin
   <% } else if (user.status_code === 1) { %>
     <%- include('partials/navbar2.ejs', {links: adminAuthenticatedLinks}) %>
 <% } %>
+
+//session persistence for development purposes- will have to explore
+const PGStore = pgSession(session);
+//pool instance
+const pgPool = new Pool({
+  host: process.env.DATABASE_HOST || "localhost",
+  user: process.env.DATABASE_USER,
+  database: process.env.DATABASE_DB,
+  password: process.env.DATABASE_USER_PASSWORD?.trim(),
+  port: Number(process.env.DATABASE_PORT),
+  ssl: {
+    rejectUnauthorized: true,
+    ca: process.env.DATABASE_SSL_CA?.replace(/\\n/g, '\n'), // To properly format multi-line certs
+  },
+});
+
+
+app.use(session({
+    store: new PGStore({ pool: pgPool, createTableIfMissing: true }), //createTableIfMissing resolves Error: relation "session" does not exist
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: { maxAge: 86400000 }
+}));

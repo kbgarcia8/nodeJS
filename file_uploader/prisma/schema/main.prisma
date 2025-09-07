@@ -33,6 +33,14 @@ model User {
 
   @@schema("file_uploader")
 }
+model Session {
+  id        String   @id
+  sid       String   @unique
+  data      String
+  expiresAt DateTime
+
+  @@schema("file_uploader")
+}
 enum Role {
   USER
   ADMIN
