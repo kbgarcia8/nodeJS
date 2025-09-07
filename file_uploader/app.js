@@ -4,14 +4,14 @@ import { fileURLToPath } from 'url';
 import {dirname} from 'path';
 //constants
 import { notAuthenticatedLinks, memberAuthenticatedLinks, guestAuthenticatedLinks, adminAuthenticatedLinks } from "./constants/constants.js";
-//session/passport
-import session from "express-session";
+//passport
 import passport from "passport";
 import "./config/passport.js"; //run current configurations via passport.use
 import flash from "connect-flash";
-//session persistence
-import pgSession from 'connect-pg-simple';
-import { Pool } from "pg";
+//session-prisma
+import expressSession from "express-session";
+import { PrismaSessionStore } from "@quixo3/prisma-session-store";
+import { PrismaClient } from './prisma/schema/generated/prisma/index.js';
 //.env
 import dotenv from 'dotenv';
 dotenv.config(); 
@@ -34,29 +34,29 @@ app.use(express.static(assetsPath));
 app.use(express.urlencoded({ extended: true })); //express level middleware to parse the form data into req.body
 app.use(express.json()); //express level middleware to parse json
 
-//session persistence for development purposes- will have to explore
-const PGStore = pgSession(session);
-//pool instance
-const pgPool = new Pool({
-  host: process.env.DATABASE_HOST || "localhost",
-  user: process.env.DATABASE_USER,
-  database: process.env.DATABASE_DB,
-  password: process.env.DATABASE_USER_PASSWORD?.trim(),
-  port: Number(process.env.DATABASE_PORT),
-  ssl: {
-    rejectUnauthorized: true,
-    ca: process.env.DATABASE_SSL_CA?.replace(/\\n/g, '\n'), // To properly format multi-line certs
-  },
-});
+//session persistence & use session in app
+const prisma = new PrismaClient();
 
-
-app.use(session({
-    store: new PGStore({ pool: pgPool, createTableIfMissing: true }), //createTableIfMissing resolves Error: relation "session" does not exist
+app.use(
+  expressSession({
+    cookie: {
+      maxAge: 7 * 24 * 60 * 60 * 1000, // ms
+      secure: process.env.NODE_ENV === "production", // use HTTPS-only cookies in prod
+      httpOnly: true, // prevents JS access to cookies
+    },
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    cookie: { maxAge: 86400000 }
-}));
+    store: new PrismaSessionStore(
+      prisma,
+      {
+        checkPeriod: 2 * 60 * 1000,  //ms
+        dbRecordIdIsSessionId: true,
+        dbRecordIdFunction: undefined,
+      }
+    )
+  })
+);
 
 //use session in passport
 app.use(passport.initialize());

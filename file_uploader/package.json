@@ -19,6 +19,11 @@
   "devDependencies": {
     "@prisma-utils/prismerge": "^1.7.0",
     "@prisma/client": "^6.15.0",
-    "prisma": "^6.15.0"
+    "prisma": "^6.15.0",
+    "prisma-erd-generator": "^2.0.4"
+  },
+  "dependencies": {
+    "@quixo3/prisma-session-store": "^3.1.13",
+    "express-session": "^1.18.2"
   }
 }

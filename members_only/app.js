@@ -4,12 +4,12 @@ import { fileURLToPath } from 'url';
 import {dirname} from 'path';
 //constants
 import { notAuthenticatedLinks, memberAuthenticatedLinks, guestAuthenticatedLinks, adminAuthenticatedLinks } from "./constants/constants.js";
-//session/passport
-import session from "express-session";
+//passport
 import passport from "passport";
 import "./config/passport.js"; //run current configurations via passport.use
 import flash from "connect-flash";
-//session persistence
+//session-pg
+import session from "express-session";
 import pgSession from 'connect-pg-simple';
 import pool from "./db/pool.js";
 //Routers
