@@ -1,0 +1,10 @@
+Only admin can create an admin
+
+<%- include("partials/errors.ejs") %>
+  <% if(user.status_code === 3) { %>
+    <%- include('partials/navbar2.ejs', {links: memberAuthenticatedLinks}) %>
+  <% } else if (user.status_code === 2) { %>
+    <%- include('partials/navbar2.ejs', {links: guestAuthenticatedLinks}) %>
+  <% } else if (user.status_code === 1) { %>
+    <%- include('partials/navbar2.ejs', {links: adminAuthenticatedLinks}) %>
+<% } %>

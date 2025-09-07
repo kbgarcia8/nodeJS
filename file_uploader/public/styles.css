@@ -312,10 +312,10 @@ div.register-submit-button-space{
     justify-content: flex-end;
 }
 div.login-instead{
-    height: 10%;
+    height: 5.5%;
     width: 25%;
     margin-top: 5.5rem;
-    margin-left: 25rem;
+    margin-left: 2.25rem;
 }
 div.login-instead form{
     width: 100%;

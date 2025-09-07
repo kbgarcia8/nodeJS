@@ -1,0 +1,25 @@
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <header>
+        <%- include("partials/errors.ejs") %>
+        <!--Include adminAuthenticated Links pag naayos na user.roles-->
+        <%- include('partials/navbar2.ejs', {links: memberAuthenticatedLinks}) %>
+        <h1 class="page-header">⤴️⤵️ File Uploader</h1>
+        <h2 class="welcome-user-header"><%= header %></h2>
+    </header>
+    <main class="message-dashboard">
+      <!--If membership guest censor author of messages unless belong to user logged in-->
+      <% if (files && files.length > 0) { %>
+        <% files.forEach((file) => { %>
+          <!--post public files here-->
+        <% }); %>
+      <% } else { %>
+        <p>No public files available yet</p>
+      <% }; %>
+    </main>
+  </body>
+</html>

@@ -1,5 +1,5 @@
 import { check, validationResult } from "express-validator";
-import { notAuthenticatedLinks } from "../constants/constants.js";
+import { notAuthenticatedLinks, memberAuthenticatedLinks } from "../constants/constants.js";
 import { ExpressValError } from "../utils/errors.js";
 import asyncHandler from "express-async-handler";
 import * as prisma from "../prisma/prisma.js";
@@ -134,29 +134,24 @@ export const loginFormPost = [
 
         req.logIn(user, (err) => {
             if (err) return next(err);
-            //return res.redirect("/dashboard");
-            res.send("User login successful")
+            return res.redirect("/dashboard");
+            //res.send("User login successful")
         });
         })(req, res, next);
     })
 ];
-/*
-export async function dashboardGet(req,res){
-    const retrievedMessages = await db.retrieveAllMessages();
 
-    const messages = retrievedMessages.map((message) => ({
-        ...message,
-        editable: isSameDay(message.created_at_utc)
-    }))
+export async function dashboardGet(req,res){
+    const publicFiles = [] //public files will be fetched later on
 
     return res.render("dashboard", {
         title: "Dashboard",
         header: `Hi ${req.user.username}, Welcome back!`,
         notAuthenticatedLinks,
         memberAuthenticatedLinks,
-        guestAuthenticatedLinks,
-        adminAuthenticatedLinks,
-        messages: messages,
+        //guestAuthenticatedLinks,
+        //adminAuthenticatedLinks,
+        files: publicFiles,
         user: req.user
     });
 };
@@ -169,4 +164,3 @@ export async function logOut (req, res, next) {
     res.redirect("/");
   });
 }
-*/

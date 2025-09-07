@@ -4,28 +4,28 @@ export const notAuthenticatedLinks = [
 ]
 
 export const guestAuthenticatedLinks = [
-  { href: "/dashboard", text: "Message Board" },
-  { href: "/messages", text: "My Messages" },
-  { href: "/messages/new", text: "New Message" },
+  { href: "/dashboard", text: "Public Files" },
+  { href: "/files", text: "My Filess" },
+  { href: "/files/new", text: "New Files" },
   { href: "/users/upgrade", text: "Upgrade" },
   { href: "/logout", text: "Logout" },
 ];
 
 
 export const memberAuthenticatedLinks = [
-  { href: "/dashboard", text: "Message Board" },
-  { href: "/messages", text: "My Messages" },
-  { href: "/messages/new", text: "New Message" },
-  { href: "/messages/search", text: "Search Message" },
+  { href: "/dashboard", text: "Public Files" },
+  { href: "/files", text: "My Files" },
+  { href: "/files/new", text: "New Files" },
+  { href: "/files/search", text: "Search Files" },
   { href: "/users/search", text: "Search User" },
   { href: "/logout", text: "Logout" },
 ];
 
 export const adminAuthenticatedLinks = [
-  { href: "/dashboard", text: "Message Board" },
-  { href: "/message", text: "My Messages" },
-  { href: "/messages/new", text: "New Message" },
-  { href: "/messages/search", text: "Search Message" },
+  { href: "/dashboard", text: "Public Files" },
+  { href: "/message", text: "My Filess" },
+  { href: "/files/new", text: "New Files" },
+  { href: "/files/search", text: "Search Files" },
   { href: "/users", text: "All Users" },
   { href: "/users/create", text: "Create User" },  
   { href: "/users/search", text: "Search User" },

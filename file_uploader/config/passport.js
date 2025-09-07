@@ -45,7 +45,7 @@ Taking that simple format (like a user ID from the session) and turning it back 
 */
 passport.deserializeUser(async (id, done) => {
   try {
-    const user = await prisma.findUserById(id);
+    const user = await prisma.findUserById(id); //will be passed as req.user in controllers
 
     done(null, user);
   } catch(err) {

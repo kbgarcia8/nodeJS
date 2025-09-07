@@ -11,8 +11,7 @@ indexRouter.get("/register", asyncHandler(indexController.registerForm));
 indexRouter.post("/register", indexController.registerFormPost);
 indexRouter.get("/login", asyncHandler(indexController.loginFormGet));
 indexRouter.post("/login", indexController.loginFormPost);
-/*
 indexRouter.get("/dashboard", checkAuthentication, indexController.dashboardGet); //only use an authentication middleware on protectred routes
 indexRouter.get("/logout", asyncHandler(indexController.logOut));
-*/
+
 export default indexRouter;
