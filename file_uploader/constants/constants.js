@@ -5,17 +5,16 @@ export const notAuthenticatedLinks = [
 
 export const guestAuthenticatedLinks = [
   { href: "/dashboard", text: "Public Files" },
-  { href: "/files", text: "My Filess" },
-  { href: "/files/new", text: "New Files" },
+  { href: "/files", text: "My Files" },
+  { href: "/files/new", text: "Upload File/s" },
   { href: "/users/upgrade", text: "Upgrade" },
   { href: "/logout", text: "Logout" },
 ];
 
-
 export const memberAuthenticatedLinks = [
   { href: "/dashboard", text: "Public Files" },
   { href: "/files", text: "My Files" },
-  { href: "/files/new", text: "New Files" },
+  { href: "/files/new", text: "Upload File/s" },
   { href: "/files/search", text: "Search Files" },
   { href: "/users/search", text: "Search User" },
   { href: "/logout", text: "Logout" },
@@ -23,8 +22,8 @@ export const memberAuthenticatedLinks = [
 
 export const adminAuthenticatedLinks = [
   { href: "/dashboard", text: "Public Files" },
-  { href: "/message", text: "My Filess" },
-  { href: "/files/new", text: "New Files" },
+  { href: "/message", text: "My Files" },
+  { href: "/files/new", text: "Upload File/s" },
   { href: "/files/search", text: "Search Files" },
   { href: "/users", text: "All Users" },
   { href: "/users/create", text: "Create User" },  

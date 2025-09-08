@@ -35,3 +35,9 @@ export class ExpressValError extends AppError {
     super(message, statusCode, code, details);
   }
 }
+//For multer file upload errors
+export class FileUploadError extends AppError {
+  constructor(message = "File Upload Error", statusCode = 400, code = "MULTER_FILE_UPLOAD_ERROR", details=null){
+    super(message, statusCode, code, details);
+  }
+}

@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@quixo3/prisma-session-store": "^3.1.13",
-    "express-session": "^1.18.2"
+    "express-session": "^1.18.2",
+    "multer": "^2.0.2"
   }
 }

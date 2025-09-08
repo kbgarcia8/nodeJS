@@ -32,3 +32,183 @@ app.use(session({
     saveUninitialized: false,
     cookie: { maxAge: 86400000 }
 }));
+
+
+form.fileUpload-page-button-only{
+    height: 5%;
+    width: 12.5%;
+}
+button.fileUpload-page-back,
+button.fileUpload-page-submit,
+button.register-instead {
+    background-color: black;
+    color: whitesmoke;
+    font-weight: 700;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    height: 100%;
+    width: 100%;
+    cursor: pointer;
+}
+button.fileUpload-page-back{
+    height: 100%;
+}
+p.fileUpload-instructions{
+    font-style: italic;
+    font-size: 1rem;
+    margin: 0;
+    width: 50%;
+    height: 10%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: Arial, Helvetica, sans-serif;
+}
+main.fileUpload-page{
+    width: 97.5vw;
+    height: 80vh;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+form.fileUpload {
+    height: 75%;
+    width: 35%;
+    border: 0.5rem double white;
+    background-color: black;
+    border-radius: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+div.fileUpload-input {
+    height: 20%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    margin-block: 0.5rem;
+}
+div.fileUpload-input label {
+    font-weight: 700;
+    text-decoration: underline;
+    font-family: Arial, Helvetica, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 75%;
+    color:rgb(209, 209, 209)
+}
+div.fileUpload-input input {
+    font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    height: 50%;
+    width: 75%;
+    padding: 0.125rem;
+}
+div.fileUpload-submit-button-space{
+    height: 10%;
+    width: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    border: 2px solid white;
+    border-radius: 1rem;
+    margin-top: 1rem;
+}
+button.fileUpload-page-submit{
+    background-color: azure;
+    color: black;
+    border-radius: 0.85rem;
+}
+
+const fileFilter = (req, file, cb) => {
+    //image files
+    imageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
+    if(imageTypes.includes(file.mimetype)) {
+        if(file.size <= (10 * 1024 * 1024)) {
+            cb(null, true)
+        } else {
+            cb(new MulterError(
+                `Failed to upload image/s. Maximum File size is 10MB`,
+                409,
+                "MULTER_IMG_UPLOAD_ERROR",
+                {detail: err.error || err.message}
+            ),
+            false)
+        }
+    }
+    //PDF files
+    if(file.mimetype === 'application/pdf' && file.size <= (20 * 1024 * 1024)) {
+        cb(null, true)
+    } else {
+        cb(new MulterError(
+            `Failed to upload PDF file. Maximum File size is 20MB`,
+            409,
+            "MULTER_PDF_UPLOAD_ERROR",
+            {detail: err.error || err.message}
+        ),
+        false)
+    }
+    //.docx or .xlsx file
+    if((file.mimetype === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || file.mimetype === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') && file.size <= (10 * 1024 * 1024)) {
+        cb(null, true)
+    } else {
+        cb(new MulterError(
+            `Failed to upload DOCX or XLSX file. Maximum File size is 10MB`,
+            409,
+            "MULTER_DOCX_OR_XLSX_UPLOAD_ERROR",
+            {detail: err.error || err.message}
+        ),
+        false)
+    }
+    //.txt file
+    if(file.mimetype === 'text/plain' && file.size <= (2 * 1024 * 1024)) {
+        cb(null, true)
+    } else {
+        cb(new MulterError(
+            `Failed to upload txt file. Maximum File size is 2MB`,
+            409,
+            "MULTER_TXT_UPLOAD_ERROR",
+            {detail: err.error || err.message}
+        ),
+        false)
+    }
+    //audio files
+    if((file.mimetype === 'audio/mpeg' || file.mimetype === 'audio/wav') && file.size <= (50 * 1024 * 1024)) {
+        cb(null, true)
+    } else {
+        cb(new MulterError(
+            `Failed to upload audio (.mp3/.wav) file. Maximum File size is 50MB`,
+            409,
+            "MULTER_AUDIO_UPLOAD_ERROR",
+            {detail: err.error || err.message}
+        ),
+        false)
+    }
+    //video files
+    if(file.mimetype === 'video/mp4' && file.size <= (150 * 1024 * 1024)) {
+        cb(null, true)
+    } else {
+        cb(new MulterError(
+            `Failed to upload video file. Maximum File size is 150MB`,
+            409,
+            "MULTER_VIDEO_UPLOAD_ERROR",
+            {detail: err.error || err.message}
+        ),
+        false)
+    }
+    //archive files
+    if(file.mimetype === 'application/zip' && file.size <= (100 * 1024 * 1024)) {
+        cb(null, true)
+    } else {
+        cb(new MulterError(
+            `Failed to upload archive(.zip/.rar) file. Maximum File size is 100MB`,
+            409,
+            "MULTER_ARCHIVED_UPLOAD_ERROR",
+            {detail: err.error || err.message}
+        ),
+        false)
+    }
+}

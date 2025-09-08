@@ -17,7 +17,7 @@ import dotenv from 'dotenv';
 dotenv.config(); 
 //Routers
 import indexRouter from "./routes/indexRouter.js";
-//import messageRouter from "./routes/messageRouter.js";
+import filesRouter from "./routes/filesRouter.js";
 //import usersRouter from "./routes/userRouter.js";
 
 const app = express();
@@ -65,7 +65,7 @@ app.use(flash()); //for error handling of passport after failureRedirect
 
 
 app.use("/", indexRouter);
-//app.use("/messages", messageRouter);
+app.use("/files", filesRouter);
 //app.use("/users", usersRouter);
 
 //error handling using middleware

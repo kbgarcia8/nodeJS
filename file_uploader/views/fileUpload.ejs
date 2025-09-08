@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Upload a File</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="fileUpload-page">
+    <%- include("partials/errors.ejs") %>
+    <!--Include adminAuthenticated Links pag naayos na user.roles-->
+    <%- include('partials/navbar2.ejs', {links: memberAuthenticatedLinks}) %>
+    <h1 class="page-header">⤴️⤵️ File Uploader</h1>
+    <h2 class="welcome-user-header"><%= header %></h2>
+  </header>
+  <main class="fileUpload-page">
+    <form class="fileUpload-page-button-only" action="/" method="GET">
+        <button type="submit" class="fileUpload-page-back">Back to Home</button>
+    </form>
+    <p class="fileUpload-instructions">
+        
+    </p>
+    <form class="fileUpload" action="/files/new" method="POST" enctype="multipart/form-data">
+        <div class="input-container fileUpload-input">
+          <label for="uploadedFile">Please choose file/s to upload. </label>
+          <input id="uploadedFile" name="uploadedFile" type="file"/>
+        </div>
+        <div class="fileUpload-submit-button-space">
+          <button type="submit" class="fileUpload-page-submit">Upload</button>
+        </div>
+    </form>
+  </main>
+</body>
+</html>
