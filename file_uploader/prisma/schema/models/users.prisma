@@ -7,6 +7,8 @@ model User {
     password    String @db.VarChar(72)
     role        Role @default(USER)
     created_at  DateTime @default(now())
+    folder Folder []
+    files File []
 
     @@schema("file_uploader")
 }

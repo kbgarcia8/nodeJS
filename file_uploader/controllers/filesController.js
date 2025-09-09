@@ -58,24 +58,32 @@ const storage = multer.diskStorage({
             fs.mkdirSync(userFolder, { recursive: true });
         }
 
-        cb(null, userFolder);
+        const userFolderMain = `./uploads/${req.user.username}/main`;
+
+        if (!fs.existsSync(userFolderMain)) {
+            fs.mkdirSync(userFolderMain, { recursive: true });
+        }
+
+        cb(null, userFolderMain);
     },
     filename: (req, file, cb) => {
         cb(null, file.originalname); 
     }
 });
 
-const upload = multer({fileFilter: fileFilter, storage: storage})
+const upload = multer({fileFilter: fileFilter, storage: storage}).single('uploadedFile');
 
 const fileUploadValidation = [
     check('uploadedFile')
         .custom((value, { req }) => !!req.file)
-        .withMessage("Please provide a file to upload")
+        .withMessage("Please provide a file to upload"),
+    check('folderName')
+        .optional()
 ];
 
 export const uploadFilePost = [
     (req, res, next) => {
-        upload.single('uploadedFile')(req, res, (err) => { // uploadedFile is from req.body
+        upload(req, res, (err) => {
             if (err) {
                 // Custom or Multer errors
                 const message = err.message || "File upload failed";
@@ -94,45 +102,72 @@ export const uploadFilePost = [
     asyncHandler(async (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-        return res.render("fileUpload", {
-            title: "Upload a File",
-            header: `Hi ${req.user.username}, you can upload your files below.`,
-            notAuthenticatedLinks,
-            memberAuthenticatedLinks,
-            errors: errors.array(),
-        });
+            fs.unlink(currentFile.path); //Manually delete file since its already uploaded on multer call above
+            return res.render("fileUpload", {
+                title: "Upload a File",
+                header: `Hi ${req.user.username}, you can upload your files below.`,
+                notAuthenticatedLinks,
+                memberAuthenticatedLinks,
+                errors: errors.array(),
+            });
         }
 
         const currentFile = req.file;
-
+        
         if (currentFile) {
-        const type = currentFile.mimetype;
-        const size = currentFile.size;
+            const type = currentFile.mimetype;
+            const size = currentFile.size;
+            //File size limit
+            const limits = {
+                'image': 10 * 1024 * 1024,
+                'application/pdf': 20 * 1024 * 1024,
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 10 * 1024 * 1024,
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 10 * 1024 * 1024,
+                'text/plain': 2 * 1024 * 1024,
+                'audio/mpeg': 50 * 1024 * 1024,
+                'audio/wav': 50 * 1024 * 1024,
+                'video/mp4': 150 * 1024 * 1024,
+                'application/zip': 100 * 1024 * 1024
+            };
+            //Check for file size limit of current file wrt file type
+            const maxAllowed = Object.entries(limits).find(([key]) => type.includes(key))?.[1];
+            //File size limit check
+            if (maxAllowed && size > maxAllowed) {
+                fs.unlink(currentFile.path); //Manually delete file since its already uploaded on multer call above
+                throw new FileUploadError(
+                `File too large for ${type} uploaded file type. Max size is ${maxAllowed / 1024 / 1024}MB`,
+                409,
+                "MULTER_MAX_FILE_SIZE_ERROR",
+                { detail: `Max size is ${maxAllowed / 1024 / 1024}MB for ${type} file type` }
+                );
+            }
+            //Change file destination from default (main) to folderName
+            const destinationFolder = req.body.folderName;
+            const currentFilePath = req.file.path;
+            const currentFileDestination = req.file.destination;
+            const currentFileName = req.file.filename;
 
-        const limits = {
-            'image': 10 * 1024 * 1024,
-            'application/pdf': 20 * 1024 * 1024,
-            'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 10 * 1024 * 1024,
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 10 * 1024 * 1024,
-            'text/plain': 2 * 1024 * 1024,
-            'audio/mpeg': 50 * 1024 * 1024,
-            'audio/wav': 50 * 1024 * 1024,
-            'video/mp4': 150 * 1024 * 1024,
-            'application/zip': 100 * 1024 * 1024
-        };
-
-        const maxAllowed = Object.entries(limits).find(([key]) => type.includes(key))?.[1];
-
-        if (maxAllowed && size > maxAllowed) {
-            throw new FileUploadError(
-            `File too large for ${type} uploaded file type. Max size is ${maxAllowed / 1024 / 1024}MB`,
-            409,
-            "MULTER_MAX_FILE_SIZE_ERROR",
-            { detail: `Max size is ${maxAllowed / 1024 / 1024}MB for ${type} file type` }
-            );
-        }
+            if(destinationFolder !== "" && destinationFolder !== "main") {
+                const newDest = `uploads/${destinationFolder}`;
+                const newPath = `${newDest}/${currentFileName}`;
+                await fs.promises.mkdir(`${newDest}`, { recursive: true });
+                await fs.promises.rename(currentFilePath, newPath);
+                //Overwrite current file's destination
+                req.file.destination = newDest;
+                req.file.path = newPath;
+            }
+            //Implementation of Prisma create/connect/update logics
         }
 
         res.redirect("/dashboard");
     }),
 ];
+
+export async function filesHome () {
+    return res.render("fileHome", {
+        title: "My Files",
+        header: `Hi ${req.user.username}. Listed below are all files belonging to you.`,
+        notAuthenticatedLinks,
+        memberAuthenticatedLinks
+    });
+}

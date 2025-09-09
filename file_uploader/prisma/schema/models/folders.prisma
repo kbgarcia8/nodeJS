@@ -1,0 +1,11 @@
+model Folder {
+    id Int @default(autoincrement()) @unique
+    user User @relation(fields: [userId], references: [id])
+    userId Int
+    name String
+    created_at DateTime @default(now())
+    files File[]
+    
+    @@id([name, userId])
+    @@schema("file_uploader")
+}

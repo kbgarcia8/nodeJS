@@ -13,7 +13,8 @@ export const guestAuthenticatedLinks = [
 
 export const memberAuthenticatedLinks = [
   { href: "/dashboard", text: "Public Files" },
-  { href: "/files", text: "My Files" },
+  { href: "/files", text: "My Files" }, //list of all files
+  { href: "/files/folders", text: "My Folders" }, //list of all folders
   { href: "/files/new", text: "Upload File/s" },
   { href: "/files/search", text: "Search Files" },
   { href: "/users/search", text: "Search User" },

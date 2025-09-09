@@ -53,13 +53,35 @@ export async function findUserById(id){
     return retrievedUser;
 
   } catch(err){
-    console.error("Database error in findUserByEmail:", err);
+    console.error("Database error in findUserById:", err);
       throw new PrismaError("Failed to create user in database", 409, "PRISMA_FIND_USER_BYEMAIL_FAILED", {
           detail: err.error || err.message,
       });
   }
 }
 /* -- END USERS -- */
+/* -- FOLDER -- */
+export async function createFolder(user_id, name){
+  try {
+    const createUserFolder = await prisma.folder.create({
+      data: {
+        name: name,
+        user: {
+          connect: { id: user_id }
+        }
+      }
+    });
+
+    console.log(`Folder ${name} under ${user_id} created`);
+
+  } catch(err){
+    console.error("Database error in createFolder:", err);
+      throw new PrismaError("Failed to create folder", 409, "PRISMA_CREATE_FOLDER_FAILED", {
+          detail: err.error || err.message,
+      });
+  }
+}
+/* -- END FOLDER -- */
 /*
 async function main() {
   const users = await prisma.user.findMany();

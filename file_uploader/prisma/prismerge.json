@@ -3,9 +3,12 @@
     "inputs": [
       "prisma/schema/schema.prisma",
       "prisma/schema/models/users.prisma",
+      "prisma/schema/models/folders.prisma",
+      "prisma/schema/models/files.prisma",
       "prisma/schema/models/session.prisma",
       "prisma/schema/models/roles.prisma"
     ],
     "output": "prisma/schema/main.prisma"
+    
   }
 }
