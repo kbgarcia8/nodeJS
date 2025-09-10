@@ -81,14 +81,48 @@ export async function createFolder(user_id, name){
       });
   }
 }
-/* -- END FOLDER -- */
-/*
-async function main() {
-  const users = await prisma.user.findMany();
-  console.log(users);
-}
+export async function retrievedFolderByName(user_id, name){
+  try {
+    const retriveFolder = await prisma.folder.findUnique({
+      where: {
+        name: name,
+        userId: user_id //both attribute are part of a composite primary key
+      },
+      include: {
+        files: true
+      }
+    });
 
-main().catch((e) => {
-  console.error('Error:', e);
-});
-*/
+    console.log(`Folder ${name} under ${user_id} created`);
+    return retriveFolder;
+
+  } catch(err){
+    console.error("Database error in createFolder:", err);
+      throw new PrismaError("Failed to create folder", 409, "PRISMA_CREATE_FOLDER_FAILED", {
+          detail: err.error || err.message,
+      });
+  }
+}
+/* -- END FOLDER -- */
+/* -- FILE -- */
+export async function createFile(user_id, name){
+  try {
+    const createUserFile = await prisma.file.create({
+      data: {
+        name: name,
+        user: {
+          connect: { id: user_id }
+        }
+      }
+    });
+
+    console.log(`File ${name} under ${user_id} created`);
+
+  } catch(err){
+    console.error("Database error in createFile:", err);
+      throw new PrismaError("Failed to create file", 409, "PRISMA_CREATE_FILE_FAILED", {
+          detail: err.error || err.message,
+      });
+  }
+}
+/* -- END FILE -- */

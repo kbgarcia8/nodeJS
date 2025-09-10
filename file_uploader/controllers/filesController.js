@@ -144,10 +144,11 @@ export const uploadFilePost = [
             //Change file destination from default (main) to folderName
             const destinationFolder = req.body.folderName;
             const currentFilePath = req.file.path;
-            const currentFileDestination = req.file.destination;
+            //const currentFileDestination = req.file.destination;
             const currentFileName = req.file.filename;
 
             if(destinationFolder !== "" && destinationFolder !== "main") {
+                //Since default file destination is upload/{username}/main if a custom folder is specified it needs to be moved there
                 const newDest = `uploads/${destinationFolder}`;
                 const newPath = `${newDest}/${currentFileName}`;
                 await fs.promises.mkdir(`${newDest}`, { recursive: true });
@@ -157,6 +158,14 @@ export const uploadFilePost = [
                 req.file.path = newPath;
             }
             //Implementation of Prisma create/connect/update logics
+            /* --Create folder record in prisma if is not yet existing, then link in currently logged user -- */
+            const folderRecord = await prisma.retrievedFolderByName(req.user.id, destinationFolder)
+            //If folder is not existing then create
+            if(!folderRecord) {
+                await prisma.createFolder(req.user.id, destinationFolder)
+            }
+            /* --Create file record in prisma, then link in logged user and current destinationFolder -- */
+            
         }
 
         res.redirect("/dashboard");
