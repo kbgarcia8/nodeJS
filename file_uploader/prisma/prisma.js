@@ -18,6 +18,7 @@ export async function createUser(firstName, lastName, username, email, password,
 
         const newUser = await prisma.user.create({ data });
         console.log("User created successfully!")
+        /*Create uploads/{username} and uploads/{username}/main in prisma folder records to make sure that main will always be folderId = 1*/
     } catch (err){
         console.error("Database error in createUser:", err);
         throw new PrismaError("Failed to create user in database", 409, "PRISMA_CREATE_USER_FAILED", {

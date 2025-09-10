@@ -156,16 +156,18 @@ export const uploadFilePost = [
                 //Overwrite current file's destination
                 req.file.destination = newDest;
                 req.file.path = newPath;
+                
+                /* --Create folder record in prisma if is not yet existing, then link in currently logged user -- */
+                const folderRecord = await prisma.retrievedFolderByName(req.user.id, destinationFolder)
+                //If folder is not existing then create
+                if(!folderRecord) {
+                    await prisma.createFolder(req.user.id, destinationFolder)
+                }
+                /* --Create file record in prisma, then link in logged user and current destinationFolder -- */
+                
+            } else { //If no destinationFolder specified - destinationFolder is main by default
+                
             }
-            //Implementation of Prisma create/connect/update logics
-            /* --Create folder record in prisma if is not yet existing, then link in currently logged user -- */
-            const folderRecord = await prisma.retrievedFolderByName(req.user.id, destinationFolder)
-            //If folder is not existing then create
-            if(!folderRecord) {
-                await prisma.createFolder(req.user.id, destinationFolder)
-            }
-            /* --Create file record in prisma, then link in logged user and current destinationFolder -- */
-            
         }
 
         res.redirect("/dashboard");
