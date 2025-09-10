@@ -1,6 +1,5 @@
 import { check, validationResult } from "express-validator";
 import { notAuthenticatedLinks, memberAuthenticatedLinks } from "../constants/constants.js";
-import { ExpressValError } from "../utils/errors.js";
 import asyncHandler from "express-async-handler";
 import * as prisma from "../prisma/prisma.js";
 //authentication
@@ -21,8 +20,8 @@ export async function uploadFileGet(req,res){
     });
 };
 
-//Ensure file type is supported by multer
-//NOTE cb () here is like next ()
+// * Ensure file type is supported by multer
+// ! Note: cb () here is like next ()
 const fileFilter = (req, file, cb) => {
     const imageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
     if(imageTypes.includes(file.mimetype)) {
@@ -52,6 +51,7 @@ const fileFilter = (req, file, cb) => {
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
+        //Note that this is folder creation on server/storage side
         const userFolder = `./uploads/${req.user.username}`;
 
         if (!fs.existsSync(userFolder)) {
@@ -148,9 +148,14 @@ export const uploadFilePost = [
             const currentFileName = req.file.filename;
 
             if(destinationFolder !== "" && destinationFolder !== "main") {
-                //Since default file destination is upload/{username}/main if a custom folder is specified it needs to be moved there
-                const newDest = `uploads/${destinationFolder}`;
+                //File is already uploaded to upload/{username}/main. If a custom folder is specified it needs to be moved there
+                const newDest = `uploads/${req.user.username}/${destinationFolder}`;
                 const newPath = `${newDest}/${currentFileName}`;
+                if (fs.existsSync(newPath)) {
+                    throw new FileUploadError("File already exists", 409, "FILE_ALREADY_EXISTS", {
+                        detail: `A file named ${currentFileName} already exists in ${destinationFolder}`
+                    });
+                }
                 await fs.promises.mkdir(`${newDest}`, { recursive: true });
                 await fs.promises.rename(currentFilePath, newPath);
                 //Overwrite current file's destination
@@ -158,27 +163,35 @@ export const uploadFilePost = [
                 req.file.path = newPath;
                 
                 /* --Create folder record in prisma if is not yet existing, then link in currently logged user -- */
-                const folderRecord = await prisma.retrievedFolderByName(req.user.id, destinationFolder)
+                let folderRecord = await prisma.retrievedFolderByName(req.user.id, destinationFolder)
                 //If folder is not existing then create
                 if(!folderRecord) {
-                    await prisma.createFolder(req.user.id, destinationFolder)
+                    folderRecord = await prisma.createFolder(req.user.id, destinationFolder)
                 }
                 /* --Create file record in prisma, then link in logged user and current destinationFolder -- */
+                const { mimetype, size, filename, path } = req.file
+
+                await prisma.createFileRecord(mimetype, filename, path, size, req.user.id, folderRecord.id)
                 
-            } else { //If no destinationFolder specified - destinationFolder is main by default
-                
+            } else { //If no destinationFolder specified - destinationFolder is main by default, also main is expected to be initiated in createUser
+                const { mimetype, size, filename, path } = req.file
+                await prisma.createFileRecord(mimetype, filename, path, size, req.user.id)
             }
         }
-
         res.redirect("/dashboard");
     }),
 ];
 
-export async function filesHome () {
-    return res.render("fileHome", {
+export async function filesHome (req, res) {
+
+    const userAllFiles = await prisma.retrieveAllFilesByUser(req.user.id);
+
+    return res.render("filesHome", {
         title: "My Files",
         header: `Hi ${req.user.username}. Listed below are all files belonging to you.`,
         notAuthenticatedLinks,
-        memberAuthenticatedLinks
+        memberAuthenticatedLinks,
+        files: userAllFiles,
+        user: req.user
     });
 }

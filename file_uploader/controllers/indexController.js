@@ -7,6 +7,7 @@ import bcrypt from "bcryptjs";
 import passport from "passport";
 
 export async function homePage(req,res){
+    // TODO: Display public files here regardless of user
     return res.render("index", {
         title: "Home Page",
         notAuthenticatedLinks

@@ -522,7 +522,7 @@ div.fileUpload-input input {
     width: 100%;
     padding: 0.125rem 0.25rem;
     display: inline-block;
-    background-color: #007bff;
+    background-color: #657e9a;
     color: white;
     border-radius: 0.25rem;
     cursor: pointer;
@@ -530,7 +530,10 @@ div.fileUpload-input input {
     transition: background-color 0.3s ease;
 }
 div.fileUpload-input input:hover {
-  background-color: #0056b3;
+  background-color: #3d4c5e;
+}
+div.fileUpload-input input::placeholder {
+  color: #ffffff;
 }
 div.fileUpload-submit-button-space{
     height: 10%;

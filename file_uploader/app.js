@@ -78,7 +78,7 @@ app.use((err, req, res, next) => {
   res.render("systemError", {
       title: "Error Page",
       notAuthenticatedLinks,
-      //memberAuthenticatedLinks,
+      memberAuthenticatedLinks,
       //guestAuthenticatedLinks,
       //adminAuthenticatedLinks,
       access: isAuthenticated,

@@ -131,6 +131,24 @@ exports.Prisma.UserScalarFieldEnum = {
   created_at: 'created_at'
 };
 
+exports.Prisma.FolderScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  name: 'name',
+  created_at: 'created_at'
+};
+
+exports.Prisma.FileScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  uploaded_at: 'uploaded_at',
+  folderId: 'folderId',
+  fileType: 'fileType',
+  name: 'name',
+  path: 'path',
+  size: 'size'
+};
+
 exports.Prisma.SessionScalarFieldEnum = {
   id: 'id',
   sid: 'sid',
@@ -159,6 +177,8 @@ exports.Role = exports.$Enums.Role = {
 
 exports.Prisma.ModelName = {
   User: 'User',
+  Folder: 'Folder',
+  File: 'File',
   Session: 'Session'
 };
 

@@ -48,11 +48,11 @@ model Folder {
 }
 model File {
   id          Int      @id @default(autoincrement())
-  owner       User     @relation(fields: [ownerId], references: [id])
-  ownerId     Int
+  user        User     @relation(fields: [userId], references: [id])
+  userId      Int
   uploaded_at DateTime @default(now())
   folder      Folder   @relation(fields: [folderId], references: [id]) //should be equivalent to req.file.destination
-  folderId    Int      @default(1) // default is 1 since its the main folder
+  folderId    Int
   fileType    String
   name        String //req.file.filename
   path        String //req.file.path

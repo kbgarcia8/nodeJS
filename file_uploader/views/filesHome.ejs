@@ -14,8 +14,8 @@
       <% if(files.length === 0) { %>
         <p class="no-loggedin-user-files">You have not post any files yet! <a href="/files/new">Upload a File now</a></p>
       <% } else { %>
-        <% files.forEach((message) => { %>
-          <%- include('partials/file_entry.ejs', {file: file}) %>
+        <% files.forEach((file) => { %>
+          <%- include('partials/file_entry.ejs', {file: file, user: user}) %>
         <% }); %>
       <% } %>
     </main>

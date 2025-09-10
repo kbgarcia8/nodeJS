@@ -7,18 +7,10 @@
 </head>
 <body>
   <header class="system-error-page-header">
-    <% if (access) { %>
-      <% if(user.status_code === 3) { %>
-        <%- include('partials/navbar2.ejs', {links: memberAuthenticatedLinks}) %>
-      <% } else if (user.status_code === 2) { %>
-        <%- include('partials/navbar2.ejs', {links: guestAuthenticatedLinks}) %>
-      <% } else if (user.status_code === 1) { %>
-        <%- include('partials/navbar2.ejs', {links: adminAuthenticatedLinks}) %>
-      <% } %>
-    <% } else { %>
-      <%- include('partials/navbar.ejs', {links: notAuthenticatedLinks}) %>
-    <% }; %>
-      <h1 class="page-header">→ What's on your mind? 🧠</h1>
+    <%- include("partials/errors.ejs") %>
+    <!--Include adminAuthenticated Links pag naayos na user.roles-->
+    <%- include('partials/navbar2.ejs', {links: memberAuthenticatedLinks}) %>
+    <h1 class="page-header">⤴️⤵️ File Uploader</h1>
   </header>
   <main class="system-error-page">
     <div class="error-image-space">

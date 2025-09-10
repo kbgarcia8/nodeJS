@@ -30,6 +30,35 @@ model User {
   password   String   @db.VarChar(72)
   role       Role     @default(USER)
   created_at DateTime @default(now())
+  folder     Folder[]
+  files      File[]
+
+  @@schema("file_uploader")
+}
+
+model Folder {
+  id         Int      @unique @default(autoincrement())
+  user       User     @relation(fields: [userId], references: [id])
+  userId     Int
+  name       String
+  created_at DateTime @default(now())
+  files      File[]
+
+  @@id([name, userId])
+  @@schema("file_uploader")
+}
+
+model File {
+  id          Int      @id @default(autoincrement())
+  user        User     @relation(fields: [userId], references: [id])
+  userId      Int
+  uploaded_at DateTime @default(now())
+  folder      Folder   @relation(fields: [folderId], references: [id]) //should be equivalent to req.file.destination
+  folderId    Int
+  fileType    String
+  name        String //req.file.filename
+  path        String //req.file.path
+  size        Int
 
   @@schema("file_uploader")
 }

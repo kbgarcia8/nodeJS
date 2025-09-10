@@ -5,7 +5,7 @@ import * as filesController from "../controllers/filesController.js"
 
 const filesRouter = Router();
 
-//filesRouter.get("/", asyncHandler(indexController.homePage));
+filesRouter.get("/", checkAuthentication, filesController.filesHome);
 filesRouter.get("/new", checkAuthentication, asyncHandler(filesController.uploadFileGet));
 filesRouter.post("/new", checkAuthentication, ...filesController.uploadFilePost);
 
