@@ -1,12 +1,15 @@
-export function isSameDay(utcCreatedAt) {
-    const createdDate = new Date(utcCreatedAt); // ISO timestamp from DB
-    const now = new Date();
+export function formatDateTime(utcDate) {
+    const date = new Date(utcDate);
 
-    // Convert both to UTC-based date-only strings (no time)
-    const createdDateStr = createdDate.toISOString().split('T')[0];
-    const nowDateStr = now.toISOString().split('T')[0];
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const dayName = days[date.getUTCDay()];
 
-    console.log(createdDateStr === nowDateStr);
+    const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(date.getUTCDate()).padStart(2, '0');
+    const year = date.getUTCFullYear();
 
-    return createdDateStr === nowDateStr;
+    const hours = String(date.getUTCHours()).padStart(2, '0');
+    const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+
+    return `${dayName} ${month}/${day}/${year} ${hours}:${minutes}`;
 }

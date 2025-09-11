@@ -72,13 +72,13 @@ export async function findUserById(id){
 /* -- END USERS -- */
 
 /* -- FOLDER -- */
-export async function createFolder(user_id, name){
+export async function createFolder(name, userId){
   try {
     const createUserFolder = await prisma.folder.create({
       data: {
         name: name,
         user: {
-          connect: { id: user_id }
+          connect: { id: userId }
         }
       },
       include: {
@@ -86,7 +86,7 @@ export async function createFolder(user_id, name){
       }
     });
 
-    console.log(`Folder ${name} under ${user_id} created`);
+    console.log(`Folder ${name} under ${userId} created`);
 
     return createUserFolder;
 
@@ -97,13 +97,13 @@ export async function createFolder(user_id, name){
     });
   }
 }
-export async function retrievedFolderByName(user_id, name){
+export async function retrievedFolderByName(name, userId){
   try {
     const retriveFolder = await prisma.folder.findUnique({
       where: {
-        userId_name: { //both attribute are part of a composite primary key
-          userId: user_id, 
-          name: name
+        name_userId: { //both attribute are part of a composite primary key
+          name: name,
+          userId: userId
         }
       },
       include: {
@@ -111,7 +111,7 @@ export async function retrievedFolderByName(user_id, name){
       }
     });
 
-    console.log(`Folder ${name} under ${user_id} created`);
+    console.log(`Folder ${name} under ${userId} created`);
     return retriveFolder;
 
   } catch(err){
@@ -124,8 +124,8 @@ export async function retrievedFolderByName(user_id, name){
 /* -- END FOLDER -- */
 
 /* -- FILE -- */
-export async function createFileRecord(type, name, path, size, user_id, folder_id){
-  const currentUserMainFolder = await retrievedFolderByName("main", user_id);
+export async function createFileRecord(type, name, path, size, userId, folderId){
+  const currentUserMainFolder = await retrievedFolderByName("main", userId);
   const currentUserMainFolderId = parseInt(currentUserMainFolder?.id);
 
   try {
@@ -136,15 +136,15 @@ export async function createFileRecord(type, name, path, size, user_id, folder_i
         path: path,
         size: size,
         user: {
-          connect: { id: user_id }
+          connect: { id: userId }
         },
         folder: {
-          connect: { id: folder_id !== undefined ? folder_id : currentUserMainFolderId} //connect to main of current user by default
+          connect: { id: folderId !== undefined ? folderId : currentUserMainFolderId} //connect to main of current user by default
         }
       }
     });
 
-    console.log(`File ${name} under ${user_id} created`);
+    console.log(`File ${name} under ${userId} created`);
 
   } catch(err){
     console.error("Prisma Database error in createFile:", err);
@@ -153,11 +153,50 @@ export async function createFileRecord(type, name, path, size, user_id, folder_i
     });
   }
 }
-export async function retrieveAllFilesByUser(user_id){
+export async function retrieveFileById(user, fileId){
+  try {
+    const retrievedFile = await prisma.file.findUnique({
+      where: {
+        id: fileId
+      },
+      include:{
+        folder: true,
+        user: true
+      }
+    });
+
+    console.log(`File id ${fileId} under ${user.username} is retrieved`);
+    return retrievedFile;
+
+  } catch(err){
+    console.error("Prisma Database error in retrieveFileById:", err);
+    throw new FileUploadError("Failed to retrieve file", 409, "PRISMA_RETRIEVE_FILE_BY_ID_FAILED", {
+        detail: err.error || err.message,
+    });
+  }
+}
+export async function deleteFileById(user, fileId){
+  try {
+    const deleteUserFile = await prisma.file.delete({
+      where: {
+        id: fileId
+      }
+    });
+
+    console.log(`File id ${fileId} under ${user.username} deleted`);
+
+  } catch(err){
+    console.error("Prisma Database error in deleteFileById:", err);
+    throw new FileUploadError("Failed to delete file", 409, "PRISMA_DELETE_FILE_BY_ID_FAILED", {
+        detail: err.error || err.message,
+    });
+  }
+}
+export async function retrieveAllFilesByUser(userId){
   try{
     const allUserFiles = await prisma.file.findMany({
       where: {
-        userId: user_id
+        userId: userId
       },
       include: {
         folder: true,

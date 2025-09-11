@@ -1,6 +1,9 @@
 import { check, validationResult } from "express-validator";
+//utils
 import { notAuthenticatedLinks, memberAuthenticatedLinks } from "../constants/constants.js";
+import { formatDateTime } from "../utils/utility.js";
 import asyncHandler from "express-async-handler";
+//prisma queries
 import * as prisma from "../prisma/prisma.js";
 //authentication
 import bcrypt from "bcryptjs";
@@ -102,7 +105,7 @@ export const uploadFilePost = [
     asyncHandler(async (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            fs.unlink(currentFile.path); //Manually delete file since its already uploaded on multer call above
+            await fs.promises.unlink(currentFile.path); //Manually delete file since its already uploaded on multer call above
             return res.render("fileUpload", {
                 title: "Upload a File",
                 header: `Hi ${req.user.username}, you can upload your files below.`,
@@ -133,7 +136,7 @@ export const uploadFilePost = [
             const maxAllowed = Object.entries(limits).find(([key]) => type.includes(key))?.[1];
             //File size limit check
             if (maxAllowed && size > maxAllowed) {
-                fs.unlink(currentFile.path); //Manually delete file since its already uploaded on multer call above
+                await fs.promises.unlink(currentFile.path); //Manually delete file since its already uploaded on multer call above
                 throw new FileUploadError(
                 `File too large for ${type} uploaded file type. Max size is ${maxAllowed / 1024 / 1024}MB`,
                 409,
@@ -163,10 +166,10 @@ export const uploadFilePost = [
                 req.file.path = newPath;
                 
                 /* --Create folder record in prisma if is not yet existing, then link in currently logged user -- */
-                let folderRecord = await prisma.retrievedFolderByName(req.user.id, destinationFolder)
+                let folderRecord = await prisma.retrievedFolderByName(destinationFolder, req.user.id)
                 //If folder is not existing then create
                 if(!folderRecord) {
-                    folderRecord = await prisma.createFolder(req.user.id, destinationFolder)
+                    folderRecord = await prisma.createFolder(destinationFolder, req.user.id)
                 }
                 /* --Create file record in prisma, then link in logged user and current destinationFolder -- */
                 const { mimetype, size, filename, path } = req.file
@@ -186,12 +189,46 @@ export async function filesHome (req, res) {
 
     const userAllFiles = await prisma.retrieveAllFilesByUser(req.user.id);
 
+    const filesWithFormattedDate = userAllFiles.map((file) => {
+        return {
+            ...file, 
+            uploaded_at: formatDateTime(file.uploaded_at),
+            folder_name: file.folder.name
+        }
+    })
+
+    const icons = {
+        'image': "🖼️",
+        'application/pdf': "📕",
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document': "📄",
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': "𝄜",
+        'text/plain': "📃",
+        'audio/mpeg': "🔊",
+        'audio/wav': "🔊",
+        'video/mp4': "📽️",
+        'application/zip': "🔐"
+    };
+
     return res.render("filesHome", {
         title: "My Files",
         header: `Hi ${req.user.username}. Listed below are all files belonging to you.`,
         notAuthenticatedLinks,
         memberAuthenticatedLinks,
-        files: userAllFiles,
-        user: req.user
+        files: filesWithFormattedDate,
+        user: req.user,
+        icons
     });
+}
+
+export async function deleteFile(req,res) {
+    const fileId = parseInt(req.params.id);
+    
+    // * Delete file in server/local storage
+    const currentFile = await prisma.retrieveFileById(req.user,fileId);
+    await fs.promises.unlink(currentFile.path);
+    
+    // * Delete file record in prisma
+    await prisma.deleteFileById(req.user, fileId)
+
+    res.redirect("/files")
 }
