@@ -10,6 +10,8 @@
       <%- include('partials/navbar2.ejs', {links: memberAuthenticatedLinks}) %>
       <h1 class="page-header"><%= header %></h1>
     </header>
-    <%- include('partials/file_container.ejs', {user: user, file: file }) %>
+    <main class="view-file">
+      <%- include('partials/file_container.ejs', {user: user, file: file }) %>
+    </main>
   </body>
 </html>

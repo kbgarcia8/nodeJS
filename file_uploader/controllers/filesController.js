@@ -3,6 +3,7 @@ import { check, validationResult } from "express-validator";
 import { notAuthenticatedLinks, memberAuthenticatedLinks } from "../constants/constants.js";
 import { formatDateTime } from "../utils/utility.js";
 import path from 'path';
+import { dirname } from "path";
 import asyncHandler from "express-async-handler";
 //prisma queries
 import * as prisma from "../prisma/prisma.js";
@@ -259,10 +260,8 @@ export async function viewFile (req, res) {
 export async function downloadFile (req, res) {
 
     const fileId = parseInt(req.params.id);
-
     const fileForDownload = await prisma.retrieveFileById(req.user,fileId);
-
-    const filePath = path.join(__dirname, fileForDownload.path);
+    const filePath = path.join(process.cwd(), fileForDownload.path); //local storage for now
 
     res.download(filePath, (err) => {
         if (err) {
@@ -271,6 +270,7 @@ export async function downloadFile (req, res) {
             });
         }
     });
+    res.redirect(`/view/${fileId}`);
 }
 
 export async function deleteFile(req,res) {
