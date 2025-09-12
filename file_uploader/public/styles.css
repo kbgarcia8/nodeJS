@@ -613,7 +613,6 @@ div.file-entry-button-space form {
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 2px solid red;
     width: 100%;
 }
 p.file-entry-date-uploaded,
