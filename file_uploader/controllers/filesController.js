@@ -2,6 +2,7 @@ import { check, validationResult } from "express-validator";
 //utils
 import { notAuthenticatedLinks, memberAuthenticatedLinks } from "../constants/constants.js";
 import { formatDateTime } from "../utils/utility.js";
+import path from 'path';
 import asyncHandler from "express-async-handler";
 //prisma queries
 import * as prisma from "../prisma/prisma.js";
@@ -220,11 +221,63 @@ export async function filesHome (req, res) {
     });
 }
 
+export async function viewFile (req, res) {
+
+    const fileId = parseInt(req.params.id);
+
+    const fileForView = await prisma.retrieveFileById(req.user,fileId);
+
+    const fileForViewWithFormattedDate = {
+        ...fileForView,
+        uploaded_at: formatDateTime(fileForView.uploaded_at),
+        folder_name: fileForView.folder.name
+    }
+    
+    const icons = {
+        'image': "🖼️",
+        'application/pdf': "📕",
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document': "📄",
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': "𝄜",
+        'text/plain': "📃",
+        'audio/mpeg': "🔊",
+        'audio/wav': "🔊",
+        'video/mp4': "📽️",
+        'application/zip': "🔐"
+    };
+
+    return res.render("viewFile", {
+        title: "View File",
+        header: `Hi ${req.user.username}, you are viewing file with file id: ${fileId}`,
+        notAuthenticatedLinks,
+        memberAuthenticatedLinks,
+        file: fileForViewWithFormattedDate,
+        user: req.user,
+        icons
+    });
+}
+
+export async function downloadFile (req, res) {
+
+    const fileId = parseInt(req.params.id);
+
+    const fileForDownload = await prisma.retrieveFileById(req.user,fileId);
+
+    const filePath = path.join(__dirname, fileForDownload.path);
+
+    res.download(filePath, (err) => {
+        if (err) {
+            throw new AppError("Failed to download file", 409, "DOWNLOAD_FILE_FAILED", {
+                detail: err.error || err.message,
+            });
+        }
+    });
+}
+
 export async function deleteFile(req,res) {
     const fileId = parseInt(req.params.id);
     
     // * Delete file in server/local storage
-    const currentFile = await prisma.retrieveFileById(req.user,fileId);
+    const currentFile = await prisma.retrieveFileById(req.user, fileId);
     await fs.promises.unlink(currentFile.path);
     
     // * Delete file record in prisma

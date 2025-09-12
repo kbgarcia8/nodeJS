@@ -8,6 +8,8 @@ const filesRouter = Router();
 filesRouter.get("/", checkAuthentication, filesController.filesHome);
 filesRouter.get("/new", checkAuthentication, asyncHandler(filesController.uploadFileGet));
 filesRouter.post("/new", checkAuthentication, ...filesController.uploadFilePost);
-filesRouter.get("/delete/:id", checkAuthentication, filesController.deleteFile)
+filesRouter.get("/delete/:id", checkAuthentication, filesController.deleteFile);
+filesRouter.get("/view/:id", checkAuthentication, filesController.viewFile);
+filesRouter.get("/download/:id", checkAuthentication, filesController.downloadFile);
 
 export default filesRouter;

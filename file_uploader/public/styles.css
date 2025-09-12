@@ -569,7 +569,7 @@ p.no-loggedin-user-files{
     margin-top: 2rem;
     font-family: Arial, Helvetica, sans-serif;
 }
-/* Message Entry */
+/* File Entry */
 div.file-entry{
     width: 20%;
     height: 50%;
@@ -612,8 +612,12 @@ p.file-entry-folder{
     font-size: 0.75rem;
     white-space: pre;
 }
+p.file-entry-folder{
+    font-size: 1.25rem;
+}
 button.open-file,
-button.delete-file{
+button.delete-file,
+button.download-file{
     display: flex;
     flex-direction: column;
     cursor: pointer;
@@ -633,5 +637,12 @@ button.open-file span.view-text{
     font-size: 1rem;
 }
 button.open-file span.view-icon{
+    font-size: 5rem;
+}
+span.download-file-icon{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
     font-size: 5rem;
 }
