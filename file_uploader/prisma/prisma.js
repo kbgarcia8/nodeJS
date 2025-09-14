@@ -40,6 +40,10 @@ export async function findUserByEmail(email){
     const retrievedUser = await prisma.user.findUnique({
       where: {
         email: email
+      },
+      include: {
+        folder: true,
+        files: true
       }
     });
 
@@ -57,6 +61,10 @@ export async function findUserById(id){
     const retrievedUser = await prisma.user.findUnique({
       where: {
         id: id
+      },
+      include: {
+        folder: true,
+        files: true
       }
     });
 

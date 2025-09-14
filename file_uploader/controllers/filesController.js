@@ -3,7 +3,6 @@ import { check, validationResult } from "express-validator";
 import { notAuthenticatedLinks, memberAuthenticatedLinks } from "../constants/constants.js";
 import { formatDateTime } from "../utils/utility.js";
 import path from 'path';
-import { dirname } from "path";
 import asyncHandler from "express-async-handler";
 //prisma queries
 import * as prisma from "../prisma/prisma.js";
@@ -21,7 +20,8 @@ export async function uploadFileGet(req,res){
         title: "Upload a File",
         header: `Hi ${req.user.username}, you can upload your files below.`,
         notAuthenticatedLinks,
-        memberAuthenticatedLinks
+        memberAuthenticatedLinks,
+        folders: req.user.folder
     });
 };
 
@@ -81,9 +81,7 @@ const upload = multer({fileFilter: fileFilter, storage: storage}).single('upload
 const fileUploadValidation = [
     check('uploadedFile')
         .custom((value, { req }) => !!req.file)
-        .withMessage("Please provide a file to upload"),
-    check('folderName')
-        .optional()
+        .withMessage("Please provide a file to upload")
 ];
 
 export const uploadFilePost = [
@@ -147,7 +145,8 @@ export const uploadFilePost = [
                 );
             }
             //Change file destination from default (main) to folderName
-            const destinationFolder = req.body.folderName;
+            const destinationFolder = req.body.newfolderName || req.body.existingFolderName;
+            console.log(destinationFolder)
             const currentFilePath = req.file.path;
             //const currentFileDestination = req.file.destination;
             const currentFileName = req.file.filename;
@@ -169,6 +168,7 @@ export const uploadFilePost = [
                 
                 /* --Create folder record in prisma if is not yet existing, then link in currently logged user -- */
                 let folderRecord = await prisma.retrievedFolderByName(destinationFolder, req.user.id)
+                console.log(folderRecord)
                 //If folder is not existing then create
                 if(!folderRecord) {
                     folderRecord = await prisma.createFolder(destinationFolder, req.user.id)

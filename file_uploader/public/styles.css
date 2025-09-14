@@ -508,7 +508,6 @@ div.fileUpload-input {
 }
 div.fileUpload-input label {
     font-weight: 700;
-    text-decoration: underline;
     font-family: Arial, Helvetica, sans-serif;
     display: flex;
     align-items: center;
@@ -552,6 +551,64 @@ button.fileUpload-page-submit{
     background-color: azure;
     color: black;
     border-radius: 0.85rem;
+}
+div.folder-selection{
+    display: flex;
+}
+label.radio-container {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  padding-left: 30px;
+  margin: 10px;
+  cursor: pointer;
+  font-size: 18px;
+  user-select: none;
+}
+span.selection-title{
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    color: white;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-weight: 900;
+    text-decoration: underline;
+}
+div.new-folder,
+div.existing-folder{
+    display: none;
+}
+select {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  border: 1px solid #444;
+  background-color: #5a7d9a;
+  color: white;
+  font-size: 1rem;
+  font-family: Arial, Helvetica, sans-serif;
+  appearance: none; 
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='white'%3E%3Cpath d='M4 6l4 4 4-4z'/%3E%3C/svg%3E"); 
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1rem;
+}
+select::-ms-expand {
+  display: none;
+}
+select option {
+  background-color: #5a7d9a;
+  color: white;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border-radius: 0.25rem;
+}
+select option:hover {
+  background-color: #4c6b84;
 }
 /* Logged User Files */
 main.logged-user-files{
