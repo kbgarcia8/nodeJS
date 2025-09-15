@@ -639,9 +639,16 @@ div.file-entry{
     align-items: center;
     justify-content: center;
 }
+div.file-entry-file-info{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
 h3.file-entry-title{
     text-decoration: underline;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: 100%;
     height: 12.5%;
     width: 100%;
     display: flex;
@@ -798,3 +805,4 @@ span.download-file-icon{
     width: 100%;
     font-size: 5rem;
 }
+/* Logged user folders */

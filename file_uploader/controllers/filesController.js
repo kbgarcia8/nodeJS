@@ -15,6 +15,40 @@ import { FileUploadError } from "../utils/errors.js";
 //fs
 import fs from 'fs';
 
+export async function filesHome (req, res) {
+
+    const userAllFiles = await prisma.retrieveAllFilesByUser(req.user.id);
+
+    const filesWithFormattedDate = userAllFiles.map((file) => {
+        return {
+            ...file, 
+            uploaded_at: formatDateTime(file.uploaded_at),
+            folder_name: file.folder.name
+        }
+    })
+
+    const icons = {
+        'image': "🖼️",
+        'application/pdf': "📕",
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document': "📄",
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': "𝄜",
+        'text/plain': "📃",
+        'audio/mpeg': "🔊",
+        'audio/wav': "🔊",
+        'video/mp4': "📽️",
+        'application/zip': "🔐"
+    };
+
+    return res.render("filesHome", {
+        title: "My Files",
+        header: `Hi ${req.user.username}. Listed below are all files belonging to you.`,
+        notAuthenticatedLinks,
+        memberAuthenticatedLinks,
+        files: filesWithFormattedDate,
+        user: req.user,
+        icons
+    });
+}
 export async function uploadFileGet(req,res){
     return res.render("fileUpload", {
         title: "Upload a File",
@@ -24,7 +58,6 @@ export async function uploadFileGet(req,res){
         folders: req.user.folder
     });
 };
-
 // * Ensure file type is supported by multer
 // ! Note: cb () here is like next ()
 const fileFilter = (req, file, cb) => {
@@ -53,7 +86,6 @@ const fileFilter = (req, file, cb) => {
         false)
     }
 }
-
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         //Note that this is folder creation on server/storage side
@@ -75,15 +107,12 @@ const storage = multer.diskStorage({
         cb(null, file.originalname); 
     }
 });
-
 const upload = multer({fileFilter: fileFilter, storage: storage}).single('uploadedFile');
-
 const fileUploadValidation = [
     check('uploadedFile')
         .custom((value, { req }) => !!req.file)
         .withMessage("Please provide a file to upload")
 ];
-
 export const uploadFilePost = [
     (req, res, next) => {
         upload(req, res, (err) => {
@@ -186,42 +215,6 @@ export const uploadFilePost = [
         res.redirect("/dashboard");
     }),
 ];
-
-export async function filesHome (req, res) {
-
-    const userAllFiles = await prisma.retrieveAllFilesByUser(req.user.id);
-
-    const filesWithFormattedDate = userAllFiles.map((file) => {
-        return {
-            ...file, 
-            uploaded_at: formatDateTime(file.uploaded_at),
-            folder_name: file.folder.name
-        }
-    })
-
-    const icons = {
-        'image': "🖼️",
-        'application/pdf': "📕",
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document': "📄",
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': "𝄜",
-        'text/plain': "📃",
-        'audio/mpeg': "🔊",
-        'audio/wav': "🔊",
-        'video/mp4': "📽️",
-        'application/zip': "🔐"
-    };
-
-    return res.render("filesHome", {
-        title: "My Files",
-        header: `Hi ${req.user.username}. Listed below are all files belonging to you.`,
-        notAuthenticatedLinks,
-        memberAuthenticatedLinks,
-        files: filesWithFormattedDate,
-        user: req.user,
-        icons
-    });
-}
-
 export async function viewFile (req, res) {
 
     const fileId = parseInt(req.params.id);
@@ -256,7 +249,6 @@ export async function viewFile (req, res) {
         icons
     });
 }
-
 export async function downloadFile (req, res) {
 
     const fileId = parseInt(req.params.id);
@@ -272,7 +264,6 @@ export async function downloadFile (req, res) {
     });
     res.redirect(`/view/${fileId}`);
 }
-
 export async function deleteFile(req,res) {
     const fileId = parseInt(req.params.id);
     

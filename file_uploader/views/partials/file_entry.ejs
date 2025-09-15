@@ -1,5 +1,5 @@
 <div class="file-entry">
-    <div class="file-entry-header">
+    <div class="file-entry-file-info">
         <h3 class="file-entry-title"><%= file.name %></h3>
         <h6 class="file-entry-size-and-type"><%= (file.size / 1024 / 1024).toFixed(3) %>MB (<%= file.fileType %>)</h6>
         <% if (file.user.username === user.username) { %>

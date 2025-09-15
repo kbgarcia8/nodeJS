@@ -1,0 +1,23 @@
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <header>
+      <%- include("partials/errors.ejs") %>
+      <!--Include adminAuthenticated Links pag naayos na user.roles-->
+      <%- include('partials/navbar2.ejs', {links: memberAuthenticatedLinks}) %>
+      <h1 class="page-header"><%= header %></h1>
+    </header>
+    <main class="logged-user-folders">
+      <% if(folders.length === 0) { %>
+        <p class="no-loggedin-user-folders">You have not post any folders yet! <a href="/folders/new">Upload a File now</a></p>
+      <% } else { %>
+        <% folders.forEach((folder) => { %>
+          <%- include('partials/folder_entry.ejs', {folder: folder, user: user}) %>
+        <% }); %>
+      <% } %>
+    </main>
+  </body>
+</html>

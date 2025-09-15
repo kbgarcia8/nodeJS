@@ -129,6 +129,27 @@ export async function retrievedFolderByName(name, userId){
     });
   }
 }
+export async function retrieveAllFolderOfUser(userId){
+  try {
+    const allFolder = await prisma.folder.findMany({
+      where: {
+        userId: userId
+      },
+      include: {
+        files: true
+      }
+    });
+
+    console.log(`All folders under ${userId} was retrieved successfully`);
+    return allFolder;
+
+  } catch(err){
+    console.error("Prisma Database error in retrieveAllFolderOfUser:", err);
+    throw new FileUploadError("Failed to retrieve all folder", 409, "PRISMA_RETRIEVE_ALL_FOLDER_FAILED", {
+      detail: err.error || err.message,
+    });
+  }
+}
 /* -- END FOLDER -- */
 
 /* -- FILE -- */
