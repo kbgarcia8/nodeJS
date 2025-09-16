@@ -1,5 +1,5 @@
 import { FileUploadError } from '../utils/errors.js';
-import { PrismaClient } from './schema/generated/prisma/index.js';
+import { PrismaClient } from './schema/generated/prisma/index.js'; //by default is @prisma/client but when point this to the output of your generator client in main.prisma
 
 const prisma = new PrismaClient({})
 /* -- USERS -- */
@@ -115,7 +115,11 @@ export async function retrievedFolderByName(name, userId){
         }
       },
       include: {
-        files: true
+        files: {
+          include: { //nested include example
+            user: true
+          }
+        }
       }
     });
 
@@ -136,7 +140,8 @@ export async function retrieveAllFolderOfUser(userId){
         userId: userId
       },
       include: {
-        files: true
+        files: true,
+        user: true
       }
     });
 
@@ -242,3 +247,7 @@ export async function retrieveAllFilesByUser(userId){
   }
 }
 /* -- END FILE -- */
+
+/* -- ROLE -- */
+
+/* -- END ROLE -- */

@@ -40,6 +40,7 @@ export type Session = $Result.DefaultSelection<Prisma.$SessionPayload>
 export namespace $Enums {
   export const Role: {
   USER: 'USER',
+  GUEST: 'GUEST',
   ADMIN: 'ADMIN'
 };
 

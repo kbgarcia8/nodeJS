@@ -11,5 +11,6 @@ filesRouter.post("/new", checkAuthentication, ...filesController.uploadFilePost)
 filesRouter.get("/delete/:id", checkAuthentication, filesController.deleteFile);
 filesRouter.get("/view/:id", checkAuthentication, filesController.viewFile);
 filesRouter.get("/download/:id", checkAuthentication, filesController.downloadFile);
+filesRouter.get("/search", checkAuthentication, filesController.searchFileGet);
 
 export default filesRouter;

@@ -1,6 +1,6 @@
 import { check, validationResult } from "express-validator";
 //utils
-import { notAuthenticatedLinks, memberAuthenticatedLinks } from "../constants/constants.js";
+import { notAuthenticatedLinks, memberAuthenticatedLinks, guestAuthenticatedLinks, adminAuthenticatedLinks, icons } from "../constants/constants.js";
 import { formatDateTime } from "../utils/utility.js";
 import path from 'path';
 import asyncHandler from "express-async-handler";
@@ -27,23 +27,13 @@ export async function filesHome (req, res) {
         }
     })
 
-    const icons = {
-        'image': "🖼️",
-        'application/pdf': "📕",
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document': "📄",
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': "𝄜",
-        'text/plain': "📃",
-        'audio/mpeg': "🔊",
-        'audio/wav': "🔊",
-        'video/mp4': "📽️",
-        'application/zip': "🔐"
-    };
-
     return res.render("filesHome", {
         title: "My Files",
         header: `Hi ${req.user.username}. Listed below are all files belonging to you.`,
         notAuthenticatedLinks,
         memberAuthenticatedLinks,
+        guestAuthenticatedLinks,
+        adminAuthenticatedLinks,
         files: filesWithFormattedDate,
         user: req.user,
         icons
@@ -55,6 +45,9 @@ export async function uploadFileGet(req,res){
         header: `Hi ${req.user.username}, you can upload your files below.`,
         notAuthenticatedLinks,
         memberAuthenticatedLinks,
+        guestAuthenticatedLinks,
+        adminAuthenticatedLinks,
+        user: req.user,
         folders: req.user.folder
     });
 };
@@ -140,6 +133,9 @@ export const uploadFilePost = [
                 header: `Hi ${req.user.username}, you can upload your files below.`,
                 notAuthenticatedLinks,
                 memberAuthenticatedLinks,
+                guestAuthenticatedLinks,
+                adminAuthenticatedLinks,
+                user: req.user,
                 errors: errors.array(),
             });
         }
@@ -226,27 +222,40 @@ export async function viewFile (req, res) {
         uploaded_at: formatDateTime(fileForView.uploaded_at),
         folder_name: fileForView.folder.name
     }
-    
-    const icons = {
-        'image': "🖼️",
-        'application/pdf': "📕",
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document': "📄",
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': "𝄜",
-        'text/plain': "📃",
-        'audio/mpeg': "🔊",
-        'audio/wav': "🔊",
-        'video/mp4': "📽️",
-        'application/zip': "🔐"
-    };
 
     return res.render("viewFile", {
         title: "View File",
         header: `Hi ${req.user.username}, you are viewing file with file id: ${fileId}`,
         notAuthenticatedLinks,
         memberAuthenticatedLinks,
+        guestAuthenticatedLinks,
+        adminAuthenticatedLinks,
         file: fileForViewWithFormattedDate,
         user: req.user,
         icons
+    });
+};
+export async function searchFileGet (req, res){
+
+    const userAllFiles = await prisma.retrieveAllFilesByUser(req.user.id);
+
+    const filesWithFormattedDate = userAllFiles.map((file) => {
+        return {
+            ...file, 
+            uploaded_at: formatDateTime(file.uploaded_at),
+            folder_name: file.folder.name
+        }
+    })
+
+    return res.render("searchFiles", {
+        title: "Search Files",
+        header: `Hi ${req.user.username}, you can search your files below.`,
+        notAuthenticatedLinks,
+        memberAuthenticatedLinks,
+        guestAuthenticatedLinks,
+        adminAuthenticatedLinks,
+        user: req.user,
+        files: filesWithFormattedDate
     });
 }
 export async function downloadFile (req, res) {
@@ -263,7 +272,7 @@ export async function downloadFile (req, res) {
         }
     });
     res.redirect(`/view/${fileId}`);
-}
+};
 export async function deleteFile(req,res) {
     const fileId = parseInt(req.params.id);
     
@@ -275,4 +284,4 @@ export async function deleteFile(req,res) {
     await prisma.deleteFileById(req.user, fileId)
 
     res.redirect("/files")
-}
+};

@@ -6,8 +6,13 @@
   <body>
     <header>
       <%- include("partials/errors.ejs") %>
-      <!--Include adminAuthenticated Links pag naayos na user.roles-->
-      <%- include('partials/navbar2.ejs', {links: memberAuthenticatedLinks}) %>
+      <% if(user.role === 'USER') { %>
+        <%- include('partials/navbar2.ejs', {links: memberAuthenticatedLinks}) %>
+      <% } else if (user.status_code === 'GUEST') { %>
+        <%- include('partials/navbar2.ejs', {links: guestAuthenticatedLinks}) %>
+      <% } else if (user.status_code === 'ADMIN') { %>
+        <%- include('partials/navbar2.ejs', {links: adminAuthenticatedLinks}) %>
+      <% } %>
       <h1 class="page-header"><%= header %></h1>
     </header>
     <main class="logged-user-folders">

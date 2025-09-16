@@ -18,6 +18,7 @@ dotenv.config();
 //Routers
 import indexRouter from "./routes/indexRouter.js";
 import filesRouter from "./routes/filesRouter.js";
+import foldersRouter from "./routes/foldersRoutes.js";
 //import usersRouter from "./routes/userRouter.js";
 
 const app = express();
@@ -66,7 +67,7 @@ app.use(flash()); //for error handling of passport after failureRedirect
 
 app.use("/", indexRouter);
 app.use("/files", filesRouter);
-//app.use("/users", usersRouter);
+app.use("/folders", foldersRouter);
 
 //error handling using middleware
 app.use((err, req, res, next) => {
@@ -79,8 +80,8 @@ app.use((err, req, res, next) => {
       title: "Error Page",
       notAuthenticatedLinks,
       memberAuthenticatedLinks,
-      //guestAuthenticatedLinks,
-      //adminAuthenticatedLinks,
+      guestAuthenticatedLinks,
+      adminAuthenticatedLinks,
       access: isAuthenticated,
       user: req.user,
       error: err

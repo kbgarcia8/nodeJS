@@ -74,6 +74,7 @@ model Session {
 
 enum Role {
   USER
+  GUEST
   ADMIN
 
   @@schema("file_uploader")

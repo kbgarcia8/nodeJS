@@ -1,5 +1,5 @@
 import { check, validationResult } from "express-validator";
-import { notAuthenticatedLinks, memberAuthenticatedLinks } from "../constants/constants.js";
+import { notAuthenticatedLinks, memberAuthenticatedLinks, guestAuthenticatedLinks, adminAuthenticatedLinks } from "../constants/constants.js";
 import { ExpressValError } from "../utils/errors.js";
 import asyncHandler from "express-async-handler";
 import * as prisma from "../prisma/prisma.js";
@@ -150,8 +150,8 @@ export async function dashboardGet(req,res){
         header: `Hi ${req.user.username}, Welcome back!`,
         notAuthenticatedLinks,
         memberAuthenticatedLinks,
-        //guestAuthenticatedLinks,
-        //adminAuthenticatedLinks,
+        guestAuthenticatedLinks,
+        adminAuthenticatedLinks,
         files: publicFiles,
         user: req.user
     });

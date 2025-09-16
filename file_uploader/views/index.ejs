@@ -6,7 +6,13 @@
   <body>
     <header>
       <%- include("partials/errors.ejs") %>
-      <%- include("partials/navbar.ejs", { links: notAuthenticatedLinks }) %>
+      <% if(user.role === 'USER') { %>
+        <%- include('partials/navbar2.ejs', {links: memberAuthenticatedLinks}) %>
+      <% } else if (user.status_code === 'GUEST') { %>
+        <%- include('partials/navbar2.ejs', {links: guestAuthenticatedLinks}) %>
+      <% } else if (user.status_code === 'ADMIN') { %>
+        <%- include('partials/navbar2.ejs', {links: adminAuthenticatedLinks}) %>
+      <% } %>
       <h1 class="page-header">⤴️⤵️ File Uploader</h1>
       <h3 class="index-page-slogan">Simple and secure file storage — anytime, anywhere.</h3>
     </header>

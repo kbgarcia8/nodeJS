@@ -5,11 +5,16 @@
   </head>
   <body>
     <header>
-        <%- include("partials/errors.ejs") %>
-        <!--Include adminAuthenticated Links pag naayos na user.roles-->
+      <%- include("partials/errors.ejs") %>
+      <% if(user.role === 'USER') { %>
         <%- include('partials/navbar2.ejs', {links: memberAuthenticatedLinks}) %>
-        <h1 class="page-header">⤴️⤵️ File Uploader</h1>
-        <h2 class="welcome-user-header"><%= header %></h2>
+      <% } else if (user.status_code === 'GUEST') { %>
+        <%- include('partials/navbar2.ejs', {links: guestAuthenticatedLinks}) %>
+      <% } else if (user.status_code === 'ADMIN') { %>
+        <%- include('partials/navbar2.ejs', {links: adminAuthenticatedLinks}) %>
+      <% } %>
+      <h1 class="page-header">⤴️⤵️ File Uploader</h1>
+      <h2 class="welcome-user-header"><%= header %></h2>
     </header>
     <main class="message-dashboard">
       <!--If membership guest censor author of messages unless belong to user logged in-->

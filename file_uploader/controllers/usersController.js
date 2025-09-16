@@ -1,5 +1,5 @@
 import { body, check, query, validationResult } from "express-validator";
-import * as db from "../db/queries.js";
+import * as prisma from '../prisma/prisma.js';
 import { guestAuthenticatedLinks, memberAuthenticatedLinks, adminAuthenticatedLinks } from "../constants/constants.js";
 import asyncHandler from "express-async-handler";
 import bcrypt from "bcryptjs";
