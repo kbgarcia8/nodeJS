@@ -2,13 +2,8 @@ import { check, validationResult, query } from "express-validator";
 //utils
 import { notAuthenticatedLinks, memberAuthenticatedLinks, guestAuthenticatedLinks, adminAuthenticatedLinks, icons } from "../constants/constants.js";
 import { formatDateTime } from "../utils/utility.js";
-import path from 'path';
-import asyncHandler from "express-async-handler";
 //prisma queries
 import * as prisma from "../prisma/prisma.js";
-//authentication
-import bcrypt from "bcryptjs";
-import passport from "passport";
 
 export async function foldersHome (req, res) {
 

@@ -38,7 +38,15 @@ export type Session = $Result.DefaultSelection<Prisma.$SessionPayload>
  * Enums
  */
 export namespace $Enums {
-  export const Role: {
+  export const Privacy: {
+  PUBLIC: 'PUBLIC',
+  PRIVATE: 'PRIVATE'
+};
+
+export type Privacy = (typeof Privacy)[keyof typeof Privacy]
+
+
+export const Role: {
   USER: 'USER',
   GUEST: 'GUEST',
   ADMIN: 'ADMIN'
@@ -47,6 +55,10 @@ export namespace $Enums {
 export type Role = (typeof Role)[keyof typeof Role]
 
 }
+
+export type Privacy = $Enums.Privacy
+
+export const Privacy: typeof $Enums.Privacy
 
 export type Role = $Enums.Role
 
@@ -3536,6 +3548,7 @@ export namespace Prisma {
     name: string | null
     path: string | null
     size: number | null
+    privacy: $Enums.Privacy | null
   }
 
   export type FileMaxAggregateOutputType = {
@@ -3547,6 +3560,7 @@ export namespace Prisma {
     name: string | null
     path: string | null
     size: number | null
+    privacy: $Enums.Privacy | null
   }
 
   export type FileCountAggregateOutputType = {
@@ -3558,6 +3572,7 @@ export namespace Prisma {
     name: number
     path: number
     size: number
+    privacy: number
     _all: number
   }
 
@@ -3585,6 +3600,7 @@ export namespace Prisma {
     name?: true
     path?: true
     size?: true
+    privacy?: true
   }
 
   export type FileMaxAggregateInputType = {
@@ -3596,6 +3612,7 @@ export namespace Prisma {
     name?: true
     path?: true
     size?: true
+    privacy?: true
   }
 
   export type FileCountAggregateInputType = {
@@ -3607,6 +3624,7 @@ export namespace Prisma {
     name?: true
     path?: true
     size?: true
+    privacy?: true
     _all?: true
   }
 
@@ -3705,6 +3723,7 @@ export namespace Prisma {
     name: string
     path: string
     size: number
+    privacy: $Enums.Privacy
     _count: FileCountAggregateOutputType | null
     _avg: FileAvgAggregateOutputType | null
     _sum: FileSumAggregateOutputType | null
@@ -3735,6 +3754,7 @@ export namespace Prisma {
     name?: boolean
     path?: boolean
     size?: boolean
+    privacy?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
     folder?: boolean | FolderDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["file"]>
@@ -3748,6 +3768,7 @@ export namespace Prisma {
     name?: boolean
     path?: boolean
     size?: boolean
+    privacy?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
     folder?: boolean | FolderDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["file"]>
@@ -3761,6 +3782,7 @@ export namespace Prisma {
     name?: boolean
     path?: boolean
     size?: boolean
+    privacy?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
     folder?: boolean | FolderDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["file"]>
@@ -3774,9 +3796,10 @@ export namespace Prisma {
     name?: boolean
     path?: boolean
     size?: boolean
+    privacy?: boolean
   }
 
-  export type FileOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "uploaded_at" | "folderId" | "fileType" | "name" | "path" | "size", ExtArgs["result"]["file"]>
+  export type FileOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "uploaded_at" | "folderId" | "fileType" | "name" | "path" | "size" | "privacy", ExtArgs["result"]["file"]>
   export type FileInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     folder?: boolean | FolderDefaultArgs<ExtArgs>
@@ -3805,6 +3828,7 @@ export namespace Prisma {
       name: string
       path: string
       size: number
+      privacy: $Enums.Privacy
     }, ExtArgs["result"]["file"]>
     composites: {}
   }
@@ -4238,6 +4262,7 @@ export namespace Prisma {
     readonly name: FieldRef<"File", 'String'>
     readonly path: FieldRef<"File", 'String'>
     readonly size: FieldRef<"File", 'Int'>
+    readonly privacy: FieldRef<"File", 'Privacy'>
   }
     
 
@@ -5680,7 +5705,8 @@ export namespace Prisma {
     fileType: 'fileType',
     name: 'name',
     path: 'path',
-    size: 'size'
+    size: 'size',
+    privacy: 'privacy'
   };
 
   export type FileScalarFieldEnum = (typeof FileScalarFieldEnum)[keyof typeof FileScalarFieldEnum]
@@ -5778,6 +5804,20 @@ export namespace Prisma {
    * Reference to a field of type 'DateTime[]'
    */
   export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Privacy'
+   */
+  export type EnumPrivacyFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Privacy'>
+    
+
+
+  /**
+   * Reference to a field of type 'Privacy[]'
+   */
+  export type ListEnumPrivacyFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Privacy[]'>
     
 
 
@@ -5941,6 +5981,7 @@ export namespace Prisma {
     name?: StringFilter<"File"> | string
     path?: StringFilter<"File"> | string
     size?: IntFilter<"File"> | number
+    privacy?: EnumPrivacyFilter<"File"> | $Enums.Privacy
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     folder?: XOR<FolderScalarRelationFilter, FolderWhereInput>
   }
@@ -5954,6 +5995,7 @@ export namespace Prisma {
     name?: SortOrder
     path?: SortOrder
     size?: SortOrder
+    privacy?: SortOrder
     user?: UserOrderByWithRelationInput
     folder?: FolderOrderByWithRelationInput
   }
@@ -5970,6 +6012,7 @@ export namespace Prisma {
     name?: StringFilter<"File"> | string
     path?: StringFilter<"File"> | string
     size?: IntFilter<"File"> | number
+    privacy?: EnumPrivacyFilter<"File"> | $Enums.Privacy
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     folder?: XOR<FolderScalarRelationFilter, FolderWhereInput>
   }, "id">
@@ -5983,6 +6026,7 @@ export namespace Prisma {
     name?: SortOrder
     path?: SortOrder
     size?: SortOrder
+    privacy?: SortOrder
     _count?: FileCountOrderByAggregateInput
     _avg?: FileAvgOrderByAggregateInput
     _max?: FileMaxOrderByAggregateInput
@@ -6002,6 +6046,7 @@ export namespace Prisma {
     name?: StringWithAggregatesFilter<"File"> | string
     path?: StringWithAggregatesFilter<"File"> | string
     size?: IntWithAggregatesFilter<"File"> | number
+    privacy?: EnumPrivacyWithAggregatesFilter<"File"> | $Enums.Privacy
   }
 
   export type SessionWhereInput = {
@@ -6189,6 +6234,7 @@ export namespace Prisma {
     name: string
     path: string
     size: number
+    privacy?: $Enums.Privacy
     user: UserCreateNestedOneWithoutFilesInput
     folder: FolderCreateNestedOneWithoutFilesInput
   }
@@ -6202,6 +6248,7 @@ export namespace Prisma {
     name: string
     path: string
     size: number
+    privacy?: $Enums.Privacy
   }
 
   export type FileUpdateInput = {
@@ -6210,6 +6257,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     path?: StringFieldUpdateOperationsInput | string
     size?: IntFieldUpdateOperationsInput | number
+    privacy?: EnumPrivacyFieldUpdateOperationsInput | $Enums.Privacy
     user?: UserUpdateOneRequiredWithoutFilesNestedInput
     folder?: FolderUpdateOneRequiredWithoutFilesNestedInput
   }
@@ -6223,6 +6271,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     path?: StringFieldUpdateOperationsInput | string
     size?: IntFieldUpdateOperationsInput | number
+    privacy?: EnumPrivacyFieldUpdateOperationsInput | $Enums.Privacy
   }
 
   export type FileCreateManyInput = {
@@ -6234,6 +6283,7 @@ export namespace Prisma {
     name: string
     path: string
     size: number
+    privacy?: $Enums.Privacy
   }
 
   export type FileUpdateManyMutationInput = {
@@ -6242,6 +6292,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     path?: StringFieldUpdateOperationsInput | string
     size?: IntFieldUpdateOperationsInput | number
+    privacy?: EnumPrivacyFieldUpdateOperationsInput | $Enums.Privacy
   }
 
   export type FileUncheckedUpdateManyInput = {
@@ -6253,6 +6304,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     path?: StringFieldUpdateOperationsInput | string
     size?: IntFieldUpdateOperationsInput | number
+    privacy?: EnumPrivacyFieldUpdateOperationsInput | $Enums.Privacy
   }
 
   export type SessionCreateInput = {
@@ -6546,6 +6598,13 @@ export namespace Prisma {
     userId?: SortOrder
   }
 
+  export type EnumPrivacyFilter<$PrismaModel = never> = {
+    equals?: $Enums.Privacy | EnumPrivacyFieldRefInput<$PrismaModel>
+    in?: $Enums.Privacy[] | ListEnumPrivacyFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Privacy[] | ListEnumPrivacyFieldRefInput<$PrismaModel>
+    not?: NestedEnumPrivacyFilter<$PrismaModel> | $Enums.Privacy
+  }
+
   export type FolderScalarRelationFilter = {
     is?: FolderWhereInput
     isNot?: FolderWhereInput
@@ -6560,6 +6619,7 @@ export namespace Prisma {
     name?: SortOrder
     path?: SortOrder
     size?: SortOrder
+    privacy?: SortOrder
   }
 
   export type FileAvgOrderByAggregateInput = {
@@ -6578,6 +6638,7 @@ export namespace Prisma {
     name?: SortOrder
     path?: SortOrder
     size?: SortOrder
+    privacy?: SortOrder
   }
 
   export type FileMinOrderByAggregateInput = {
@@ -6589,6 +6650,7 @@ export namespace Prisma {
     name?: SortOrder
     path?: SortOrder
     size?: SortOrder
+    privacy?: SortOrder
   }
 
   export type FileSumOrderByAggregateInput = {
@@ -6596,6 +6658,16 @@ export namespace Prisma {
     userId?: SortOrder
     folderId?: SortOrder
     size?: SortOrder
+  }
+
+  export type EnumPrivacyWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Privacy | EnumPrivacyFieldRefInput<$PrismaModel>
+    in?: $Enums.Privacy[] | ListEnumPrivacyFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Privacy[] | ListEnumPrivacyFieldRefInput<$PrismaModel>
+    not?: NestedEnumPrivacyWithAggregatesFilter<$PrismaModel> | $Enums.Privacy
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumPrivacyFilter<$PrismaModel>
+    _max?: NestedEnumPrivacyFilter<$PrismaModel>
   }
 
   export type SessionCountOrderByAggregateInput = {
@@ -6795,6 +6867,10 @@ export namespace Prisma {
     connect?: FolderWhereUniqueInput
   }
 
+  export type EnumPrivacyFieldUpdateOperationsInput = {
+    set?: $Enums.Privacy
+  }
+
   export type UserUpdateOneRequiredWithoutFilesNestedInput = {
     create?: XOR<UserCreateWithoutFilesInput, UserUncheckedCreateWithoutFilesInput>
     connectOrCreate?: UserCreateOrConnectWithoutFilesInput
@@ -6964,6 +7040,23 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type NestedEnumPrivacyFilter<$PrismaModel = never> = {
+    equals?: $Enums.Privacy | EnumPrivacyFieldRefInput<$PrismaModel>
+    in?: $Enums.Privacy[] | ListEnumPrivacyFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Privacy[] | ListEnumPrivacyFieldRefInput<$PrismaModel>
+    not?: NestedEnumPrivacyFilter<$PrismaModel> | $Enums.Privacy
+  }
+
+  export type NestedEnumPrivacyWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Privacy | EnumPrivacyFieldRefInput<$PrismaModel>
+    in?: $Enums.Privacy[] | ListEnumPrivacyFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Privacy[] | ListEnumPrivacyFieldRefInput<$PrismaModel>
+    not?: NestedEnumPrivacyWithAggregatesFilter<$PrismaModel> | $Enums.Privacy
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumPrivacyFilter<$PrismaModel>
+    _max?: NestedEnumPrivacyFilter<$PrismaModel>
+  }
+
   export type FolderCreateWithoutUserInput = {
     id?: number
     name: string
@@ -6994,6 +7087,7 @@ export namespace Prisma {
     name: string
     path: string
     size: number
+    privacy?: $Enums.Privacy
     folder: FolderCreateNestedOneWithoutFilesInput
   }
 
@@ -7005,6 +7099,7 @@ export namespace Prisma {
     name: string
     path: string
     size: number
+    privacy?: $Enums.Privacy
   }
 
   export type FileCreateOrConnectWithoutUserInput = {
@@ -7071,6 +7166,7 @@ export namespace Prisma {
     name?: StringFilter<"File"> | string
     path?: StringFilter<"File"> | string
     size?: IntFilter<"File"> | number
+    privacy?: EnumPrivacyFilter<"File"> | $Enums.Privacy
   }
 
   export type UserCreateWithoutFolderInput = {
@@ -7107,6 +7203,7 @@ export namespace Prisma {
     name: string
     path: string
     size: number
+    privacy?: $Enums.Privacy
     user: UserCreateNestedOneWithoutFilesInput
   }
 
@@ -7118,6 +7215,7 @@ export namespace Prisma {
     name: string
     path: string
     size: number
+    privacy?: $Enums.Privacy
   }
 
   export type FileCreateOrConnectWithoutFolderInput = {
@@ -7299,6 +7397,7 @@ export namespace Prisma {
     name: string
     path: string
     size: number
+    privacy?: $Enums.Privacy
   }
 
   export type FolderUpdateWithoutUserInput = {
@@ -7326,6 +7425,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     path?: StringFieldUpdateOperationsInput | string
     size?: IntFieldUpdateOperationsInput | number
+    privacy?: EnumPrivacyFieldUpdateOperationsInput | $Enums.Privacy
     folder?: FolderUpdateOneRequiredWithoutFilesNestedInput
   }
 
@@ -7337,6 +7437,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     path?: StringFieldUpdateOperationsInput | string
     size?: IntFieldUpdateOperationsInput | number
+    privacy?: EnumPrivacyFieldUpdateOperationsInput | $Enums.Privacy
   }
 
   export type FileUncheckedUpdateManyWithoutUserInput = {
@@ -7347,6 +7448,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     path?: StringFieldUpdateOperationsInput | string
     size?: IntFieldUpdateOperationsInput | number
+    privacy?: EnumPrivacyFieldUpdateOperationsInput | $Enums.Privacy
   }
 
   export type FileCreateManyFolderInput = {
@@ -7357,6 +7459,7 @@ export namespace Prisma {
     name: string
     path: string
     size: number
+    privacy?: $Enums.Privacy
   }
 
   export type FileUpdateWithoutFolderInput = {
@@ -7365,6 +7468,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     path?: StringFieldUpdateOperationsInput | string
     size?: IntFieldUpdateOperationsInput | number
+    privacy?: EnumPrivacyFieldUpdateOperationsInput | $Enums.Privacy
     user?: UserUpdateOneRequiredWithoutFilesNestedInput
   }
 
@@ -7376,6 +7480,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     path?: StringFieldUpdateOperationsInput | string
     size?: IntFieldUpdateOperationsInput | number
+    privacy?: EnumPrivacyFieldUpdateOperationsInput | $Enums.Privacy
   }
 
   export type FileUncheckedUpdateManyWithoutFolderInput = {
@@ -7386,6 +7491,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     path?: StringFieldUpdateOperationsInput | string
     size?: IntFieldUpdateOperationsInput | number
+    privacy?: EnumPrivacyFieldUpdateOperationsInput | $Enums.Privacy
   }
 
 

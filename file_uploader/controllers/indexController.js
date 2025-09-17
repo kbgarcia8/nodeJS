@@ -7,7 +7,6 @@ import bcrypt from "bcryptjs";
 import passport from "passport";
 
 export async function homePage(req,res){
-    // TODO: Display public files here regardless of user
     return res.render("index", {
         title: "Home Page",
         notAuthenticatedLinks
@@ -143,7 +142,16 @@ export const loginFormPost = [
 ];
 
 export async function dashboardGet(req,res){
-    const publicFiles = [] //public files will be fetched later on
+    // TODO: Display public files here regardless of user
+    const publicFiles = await prisma.retrievePublicFiles();
+
+    const publicFilesWithFormattedDate = publicFiles.map((file) => {
+        return {
+            ...file, 
+            uploaded_at: formatDateTime(file.uploaded_at),
+            folder_name: file.folder.name
+        }
+    })
 
     return res.render("dashboard", {
         title: "Dashboard",
@@ -152,7 +160,7 @@ export async function dashboardGet(req,res){
         memberAuthenticatedLinks,
         guestAuthenticatedLinks,
         adminAuthenticatedLinks,
-        files: publicFiles,
+        files: publicFilesWithFormattedDate,
         user: req.user
     });
 };

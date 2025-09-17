@@ -9,6 +9,7 @@ model File {
     name String //req.file.filename
     path String //req.file.path
     size Int
+    privacy Privacy @default(PUBLIC)
 
     @@schema("file_uploader")
 }

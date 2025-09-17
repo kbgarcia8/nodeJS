@@ -220,6 +220,30 @@ export async function createFileRecord(type, name, path, size, userId, folderId)
     });
   }
 }
+export async function retrievePublicFiles(){
+  try {
+    const publicFiles = await prisma.file.findMany({
+      where: {
+        privacy: {
+          equals: "PUBLIC"
+        }
+      },
+      include:{
+        folder: true,
+        user: true
+      }
+    });
+
+    console.log(`Public files retrieved successfully`);
+    return publicFiles;
+
+  } catch(err){
+    console.error("Prisma Database error in retrievePublicFiles:", err);
+    throw new PrismaError("Failed to retrieve public files", 409, "PRISMA_RETRIEVE_PUBLIC_FILES_FAILED", {
+        detail: err.error || err.message,
+    });
+  }
+}
 export async function retrieveFileById(user, fileId){
   try {
     const retrievedFile = await prisma.file.findUnique({

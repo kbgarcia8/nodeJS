@@ -146,7 +146,8 @@ exports.Prisma.FileScalarFieldEnum = {
   fileType: 'fileType',
   name: 'name',
   path: 'path',
-  size: 'size'
+  size: 'size',
+  privacy: 'privacy'
 };
 
 exports.Prisma.SessionScalarFieldEnum = {
@@ -174,6 +175,11 @@ exports.Role = exports.$Enums.Role = {
   USER: 'USER',
   GUEST: 'GUEST',
   ADMIN: 'ADMIN'
+};
+
+exports.Privacy = exports.$Enums.Privacy = {
+  PUBLIC: 'PUBLIC',
+  PRIVATE: 'PRIVATE'
 };
 
 exports.Prisma.ModelName = {
