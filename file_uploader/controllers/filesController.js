@@ -6,9 +6,6 @@ import path from 'path';
 import asyncHandler from "express-async-handler";
 //prisma queries
 import * as prisma from "../prisma/prisma.js";
-//authentication
-import bcrypt from "bcryptjs";
-import passport from "passport";
 //File upload
 import multer from 'multer';
 import { FileUploadError } from "../utils/errors.js";
@@ -171,7 +168,7 @@ export const uploadFilePost = [
             }
             //Change file destination from default (main) to folderName
             const destinationFolder = req.body.newfolderName || req.body.existingFolderName;
-            console.log(destinationFolder)
+            const filePrivacy = req.body.filePrivacy || "PUBLIC";
             const currentFilePath = req.file.path;
             //const currentFileDestination = req.file.destination;
             const currentFileName = req.file.filename;
@@ -201,11 +198,11 @@ export const uploadFilePost = [
                 /* --Create file record in prisma, then link in logged user and current destinationFolder -- */
                 const { mimetype, size, filename, path } = req.file
 
-                await prisma.createFileRecord(mimetype, filename, path, size, req.user.id, folderRecord.id)
+                await prisma.createFileRecord(mimetype, filename, path, size, req.user.id, filePrivacy, folderRecord.id)
                 
             } else { //If no destinationFolder specified - destinationFolder is main by default, also main is expected to be initiated in createUser
                 const { mimetype, size, filename, path } = req.file
-                await prisma.createFileRecord(mimetype, filename, path, size, req.user.id)
+                await prisma.createFileRecord(mimetype, filename, path, size, filePrivacy, req.user.id)
             }
         }
         res.redirect("/dashboard");
@@ -353,6 +350,15 @@ export async function downloadFile (req, res) {
     });
     res.redirect(`/view/${fileId}`);
 };
+export async function changePrivacy (req,res) {
+    const fileId = parseInt(req.params.id);
+    const currentPrivacy = req.params.privacy;
+
+    const newPrivacy = currentPrivacy === "PUBLIC" ? "PRIVATE" : "PUBLIC";
+    
+    await prisma.changeFilePrivacy(req.user, fileId, newPrivacy);
+    res.redirect(`/view/${fileId}`);
+}
 export async function deleteFile(req,res) {
     const fileId = parseInt(req.params.id);
     

@@ -13,5 +13,6 @@ filesRouter.get("/view/:id", checkAuthentication, filesController.viewFile);
 filesRouter.get("/download/:id", checkAuthentication, filesController.downloadFile);
 filesRouter.get("/search", checkAuthentication, filesController.searchFile);
 filesRouter.get("/search/results", checkAuthentication, filesController.fileSearchResult);
+filesRouter.get("/change/:id/:privacy", checkAuthentication, filesController.changePrivacy);
 
 export default filesRouter;

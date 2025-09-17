@@ -47,10 +47,17 @@
         </div>
         <div class="input-container fileUpload-input existing-folder">
           <label for="existingFolderName">Choose existing folder: </label>
-          <select name="existingFolderName" placeholder="Please specify new folder name">
+          <select name="existingFolderName" placeholder="Please select existing folder to save file">
             <% folders.forEach((folder)=> { %>
               <option value="<%= folder.name %>" <% folder.name === "main" ? "default" : "" %> ><%= folder.name %></option>
             <% }) %>
+          </select>
+        </div>
+        <div class="input-container fileUpload-input existing-folder">
+          <label for="filePrivacy">Set privacy: </label>
+          <select name="filePrivacy" placeholder="Choose file privacy">
+              <option value="PUBLIC" selected>Public</option>
+              <option value="PRIVATE">Private</option>
           </select>
         </div>
         <div class="fileUpload-submit-button-space">

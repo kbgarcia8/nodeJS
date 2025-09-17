@@ -191,7 +191,7 @@ export async function retrieveSearchedFolders(searchFolderName, searchFolderOwne
 /* -- END FOLDER -- */
 
 /* -- FILE -- */
-export async function createFileRecord(type, name, path, size, userId, folderId){
+export async function createFileRecord(type, name, path, size, userId, privacy, folderId){
   const currentUserMainFolder = await retrievedFolderByName("main", userId);
   const currentUserMainFolderId = parseInt(currentUserMainFolder?.id);
 
@@ -207,7 +207,8 @@ export async function createFileRecord(type, name, path, size, userId, folderId)
         },
         folder: {
           connect: { id: folderId !== undefined ? folderId : currentUserMainFolderId} //connect to main of current user by default
-        }
+        },
+        privacy: privacy
       }
     });
 
@@ -333,6 +334,27 @@ export async function retrieveSearchedFiles(searchFileName, searchFileOwner){
     console.error("Prisma Database error in retrieveSearchedFiles:", err);
     throw new PrismaError(`Failed to retrieve files with filename pattern ${searchFileName} or file owner pattern ${searchFileOwner} in database`, 409, "PRISMA_RETRIEVE_SEARCH_FILES_FAILED", {
       detail: err.error || err.message,
+    });
+  }
+}
+export async function changeFilePrivacy(fileId, newPrivacy){
+  try {
+    const updatedFile = await prisma.file.update({
+      where: {
+        id: fileId
+      },
+      data: {
+        privacy: newPrivacy
+      }
+    });
+
+    console.log(`File id ${fileId} privacy changed to ${newPrivacy}`);
+    return updatedFile;
+
+  } catch(err){
+    console.error("Prisma Database error in changeFilePrivacy:", err);
+    throw new PrismaError("Failed to change file privacy", 409, "PRISMA_CHANGE_FILE_PRIVACY_FAILED", {
+        detail: err.error || err.message,
     });
   }
 }

@@ -786,7 +786,8 @@ div.file-view-entry-button-space form button{
     justify-content: center;
 }
 p.file-view-entry-date-uploaded,
-p.file-view-entry-folder{
+p.file-view-entry-folder,
+p.file-view-entry-privacy{
     width: 100%;
     height: 15%;
     display: flex;
