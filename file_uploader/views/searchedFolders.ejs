@@ -1,0 +1,28 @@
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <header>
+      <%- include("partials/errors.ejs") %>
+      <% if(user.role === 'USER') { %>
+        <%- include('partials/navbar2.ejs', {links: memberAuthenticatedLinks}) %>
+      <% } else if (user.status_code === 'GUEST') { %>
+        <%- include('partials/navbar2.ejs', {links: guestAuthenticatedLinks}) %>
+      <% } else if (user.status_code === 'ADMIN') { %>
+        <%- include('partials/navbar2.ejs', {links: adminAuthenticatedLinks}) %>
+      <% } %>
+      <h1 class="page-header"><%= header %></h1>
+    </header>
+    <main class="logged-user-folders">
+      <% if(folders.length === 0) { %>
+        <p class="no-loggedin-user-folders">You have not created any folders yet! <a href="/folders/new">Create a Folder now</a></p>
+      <% } else { %>
+        <% folders.forEach((folder) => { %>
+          <%- include('partials/folder_entry.ejs', {folder: folder, user: user}) %>
+        <% }); %>
+      <% } %>
+    </main>
+  </body>
+</html>

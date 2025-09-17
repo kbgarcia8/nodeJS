@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+<body>
+  <header>
+    <%- include("partials/errors.ejs") %>
+    <% if(user.role === 'USER') { %>
+      <%- include('partials/navbar2.ejs', {links: memberAuthenticatedLinks}) %>
+    <% } else if (user.status_code === 'GUEST') { %>
+      <%- include('partials/navbar2.ejs', {links: guestAuthenticatedLinks}) %>
+    <% } else if (user.status_code === 'ADMIN') { %>
+      <%- include('partials/navbar2.ejs', {links: adminAuthenticatedLinks}) %>
+    <% } %>
+    <h1 class="page-header"><%= title %></h1>
+  </header>
+  <form action="/folders/search/results" method="GET">
+    <div class="search-folders-input">
+      <label for="searchFolderName">Folder Name: </label>
+      <input type="text" name="searchFolderName" id="searchFolderName">
+    </div>
+    <div class="search-folders-input">
+      <label for="searchFolderOwner">Owner (username): </label>
+      <input type="text" name="searchFolderOwner" id="searchFolderOwner">
+    </div>
+    <button class="folders-search-submit" type="submit" <%= folders.length === 0 ? disabled : "" %> >Search</button>
+  </form>
+</body>
+</html>

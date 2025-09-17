@@ -16,13 +16,13 @@
     <% } %>
     <h1 class="page-header"><%= title %></h1>
   </header>
-  <form action="/files/search/result" method="GET">
+  <form action="/files/search/results" method="GET">
     <div class="search-files-input">
       <label for="searchFileName">File Name: </label>
       <input type="text" name="searchFileName" id="searchFileName">
     </div>
     <div class="search-files-input">
-      <label for="searchFileOwner">Owner: </label>
+      <label for="searchFileOwner">Owner (username): </label>
       <input type="text" name="searchFileOwner" id="searchFileOwner">
     </div>
     <!-- optional to include file type search

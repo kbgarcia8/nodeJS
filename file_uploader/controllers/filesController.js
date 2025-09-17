@@ -1,4 +1,4 @@
-import { check, validationResult } from "express-validator";
+import { check, validationResult,query } from "express-validator";
 //utils
 import { notAuthenticatedLinks, memberAuthenticatedLinks, guestAuthenticatedLinks, adminAuthenticatedLinks, icons } from "../constants/constants.js";
 import { formatDateTime } from "../utils/utility.js";
@@ -235,7 +235,7 @@ export async function viewFile (req, res) {
         icons
     });
 };
-export async function searchFileGet (req, res){
+export async function searchFile (req, res){
 
     const userAllFiles = await prisma.retrieveAllFilesByUser(req.user.id);
 
@@ -257,7 +257,87 @@ export async function searchFileGet (req, res){
         user: req.user,
         files: filesWithFormattedDate
     });
-}
+};
+const validateFileSearch = [
+  // Just basic optional + trimming, no cross-field logic here
+  query("searchFileName").optional({ checkFalsy: true }).trim(),
+  query("searchFileOwner").optional({ checkFalsy: true }).trim(),
+  //query("searchFileType").optional({ checkFalsy: true }).trim(),
+
+  // Cross-field logic in a separate middleware
+  (req, res, next) => {
+    //const { searchFileName = "", searchFileOwner = "", searchFileType = "" } = req.query;
+    const { searchFileName = "", searchFileOwner = "" } = req.query;
+
+    //if (!searchFileName && !searchFileOwner && !searchFileType) {
+    if (!searchFileName && !searchFileOwner) {
+      return next(new ExpressValError(
+        "At least one of searchFileName or searchFileOwner must be provided.",
+        400,
+        "EXPRESS_VAL_ERROR_SEARCH_FILE",
+        {
+          detail: "Provide either a file name or owner pattern to search file.",
+        }
+      ));
+    }
+
+    next();
+  },
+];
+export const fileSearchResult = [
+  validateFileSearch,
+  async (req, res) => {
+    const errors = validationResult(req);
+
+    const userAllFiles = await prisma.retrieveAllFilesByUser(req.user.id);
+
+    const filesWithFormattedDate = userAllFiles.map((file) => {
+        return {
+            ...file, 
+            uploaded_at: formatDateTime(file.uploaded_at),
+            folder_name: file.folder.name
+        }
+    })
+
+    const {searchFileName, searchFileOwner} = req.query
+
+    if (!errors.isEmpty()) {
+      return res.status(400).render("searchFiles", {
+        title: "Search Files",
+        header: `Hi ${req.user.username}, you can search your files below.`,
+        notAuthenticatedLinks,
+        memberAuthenticatedLinks,
+        guestAuthenticatedLinks,
+        adminAuthenticatedLinks,
+        user: req.user,
+        files: filesWithFormattedDate,
+        errors: errors.array(),
+      });
+    }
+
+    const matchedFilesRaw = await prisma.retrieveSearchedFiles(searchFileName, searchFileOwner)
+
+    const matchedFiles = matchedFilesRaw.map((file) => {
+        return {
+            ...file, 
+            uploaded_at: formatDateTime(file.uploaded_at),
+            folder_name: file.folder.name
+        }
+    })
+    
+    return res.render("searchedFiles", {
+        title: "Searched Files",
+        header: `Hi ${req.user.username}. File search pattern; name: ${searchFileName} | owner: ${searchFileOwner}.`,
+        notAuthenticatedLinks,
+        memberAuthenticatedLinks,
+        guestAuthenticatedLinks,
+        adminAuthenticatedLinks,
+        files: matchedFiles,
+        user: req.user,
+        icons
+    });
+  }
+];
 export async function downloadFile (req, res) {
 
     const fileId = parseInt(req.params.id);

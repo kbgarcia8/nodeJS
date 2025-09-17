@@ -17,17 +17,17 @@ export const guestAuthenticatedLinks = [
 export const memberAuthenticatedLinks = [
   { href: "/dashboard", text: "Public Files" },
   { href: "/files", text: "My Files" }, //list of all files
-  { href: "/folders", text: "My Folders" }, //list of all folders
-  { href: "/folders/search", text: "Search Folders" },
   { href: "/files/new", text: "Upload File/s" },
   { href: "/files/search", text: "Search Files" },
+  { href: "/folders", text: "My Folders" }, //list of all folders
+  { href: "/folders/search", text: "Search Folders" },  
   { href: "/logout", text: "Logout" },
 ];
 //Can create and delete user
 //Can delete files/folders that are not adhering policy/ nor safe
 export const adminAuthenticatedLinks = [
   { href: "/dashboard", text: "Public Files" },
-  { href: "/message", text: "My Files" },
+  { href: "/files", text: "My Files" },
   { href: "/files/new", text: "Upload File/s" },
   { href: "/files/search", text: "Search Files" },
   { href: "/folders/new", text: "Create Folder" },

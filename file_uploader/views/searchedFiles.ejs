@@ -1,0 +1,28 @@
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <header>
+      <%- include("partials/errors.ejs") %>
+      <% if(user.role === 'USER') { %>
+        <%- include('partials/navbar2.ejs', {links: memberAuthenticatedLinks}) %>
+      <% } else if (user.status_code === 'GUEST') { %>
+        <%- include('partials/navbar2.ejs', {links: guestAuthenticatedLinks}) %>
+      <% } else if (user.status_code === 'ADMIN') { %>
+        <%- include('partials/navbar2.ejs', {links: adminAuthenticatedLinks}) %>
+      <% } %>
+      <h1 class="page-header"><%= header %></h1>
+    </header>
+    <main class="logged-user-files">
+      <% if(files.length === 0) { %>
+        <p class="no-loggedin-user-files">You have not post any files yet! <a href="/files/new">Upload a File now</a></p>
+      <% } else { %>
+        <% files.forEach((file) => { %>
+          <%- include('partials/file_entry.ejs', {file: file, user: user}) %>
+        <% }); %>
+      <% } %>
+    </main>
+  </body>
+</html>

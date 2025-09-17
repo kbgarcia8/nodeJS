@@ -17,5 +17,6 @@
         <% } %>
     </div>
     <p class="file-entry-date-uploaded"><b>Date uploaded: </b> <%= file.uploaded_at %></p>
+    <p class="file-entry-owner"><b>File owner: </b> <%= file.user.username %></p>
     <p class="file-entry-folder"><b>File location: </b> <%= file.folder_name %></p>
 </div>

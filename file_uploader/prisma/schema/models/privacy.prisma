@@ -1,0 +1,6 @@
+enum Privacy {
+  PUBLIC
+  PRIVATE
+
+  @@schema("file_uploader")
+}

@@ -1,4 +1,4 @@
-import { FileUploadError } from '../utils/errors.js';
+import { PrismaError } from '../utils/errors.js';
 import { PrismaClient } from './schema/generated/prisma/index.js'; //by default is @prisma/client but when point this to the output of your generator client in main.prisma
 
 const prisma = new PrismaClient({})
@@ -30,7 +30,7 @@ export async function createUser(firstName, lastName, username, email, password,
         });
     } catch (err){
       console.error("Prisma Database error in createUser:", err);
-      throw new FileUploadError("Failed to create user in database", 409, "PRISMA_CREATE_USER_FAILED", {
+      throw new PrismaError("Failed to create user in database", 409, "PRISMA_CREATE_USER_FAILED", {
         detail: err.error || err.message,
       });
     }
@@ -51,7 +51,7 @@ export async function findUserByEmail(email){
 
   } catch(err){
     console.error("Prisma Database error in findUserByEmail:", err);
-      throw new FileUploadError("Failed to create user in database", 409, "PRISMA_FIND_USER_BYEMAIL_FAILED", {
+      throw new PrismaError("Failed to create user in database", 409, "PRISMA_FIND_USER_BYEMAIL_FAILED", {
           detail: err.error || err.message,
       });
   }
@@ -72,7 +72,7 @@ export async function findUserById(id){
 
   } catch(err){
     console.error("Prisma Database error in findUserById:", err);
-      throw new FileUploadError("Failed to create user in database", 409, "PRISMA_FIND_USER_BYEMAIL_FAILED", {
+      throw new PrismaError("Failed to create user in database", 409, "PRISMA_FIND_USER_BYEMAIL_FAILED", {
           detail: err.error || err.message,
       });
   }
@@ -100,7 +100,7 @@ export async function createFolder(name, userId){
 
   } catch(err){
     console.error("Prisma Database error in createFolder:", err);
-    throw new FileUploadError("Failed to create folder", 409, "PRISMA_CREATE_FOLDER_FAILED", {
+    throw new PrismaError("Failed to create folder", 409, "PRISMA_CREATE_FOLDER_FAILED", {
       detail: err.error || err.message,
     });
   }
@@ -123,12 +123,12 @@ export async function retrievedFolderByName(name, userId){
       }
     });
 
-    console.log(`Folder ${name} under ${userId} created`);
+    console.log(`Folder ${name} under ${userId} retrieved`);
     return retriveFolder;
 
   } catch(err){
     console.error("Prisma Database error in createFolder:", err);
-    throw new FileUploadError("Failed to create folder", 409, "PRISMA_CREATE_FOLDER_FAILED", {
+    throw new PrismaError("Failed to create folder", 409, "PRISMA_CREATE_FOLDER_FAILED", {
       detail: err.error || err.message,
     });
   }
@@ -150,7 +150,40 @@ export async function retrieveAllFolderOfUser(userId){
 
   } catch(err){
     console.error("Prisma Database error in retrieveAllFolderOfUser:", err);
-    throw new FileUploadError("Failed to retrieve all folder", 409, "PRISMA_RETRIEVE_ALL_FOLDER_FAILED", {
+    throw new PrismaError("Failed to retrieve all folder", 409, "PRISMA_RETRIEVE_ALL_FOLDER_FAILED", {
+      detail: err.error || err.message,
+    });
+  }
+}
+export async function retrieveSearchedFolders(searchFolderName, searchFolderOwner){
+  try{
+    const matchedFolders = await prisma.folder.findMany({
+      where: {
+        ...(searchFolderName && { //spread operator is used to add a confitional property. Then if left hand is false, becomes ..false -> means do nothing
+          name: {
+            contains: searchFolderName,
+            mode: "insensitive",
+          },
+        }),
+        ...(searchFolderOwner && {
+          user: {
+            name: {
+              contains: searchFolderOwner,
+              mode: "insensitive",
+            },
+          },
+        }),
+      },
+      include: {
+        user: true,
+        files: true
+      }
+    });
+
+    return matchedFolders;
+  } catch (err) {
+    console.error("Prisma Database error in retrieveSearchedFolders:", err);
+    throw new PrismaError(`Failed to retrieve folders with foldername pattern ${searchFolderName} or folder owner pattern ${searchFolderOwner} in database`, 409, "PRISMA_RETRIEVE_SEARCH_FILES_FAILED", {
       detail: err.error || err.message,
     });
   }
@@ -182,7 +215,7 @@ export async function createFileRecord(type, name, path, size, userId, folderId)
 
   } catch(err){
     console.error("Prisma Database error in createFile:", err);
-    throw new FileUploadError("Failed to create file", 409, "PRISMA_CREATE_FILE_FAILED", {
+    throw new PrismaError("Failed to create file", 409, "PRISMA_CREATE_FILE_FAILED", {
         detail: err.error || err.message,
     });
   }
@@ -204,7 +237,7 @@ export async function retrieveFileById(user, fileId){
 
   } catch(err){
     console.error("Prisma Database error in retrieveFileById:", err);
-    throw new FileUploadError("Failed to retrieve file", 409, "PRISMA_RETRIEVE_FILE_BY_ID_FAILED", {
+    throw new PrismaError("Failed to retrieve file", 409, "PRISMA_RETRIEVE_FILE_BY_ID_FAILED", {
         detail: err.error || err.message,
     });
   }
@@ -221,7 +254,7 @@ export async function deleteFileById(user, fileId){
 
   } catch(err){
     console.error("Prisma Database error in deleteFileById:", err);
-    throw new FileUploadError("Failed to delete file", 409, "PRISMA_DELETE_FILE_BY_ID_FAILED", {
+    throw new PrismaError("Failed to delete file", 409, "PRISMA_DELETE_FILE_BY_ID_FAILED", {
         detail: err.error || err.message,
     });
   }
@@ -241,13 +274,42 @@ export async function retrieveAllFilesByUser(userId){
     return allUserFiles;
   } catch (err){
     console.error("Prisma Database error in retrieveAllFilesByUser:", err);
-    throw new FileUploadError("Failed to retrieve files owned by user in database", 409, "PRISMA_RETRIEVE_FILES_FAILED", {
+    throw new PrismaError("Failed to retrieve files owned by user in database", 409, "PRISMA_RETRIEVE_FILES_FAILED", {
+      detail: err.error || err.message,
+    });
+  }
+}
+export async function retrieveSearchedFiles(searchFileName, searchFileOwner){
+  try{
+    const matchedFiles = await prisma.file.findMany({
+      where: {
+        ...(searchFileName && { //spread operator is used to add a confitional property. Then if left hand is false, becomes ..false -> means do nothing
+          name: {
+            contains: searchFileName,
+            mode: "insensitive",
+          },
+        }),
+        ...(searchFileOwner && {
+          user: {
+            name: {
+              contains: searchFileOwner,
+              mode: "insensitive",
+            },
+          },
+        }),
+      },
+      include: {
+        user: true,
+        folder: true
+      }
+    })
+
+    return matchedFiles;
+  } catch (err) {
+    console.error("Prisma Database error in retrieveSearchedFiles:", err);
+    throw new PrismaError(`Failed to retrieve files with filename pattern ${searchFileName} or file owner pattern ${searchFileOwner} in database`, 409, "PRISMA_RETRIEVE_SEARCH_FILES_FAILED", {
       detail: err.error || err.message,
     });
   }
 }
 /* -- END FILE -- */
-
-/* -- ROLE -- */
-
-/* -- END ROLE -- */
