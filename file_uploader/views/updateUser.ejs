@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="update-user-page">
+    <%- include("partials/errors.ejs") %>
+    <%- include('partials/navbar2.ejs', {links: adminAuthenticatedLinks}) %>
+    <h1 class="page-header">→ What's on your mind? 🧠 - Admin:  <%= title %> </h1>
+  </header>
+  <main class="update-user-page">
+    <p class="update-user-instructions">
+        Admin privelege to update user of Members Only Blogspot!
+    </p>
+    <form action="/users/update/<%= currentUserId %>" method="POST">
+        <div class="input-container update-user-input" style="display: none;">
+          <label for="updateUserId">Email: </label>
+          <input id="updateUserId" name="updateUserId" type="number" value="<%= currentUserId %>"/>
+        </div>
+        <div class="input-container update-user-input">
+          <label for="updateUserEmail">Email: </label>
+          <input id="updateUserEmail" name="updateUserEmail" placeholder="Email Address" type="text" value="<%= userInfo.email %>"/>
+        </div>
+        <div class="input-container update-user-input">
+          <label for="updateUserUsername">Username: </label>
+          <input id="updateUserUsername" name="updateUserUsername" placeholder="Username" type="text" value="<%= userInfo.username %>"/>
+        </div>
+        <div class="input-container update-user-input">
+          <label for="updateUserFirstName">First Name: </label>
+          <input id="updateUserFirstName" name="updateUserFirstName" placeholder="First Name" type="text" value="<%= userInfo.first_name %>"/>
+        </div>
+        <div class="input-container update-user-input">
+          <label for="updateUserLastName">Last Name: </label>
+          <input id="updateUserLastName" name="updateUserLastName" placeholder="Last Name" type="text" value="<%= userInfo.last_name %>"/>
+        </div>
+        <div class="input-container update-user-input">
+          <label for="updateUserMembershipCode">Membership Code: </label>
+          <select id="updateUserMembershipCode" name="updateUserMembershipCode">
+            <option value="2" <%= userInfo.status_code == 2 ? 'selected' : '' %> >Guest</option>
+            <option value="3" <%= userInfo.status_code == 3 ? 'selected' : '' %> >Member</option>
+            <option value="1" <%= userInfo.status_code == 1 ? 'selected' : '' %> >Admin</option>
+          </select>
+        </div>
+        <div class="update-user-submit-button-space">
+          <button type="submit" class="update-user-page-submit">Update User</button>
+        </div>
+    </form>
+  </main>
+</body>
+</html>

@@ -8,9 +8,9 @@
       <%- include("partials/errors.ejs") %>
       <% if(user.role === 'USER') { %>
         <%- include('partials/navbar2.ejs', {links: memberAuthenticatedLinks}) %>
-      <% } else if (user.status_code === 'GUEST') { %>
+      <% } else if (user.role === 'GUEST') { %>
         <%- include('partials/navbar2.ejs', {links: guestAuthenticatedLinks}) %>
-      <% } else if (user.status_code === 'ADMIN') { %>
+      <% } else if (user.role === 'ADMIN') { %>
         <%- include('partials/navbar2.ejs', {links: adminAuthenticatedLinks}) %>
       <% } %>
       <h1 class="page-header"><%= header %></h1>

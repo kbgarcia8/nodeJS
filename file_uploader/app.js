@@ -19,7 +19,7 @@ dotenv.config();
 import indexRouter from "./routes/indexRouter.js";
 import filesRouter from "./routes/filesRouter.js";
 import foldersRouter from "./routes/foldersRoutes.js";
-//import usersRouter from "./routes/userRouter.js";
+import usersRouter from "./routes/userRouter.js";
 
 const app = express();
 //declare public as asset path
@@ -68,6 +68,7 @@ app.use(flash()); //for error handling of passport after failureRedirect
 app.use("/", indexRouter);
 app.use("/files", filesRouter);
 app.use("/folders", foldersRouter);
+app.use("/users", usersRouter);
 
 //error handling using middleware
 app.use((err, req, res, next) => {

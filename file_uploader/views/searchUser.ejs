@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+<body>
+  <header>
+    <%- include("partials/errors.ejs") %>
+    <% if(user.role === 'USER') { %>
+      <%- include('partials/navbar2.ejs', {links: memberAuthenticatedLinks}) %>
+    <% } else if (user.role === 'GUEST') { %>
+      <%- include('partials/navbar2.ejs', {links: guestAuthenticatedLinks}) %>
+    <% } else if (user.role === 'ADMIN') { %>
+      <%- include('partials/navbar2.ejs', {links: adminAuthenticatedLinks}) %>
+    <% } %>
+    <h1 class="page-header"><%= title %></h1>
+  </header>
+  <form action="/users/search/result" method="GET">
+    <div class="search-user-input">
+      <label for="searchUsername">Username: </label>
+      <input type="text" name="searchUsername" id="searchUsername">
+    </div>
+    <div class="search-user-input">
+      <label for="searchFirstName">First Name: </label>
+      <input type="text" name="searchFirstName" id="searchFirstName">
+    </div>
+    <div class="search-user-input">
+      <label for="searchLastName">Last Name: </label>
+      <input type="text" name="searchLastName" id="searchLastName">
+    </div>
+     <div class="search-user-input">
+      <label for="searchUserEmail">User Email: </label>
+      <input type="text" name="searchUserEmail" id="searchUserEmail">
+    </div>
+    <button class="user-search-submit" type="submit" <%= users.length === 0 ? disabled : "" %> >Search</button>
+  </form>
+</body>
+</html>

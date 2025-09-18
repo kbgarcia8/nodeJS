@@ -13,7 +13,8 @@
       <% } else if (user.status_code === 'ADMIN') { %>
         <%- include('partials/navbar2.ejs', {links: adminAuthenticatedLinks}) %>
       <% } %>
-      <h1 class="page-header"><%= header %></h1>
+      <h2 class="page-header">⤴️⤵️ File Uploader - View File</h2>
+      <h3 class="welcome-header"><%= header %></h3>
     </header>
     <main class="view-file">
       <%- include('partials/file_container.ejs', {user: user, file: file }) %>

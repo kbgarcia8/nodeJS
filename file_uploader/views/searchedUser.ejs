@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+<body>
+  <header>
+    <%- include("partials/errors.ejs") %>
+    <% if(user.status_code === 3) { %>
+      <%- include('partials/navbar2.ejs', {links: memberAuthenticatedLinks}) %>
+    <% } else if (user.status_code === 2) { %>
+      <%- include('partials/navbar2.ejs', {links: guestAuthenticatedLinks}) %>
+    <% } else if (user.status_code === 1) { %>
+      <%- include('partials/navbar2.ejs', {links: adminAuthenticatedLinks}) %>
+    <% } %> 
+  </header>
+  <h3 class="user-result-header">Match users:</h3>
+  <main class="searched-users">
+    <% if(users.length === 0) { %>
+      <p class="no-searched-users">No users matched!</p>
+    <% } else { %>
+      <% users.forEach((user) => { %>
+        <%- include('partials/user_entry.ejs', {user: user, isAdmin: isAdmin}) %>
+      <% }); %>
+    <% } %>
+  </main>
+</body>
+</html>

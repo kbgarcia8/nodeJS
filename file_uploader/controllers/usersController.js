@@ -1,16 +1,24 @@
-import { body, check, query, validationResult } from "express-validator";
+import { check, query, validationResult } from "express-validator";
 import * as prisma from '../prisma/prisma.js';
 import { guestAuthenticatedLinks, memberAuthenticatedLinks, adminAuthenticatedLinks } from "../constants/constants.js";
+import { formatDateTime } from "../utils/utility.js";
 import asyncHandler from "express-async-handler";
 import bcrypt from "bcryptjs";
 
 export const usersList = async (req, res) => {
-  const users = await db.retrieveAllUsers();
+  const usersRaw = await prisma.retrieveAllUsers();
 
-  const isAdmin = req.user.status_code === 1 ? true : false;
+  const users = usersRaw.map((user) => {
+      return {
+          ...user, 
+          created_at: formatDateTime(user.created_at)
+      }
+  });
+
+  const isAdmin = req.user.role === 'ADMIN' ? true : false;
 
   return res.render("usersList", {
-    title: "Search User",
+    title: "Users",
     user: req.user,
     memberAuthenticatedLinks,
     guestAuthenticatedLinks,
@@ -19,9 +27,15 @@ export const usersList = async (req, res) => {
     users: users
   });
 };
-
 export const usersSearch = async (req, res) => {
-  const users = await db.retrieveAllUsers();
+  const usersRaw = await prisma.retrieveAllUsers();
+
+  const users = usersRaw.map((user) => {
+      return {
+          ...user, 
+          created_at: formatDateTime(user.created_at)
+      }
+  });
 
   return res.render("searchUser", {
     title: "Search User",
@@ -46,7 +60,14 @@ export const usersSearchGet = [
     const errors = validationResult(req);
 
     const {searchUsername, searchFirstName, searchLastName, searchUserEmail} = req.query
-    const users = await db.retrieveAllUsers();
+    const usersRaw = await prisma.retrieveAllUsers();
+
+    const users = usersRaw.map((user) => {
+      return {
+          ...user, 
+          created_at: formatDateTime(user.created_at)
+      }
+    });
 
     if (!errors.isEmpty()) {
       return res.status(400).render("searchUser", {
@@ -60,9 +81,9 @@ export const usersSearchGet = [
       });
     }
 
-    const matchedUsers = await db.retrieveMatchUsers(searchUsername, searchFirstName, searchLastName, searchUserEmail);
+    const matchedUsers = await prisma.retrieveSearchedUsers(searchUsername, searchFirstName, searchLastName, searchUserEmail);
     
-    const isAdmin = req.user.membership === 1 ? true : false;
+    const isAdmin = req.user.role === 'ADMIN' ? true : false;
     
     return res.render("searchedUser", {
       title: "Searched Users",
@@ -75,7 +96,7 @@ export const usersSearchGet = [
     });
   }
 ]
-
+/*
 export const usersCreateGet = (req, res) => {
   res.render("createUser", {
     title: "Create user",
@@ -279,3 +300,4 @@ export const upgradeMembershipPost = [
         res.redirect("/dashboard");
   })
 ];
+*/

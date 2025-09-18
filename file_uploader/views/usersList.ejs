@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+<body>
+  <header>
+    <%- include("partials/errors.ejs") %>
+    <% if(user.role === 'USER') { %>
+      <%- include('partials/navbar2.ejs', {links: memberAuthenticatedLinks}) %>
+    <% } else if (user.role === 'GUEST') { %>
+      <%- include('partials/navbar2.ejs', {links: guestAuthenticatedLinks}) %>
+    <% } else if (user.role === 'ADMIN') { %>
+      <%- include('partials/navbar2.ejs', {links: adminAuthenticatedLinks}) %>
+    <% } %>
+  </header>
+  <h2 class="page-header">⤴️⤵️ File Uploader - Users List</h2>
+  <h3 class="user-list-header">All users:</h3>
+  <main class="users-list">
+    <% if(users.length === 0) { %>
+      <p class="no-users">No users created yet!</p>
+    <% } else { %>
+      <% users.forEach((user) => { %>
+        <%- include('partials/user_entry.ejs', {user: user, isAdmin: isAdmin}) %>
+      <% }); %>
+    <% } %>
+  </main>
+</body>
+</html>

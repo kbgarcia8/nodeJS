@@ -72,9 +72,71 @@ export async function findUserById(id){
 
   } catch(err){
     console.error("Prisma Database error in findUserById:", err);
-      throw new PrismaError("Failed to create user in database", 409, "PRISMA_FIND_USER_BYEMAIL_FAILED", {
-          detail: err.error || err.message,
-      });
+    throw new PrismaError("Failed to create user in database", 409, "PRISMA_FIND_USER_BYEMAIL_FAILED", {
+        detail: err.error || err.message,
+    });
+  }
+}
+export async function retrieveAllUsers(){
+  try{
+    const users = await prisma.user.findMany({
+      include: {
+        folder: true,
+        files: true
+      }
+    });
+
+    console.log("Successfully retrieve all users");
+    return users;
+
+  } catch(err){
+    console.error("Prisma Database error in retrieveAllUsers:", err);
+    throw new PrismaError("Failed to retrieve all user in database", 409, "PRISMA_RETRIEVE_ALL_USER_FAILED", {
+        detail: err.error || err.message,
+    });
+  }
+}
+export async function retrieveSearchedUsers(searchUsername, searchFirstName, searchLastName, searchUserEmail){
+  try{
+    const matchedUsers = await prisma.user.findMany({
+      where: {
+        ...(searchUsername && { //spread operator is used to add a confitional property. Then if left hand is false, becomes ..false -> means do nothing
+          username: {
+            contains: searchUsername,
+            mode: "insensitive",
+          },
+        }),
+        ...(searchFirstName && {
+          firstName: {
+            contains: searchFirstName,
+            mode: "insensitive",
+          },
+        }),
+        ...(searchLastName && {
+          lastName: {
+            contains: searchLastName,
+            mode: "insensitive",
+          },
+        }),
+        ...(searchUserEmail && {
+          email: {
+            contains: searchUserEmail,
+            mode: "insensitive",
+          },
+        }),
+      },
+      include: {
+        files: true,
+        folder: true
+      }
+    })
+
+    return matchedUsers;
+  } catch (err) {
+    console.error("Prisma Database error in retrievedSearchedUsers:", err);
+    throw new PrismaError(`Failed to retrieve users in database`, 409, "PRISMA_RETRIEVE_SEARCH_USERS_FAILED", {
+      detail: err.error || err.message,
+    });
   }
 }
 /* -- END USERS -- */
