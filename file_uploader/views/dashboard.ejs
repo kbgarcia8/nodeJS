@@ -13,14 +13,13 @@
       <% } else if (user.status_code === 'ADMIN') { %>
         <%- include('partials/navbar2.ejs', {links: adminAuthenticatedLinks}) %>
       <% } %>
-      <h1 class="page-header">⤴️⤵️ File Uploader</h1>
-      <h2 class="welcome-user-header"><%= header %></h2>
+      <h2 class="page-header">⤴️⤵️ File Uploader - Public Files Dashboard</h2>
+      <h3 class="welcome-header"><%= header %></h3>
     </header>
-    <main class="message-dashboard">
-      <!--If membership guest censor author of messages unless belong to user logged in-->
+    <main class="public-dashboard">
       <% if (files && files.length > 0) { %>
         <% files.forEach((file) => { %>
-          <!--post public files here-->
+          <%- include('partials/file_entry.ejs', {file: file, user: user}) %>
         <% }); %>
       <% } else { %>
         <p>No public files available yet</p>

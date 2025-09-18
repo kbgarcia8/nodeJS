@@ -15,8 +15,8 @@
     <% } else if (user.status_code === 'ADMIN') { %>
       <%- include('partials/navbar2.ejs', {links: adminAuthenticatedLinks}) %>
     <% } %>
-    <h1 class="page-header">⤴️⤵️ File Uploader</h1>
-    <h2 class="welcome-user-header"><%= header %></h2>
+    <h2 class="page-header">⤴️⤵️ File Uploader - Upload Files</h2>
+      <h3 class="welcome-header"><%= header %></h3>
   </header>
   <main class="fileUpload-page">
     <form class="fileUpload-page-button-only" action="/" method="GET">
@@ -53,7 +53,7 @@
             <% }) %>
           </select>
         </div>
-        <div class="input-container fileUpload-input existing-folder">
+        <div class="input-container fileUpload-input file-privacy">
           <label for="filePrivacy">Set privacy: </label>
           <select name="filePrivacy" placeholder="Choose file privacy">
               <option value="PUBLIC" selected>Public</option>

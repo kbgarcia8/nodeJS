@@ -67,7 +67,7 @@ li.error-list-entry{
     list-style: circle;
 }
 /* Shared Styles */
-h1.page-header{
+h2.page-header{
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 div.input-container{
@@ -488,8 +488,9 @@ main.fileUpload-page{
     justify-content: center;
 }
 form.fileUpload {
-    height: 75%;
+    height: 100%;
     width: 35%;
+    padding: 0.5rem;
     border: 0.5rem double white;
     background-color: black;
     border-radius: 0.5rem;
@@ -681,7 +682,8 @@ div.file-entry-button-space form {
 }
 p.file-entry-date-uploaded,
 p.file-entry-owner,
-p.file-entry-folder{
+p.file-entry-folder,
+p.file-entry-privacy{
     width: 100%;
     height: 15%;
     display: flex;
@@ -988,4 +990,20 @@ button.folders-search-submit{
     height: 100%;
     width: 10%;
     cursor: pointer;
+}
+/* -- Dashboard -- */
+main.public-dashboard{
+    width: 97.5vw;
+    height: 77.5vh;
+    overflow-y: auto;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    padding: 0.75rem;
+    gap: 0.5rem;
+}
+h3.welcome-header{
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-weight: 700;
+    font-style: italic;
 }

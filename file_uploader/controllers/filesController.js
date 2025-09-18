@@ -202,7 +202,7 @@ export const uploadFilePost = [
                 
             } else { //If no destinationFolder specified - destinationFolder is main by default, also main is expected to be initiated in createUser
                 const { mimetype, size, filename, path } = req.file
-                await prisma.createFileRecord(mimetype, filename, path, size, filePrivacy, req.user.id)
+                await prisma.createFileRecord(mimetype, filename, path, size, req.user.id, filePrivacy)
             }
         }
         res.redirect("/dashboard");
@@ -356,8 +356,8 @@ export async function changePrivacy (req,res) {
 
     const newPrivacy = currentPrivacy === "PUBLIC" ? "PRIVATE" : "PUBLIC";
     
-    await prisma.changeFilePrivacy(req.user, fileId, newPrivacy);
-    res.redirect(`/view/${fileId}`);
+    await prisma.changeFilePrivacy(fileId, newPrivacy);
+    res.redirect(`/files/view/${fileId}`);
 }
 export async function deleteFile(req,res) {
     const fileId = parseInt(req.params.id);

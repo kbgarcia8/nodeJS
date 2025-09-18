@@ -1,5 +1,6 @@
 import { check, validationResult } from "express-validator";
-import { notAuthenticatedLinks, memberAuthenticatedLinks, guestAuthenticatedLinks, adminAuthenticatedLinks } from "../constants/constants.js";
+import { notAuthenticatedLinks, memberAuthenticatedLinks, guestAuthenticatedLinks, adminAuthenticatedLinks , icons } from "../constants/constants.js";
+import { formatDateTime } from "../utils/utility.js";
 import { ExpressValError } from "../utils/errors.js";
 import asyncHandler from "express-async-handler";
 import * as prisma from "../prisma/prisma.js";
@@ -161,7 +162,8 @@ export async function dashboardGet(req,res){
         guestAuthenticatedLinks,
         adminAuthenticatedLinks,
         files: publicFilesWithFormattedDate,
-        user: req.user
+        user: req.user,
+        icons
     });
 };
 

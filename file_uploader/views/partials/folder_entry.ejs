@@ -5,7 +5,7 @@
         <div class="folder-entry-folder-icon-container">
             <img src="/folder.png" alt="folder-entry-icon">
         </div>
-        <% if (folder.user.username === user.username) { %>
+        <% if (folder.user.username === user.username || user.role === 'ADMIN') { %>
             <div class="folder-entry-button-space">
                 <form class="button-only" action="/folders/view/<%= folder.name %>" data-id="<%= folder.name %>" method="GET">
                     <button class="open-folder" type="submit" >

@@ -194,7 +194,6 @@ export async function retrieveSearchedFolders(searchFolderName, searchFolderOwne
 export async function createFileRecord(type, name, path, size, userId, privacy, folderId){
   const currentUserMainFolder = await retrievedFolderByName("main", userId);
   const currentUserMainFolderId = parseInt(currentUserMainFolder?.id);
-
   try {
     const createUserFile = await prisma.file.create({
       data: {
@@ -202,13 +201,13 @@ export async function createFileRecord(type, name, path, size, userId, privacy, 
         name: name,
         path: path,
         size: size,
+        privacy: privacy,
         user: {
           connect: { id: userId }
         },
         folder: {
           connect: { id: folderId !== undefined ? folderId : currentUserMainFolderId} //connect to main of current user by default
-        },
-        privacy: privacy
+        }
       }
     });
 
