@@ -30,36 +30,51 @@
           <label for="uploadedFile">Please choose file/s to upload. </label>
           <input id="uploadedFile" name="uploadedFile" type="file"/>
         </div>
-        <div class="input-container fileUpload-input folder-selection">
-          <span class="selection-title">Upload to: </span>
-          <div class="folder-selection">
-            <label class="radio-container">
-              <input type="radio" name="folderSelection" value="new">New
-            </label>
-            <label class="radio-container">
-              <input type="radio" name="folderSelection" value="existing">Existing
-            </label>
+        <% if (user.role !== 'GUEST') { %>
+          <div class="input-container fileUpload-input folder-selection">
+            <span class="selection-title">Upload to: </span>
+            <div class="folder-selection">
+              <label class="radio-container">
+                <input type="radio" name="folderSelection" value="new">New
+              </label>
+              <label class="radio-container">
+                <input type="radio" name="folderSelection" value="existing">Existing
+              </label>
+            </div>
           </div>
-        </div>
-        <div class="input-container fileUpload-input new-folder">
-          <label for="newFolderName">Specify name of new folder: </label>
-          <input id="newFolderName" name="newFolderName" placeholder="Where folder to save?" type="text" />
-        </div>
-        <div class="input-container fileUpload-input existing-folder">
-          <label for="existingFolderName">Choose existing folder: </label>
-          <select name="existingFolderName" placeholder="Please select existing folder to save file">
-            <% folders.forEach((folder)=> { %>
-              <option value="<%= folder.name %>" <% folder.name === "main" ? "default" : "" %> ><%= folder.name %></option>
-            <% }) %>
-          </select>
-        </div>
-        <div class="input-container fileUpload-input file-privacy">
-          <label for="filePrivacy">Set privacy: </label>
-          <select name="filePrivacy" placeholder="Choose file privacy">
-              <option value="PUBLIC" selected>Public</option>
-              <option value="PRIVATE">Private</option>
-          </select>
-        </div>
+          <div class="input-container fileUpload-input new-folder">
+            <label for="newFolderName">Specify name of new folder: </label>
+            <input id="newFolderName" name="newFolderName" placeholder="Where folder to save?" type="text" />
+          </div>
+          <div class="input-container fileUpload-input existing-folder">
+            <label for="existingFolderName">Choose existing folder: </label>
+            <select name="existingFolderName" placeholder="Please select existing folder to save file">
+              <% folders.forEach((folder)=> { %>
+                <option value="<%= folder.name %>" <% folder.name === "main" ? "default" : "" %> ><%= folder.name %></option>
+              <% }) %>
+            </select>
+          </div>
+          <div class="input-container fileUpload-input file-privacy">
+            <label for="filePrivacy">Set privacy: </label>
+            <select name="filePrivacy" id="filePrivacy">
+                <option value="" disabled selected>Choose file privacy</option>
+                <option value="PUBLIC">Public</option>
+                <option value="PRIVATE">Private</option>
+            </select>
+          </div>
+        <% } else { %>
+          <!--For guest member type files can only be public and saved to main folder-->
+          <div class="input-container fileUpload-input">
+            <label for="newFolderName">Folder to be used: </label>
+            <input id="newFolderName" name="newFolderName" value="main" type="text" disabled/>
+          </div>
+          <div class="input-container fileUpload-input file-privacy">
+            <label for="filePrivacy">Set privacy: </label>
+            <select name="filePrivacy" id="filePrivacy" disabled>
+                <option value="PUBLIC" selected>Public</option>
+            </select>
+          </div>
+        <% } %>
         <div class="fileUpload-submit-button-space">
           <button type="submit" class="fileUpload-page-submit">Upload</button>
         </div>

@@ -9,39 +9,36 @@
   <header class="update-user-page">
     <%- include("partials/errors.ejs") %>
     <%- include('partials/navbar2.ejs', {links: adminAuthenticatedLinks}) %>
-    <h1 class="page-header">→ What's on your mind? 🧠 - Admin:  <%= title %> </h1>
+    <h2 class="page-header">⤴️⤵️ File Uploader - Update User</h2>
   </header>
   <main class="update-user-page">
     <p class="update-user-instructions">
-        Admin privelege to update user of Members Only Blogspot!
+        Admin privelege to update user of File Uploader Website!
     </p>
-    <form action="/users/update/<%= currentUserId %>" method="POST">
-        <div class="input-container update-user-input" style="display: none;">
-          <label for="updateUserId">Email: </label>
-          <input id="updateUserId" name="updateUserId" type="number" value="<%= currentUserId %>"/>
-        </div>
+    <form action="/users/update/<%= user.id %>" method="POST">
         <div class="input-container update-user-input">
           <label for="updateUserEmail">Email: </label>
-          <input id="updateUserEmail" name="updateUserEmail" placeholder="Email Address" type="text" value="<%= userInfo.email %>"/>
+          <input id="updateUserEmail" name="updateUserEmail" placeholder="Email Address" type="text" value="<%= user.email %>"/>
         </div>
         <div class="input-container update-user-input">
           <label for="updateUserUsername">Username: </label>
-          <input id="updateUserUsername" name="updateUserUsername" placeholder="Username" type="text" value="<%= userInfo.username %>"/>
+          <input id="updateUserUsername" name="updateUserUsername" placeholder="Username" type="text" value="<%= user.username %>"/>
         </div>
         <div class="input-container update-user-input">
           <label for="updateUserFirstName">First Name: </label>
-          <input id="updateUserFirstName" name="updateUserFirstName" placeholder="First Name" type="text" value="<%= userInfo.first_name %>"/>
+          <input id="updateUserFirstName" name="updateUserFirstName" placeholder="First Name" type="text" value="<%= user.firstName %>"/>
         </div>
         <div class="input-container update-user-input">
           <label for="updateUserLastName">Last Name: </label>
-          <input id="updateUserLastName" name="updateUserLastName" placeholder="Last Name" type="text" value="<%= userInfo.last_name %>"/>
+          <input id="updateUserLastName" name="updateUserLastName" placeholder="Last Name" type="text" value="<%= user.lastName %>"/>
         </div>
         <div class="input-container update-user-input">
-          <label for="updateUserMembershipCode">Membership Code: </label>
-          <select id="updateUserMembershipCode" name="updateUserMembershipCode">
-            <option value="2" <%= userInfo.status_code == 2 ? 'selected' : '' %> >Guest</option>
-            <option value="3" <%= userInfo.status_code == 3 ? 'selected' : '' %> >Member</option>
-            <option value="1" <%= userInfo.status_code == 1 ? 'selected' : '' %> >Admin</option>
+          <label for="updateUserMemberType">Member Type: </label>
+          <select id="updateUserMemberType" name="updateUserMemberType">
+            <option value="" disabled selected>Select Member Type</option>
+            <option value="GUEST" <%= user.role === 'GUEST' ? 'selected' : '' %> >Guest</option>
+            <option value="USER" <%= user.role === 'USER' ? 'selected' : '' %> >User</option>
+            <option value="ADMIN" <%= user.role === 'ADMIN' ? 'selected' : '' %> >Admin</option>
           </select>
         </div>
         <div class="update-user-submit-button-space">

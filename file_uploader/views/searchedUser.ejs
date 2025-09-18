@@ -7,14 +7,15 @@
 <body>
   <header>
     <%- include("partials/errors.ejs") %>
-    <% if(user.status_code === 3) { %>
+    <% if(user.role === 'USER') { %>
       <%- include('partials/navbar2.ejs', {links: memberAuthenticatedLinks}) %>
-    <% } else if (user.status_code === 2) { %>
+    <% } else if (user.role === 'GUEST') { %>
       <%- include('partials/navbar2.ejs', {links: guestAuthenticatedLinks}) %>
-    <% } else if (user.status_code === 1) { %>
+    <% } else if (user.role === 'ADMIN') { %>
       <%- include('partials/navbar2.ejs', {links: adminAuthenticatedLinks}) %>
     <% } %> 
   </header>
+  <h2 class="page-header">⤴️⤵️ File Uploader - Search User Result</h2>
   <h3 class="user-result-header">Match users:</h3>
   <main class="searched-users">
     <% if(users.length === 0) { %>

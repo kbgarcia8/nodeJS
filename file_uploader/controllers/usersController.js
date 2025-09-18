@@ -46,14 +46,12 @@ export const usersSearch = async (req, res) => {
     users: users
   });
 };
-
 const validateUserSearch = [
   query("searchUsername").optional({checkFalsy: true}).trim(),
   query("searchFirstName").optional({checkFalsy: true}).trim(),
   query("searchLastName").optional({checkFalsy: true}).trim(),
   query("searchUserEmail").optional({checkFalsy: true}).isEmail().withMessage("Valid email is required"),
 ];
-
 export const usersSearchGet = [
   validateUserSearch,
   async (req, res) => {
@@ -81,7 +79,14 @@ export const usersSearchGet = [
       });
     }
 
-    const matchedUsers = await prisma.retrieveSearchedUsers(searchUsername, searchFirstName, searchLastName, searchUserEmail);
+    const matchedUsersRaw = await prisma.retrieveSearchedUsers(searchUsername, searchFirstName, searchLastName, searchUserEmail);
+
+    const matchedUsers = matchedUsersRaw.map((user) => {
+      return {
+          ...user, 
+          created_at: formatDateTime(user.created_at)
+      }
+    });
     
     const isAdmin = req.user.role === 'ADMIN' ? true : false;
     
@@ -95,8 +100,7 @@ export const usersSearchGet = [
       isAdmin
     });
   }
-]
-/*
+];
 export const usersCreateGet = (req, res) => {
   res.render("createUser", {
     title: "Create user",
@@ -106,7 +110,6 @@ export const usersCreateGet = (req, res) => {
     adminAuthenticatedLinks
   });
 };
-
 const createUserValidation = [
     check('createUserEmail')
         .isEmail().withMessage('Please provide a valid email address!').bail()
@@ -133,15 +136,14 @@ const createUserValidation = [
             minSymbols: 1,
             minNumbers: 1,
         }).withMessage('Password must be at least 8 characters and include uppercase, lowercase, and a symbol'),
-    check('createUserMembershipCode')
+    check('createUserMemberType')
         .trim()
         .notEmpty()
 ];
-
 export const usersCreatePost = [
     createUserValidation, asyncHandler(async (req,res) =>{
         const errors = validationResult(req);
-        const { createUserEmail, createUserUsername, createUserFirstName, createUserLastName, createUserPassword, createUserMembershipCode } = req.body;
+        const { createUserEmail, createUserUsername, createUserFirstName, createUserLastName, createUserPassword, createUserMemberType } = req.body;
         const hashedPassword = await bcrypt.hash(createUserPassword, 10);
         console.log(req.body);
         if (!errors.isEmpty()) {
@@ -155,34 +157,24 @@ export const usersCreatePost = [
             });
         }
         if(createUserUsername !== "") {
-            await db.createUser(createUserFirstName, createUserLastName, createUserUsername, createUserEmail, hashedPassword);
+            await prisma.createUser(createUserFirstName, createUserLastName, createUserUsername, createUserEmail, hashedPassword, createUserMemberType);
         } else {
             const extractedUsername = createUserEmail.split('@')[0];
-            await db.createUser(createUserFirstName, createUserLastName, createUserUsername, createUserEmail, hashedPassword);
+            await prisma.createUser(createUserFirstName, createUserLastName, extractedUsername, createUserEmail, hashedPassword);
         }
-        const createdUser = await db.retrieveNewlyCreatedUser(createUserEmail);
-        
-        await db.addMembershipToCreatedUser(createdUser.id, parseInt(createUserMembershipCode));
-        
         res.redirect("/users");
     })
 ];
-
-
 export const usersUpdateGet = async (req, res) => {
-  const userInfo = await db.retrieveUserById(req.params.id);
-  console.dir(userInfo)
+  const userToUpdate = await prisma.retrieveUserById(parseInt(req.params.id));
   return res.render("updateUser", {
     title: "Update user",
-    user: req.user,
-    currentUserId: req.params.id,
-    userInfo,
+    user: userToUpdate,
     memberAuthenticatedLinks,
     guestAuthenticatedLinks,
     adminAuthenticatedLinks,
   });
 };
-
 const updateUserValidation = [
     check('updateUserId')
         .notEmpty(),
@@ -202,16 +194,16 @@ const updateUserValidation = [
         .trim()
         .notEmpty().withMessage('Last Name is required!').bail()
         .matches(/^[a-zA-Z0-9.\-]+$/).withMessage('Last Name can only contain letters, numbers, hypen and dots'),
-    check('updateUserMembershipCode')
+    check('updateUserMemberType')
         .trim()
         .notEmpty()
 ];
-
 export const usersUpdatePost = [
   updateUserValidation,
   asyncHandler(async (req,res) =>{
         const errors = validationResult(req);
-        const { updateUserId, updateUserEmail, updateUserUsername, updateUserFirstName, updateUserLastName, updateUserMembershipCode } = req.body;
+
+        const { updateUserEmail, updateUserUsername, updateUserFirstName, updateUserLastName, updateUserMemberType } = req.body;
         
         
         if (!errors.isEmpty()) {
@@ -227,46 +219,36 @@ export const usersUpdatePost = [
         }
         const userId = req.params.id;
 
-        const currentUser = await db.retrieveUserById(userId);
-
-        console.log(`current user: ${currentUser}`)
-
         if(updateUserUsername !== "") {
-            await db.updateUser(userId, updateUserFirstName, updateUserLastName, updateUserUsername, updateUserEmail);
+            await db.updateUser(userId, updateUserFirstName, updateUserLastName, updateUserUsername, updateUserEmail, updateUserMemberType);
         } else {
             const extractedUsername = updateUserEmail.split('@')[0];
-            await db.updateUser(userId, updateUserFirstName, updateUserLastName, updateUserUsername, updateUserEmail);
+            await db.updateUser(userId, updateUserFirstName, updateUserLastName, extractedUsername, updateUserEmail, updateUserMemberType);
         }
-        const updatedUser = await db.retrieveNewlyCreatedUser(updateUserEmail);
-        
-        await db.modifyMembership(userId, parseInt(updateUserMembershipCode));
         
         res.redirect("/users");
   })
 ];
-
 export const userDelete = async (req, res) => {
-  await db.deleteUser(req.params.id);
+  await prisma.deleteUserById(parseInt(req.params.id));
   res.redirect("/users");
 };
-
 export const upgradeMembershipGet = async (req,res) => {
-  return res.render("membershipUpgrade", {
-    title: "Membersip Upgrade",
-    header: "Guest to Member",
+  return res.render("memberTypeUpgrade", {
+    title: "Member Type Upgrade",
+    header: "Guest to User",
     user: req.user,
     memberAuthenticatedLinks,
     guestAuthenticatedLinks,
     adminAuthenticatedLinks,
   });
 };
-
-const updateMembershipValidation = [
-  check('membershipSecretCode')
+const updateMemberTypeValidation = [
+  check('memberSecretCode')
     .trim()
     .optional({ checkFalsy: true })
     .custom((value, { req }) => {
-        if (value === 'M3mbeRs0nLy4ev3r') {
+        if (value === 'f1L3upL0@d3r') {
             req.isValidMembershipCode = true; 
         } else {
             req.isValidMembershipCode = false;
@@ -274,17 +256,16 @@ const updateMembershipValidation = [
         return true; 
     })
 ]
-
 export const upgradeMembershipPost = [
-  updateMembershipValidation,
+  updateMemberTypeValidation,
   asyncHandler(async (req,res) =>{
         const errors = validationResult(req);
         const currentUser = req.user;
         
         if (!errors.isEmpty()) {
-            return res.render("membershipUpgrade", {
-                title: "Membersip Upgrade",
-                header: "Guest to Member",
+            return res.render("memberTypeUpgrade", {
+                title: "Member Type Upgrade",
+                header: "Guest to User",
                 user: req.user,
                 memberAuthenticatedLinks,
                 guestAuthenticatedLinks,
@@ -293,11 +274,18 @@ export const upgradeMembershipPost = [
             });
         }
         if(req.isValidMembershipCode === true){
-          await db.modifyMembership(currentUser.id, 3);
+          await prisma.changeMemberType(currentUser.id, 'USER');
         } else {
-          res.redirect("/dashboard");
+          return res.render("memberTypeUpgrade", {
+              title: "Member Type Upgrade",
+              header: "Guest to User",
+              user: req.user,
+              memberAuthenticatedLinks,
+              guestAuthenticatedLinks,
+              adminAuthenticatedLinks,
+              errors: [{msg: "Incorrect membership code. Please provide correct member type upgrade code"}]
+            });
         }
         res.redirect("/dashboard");
   })
 ];
-*/

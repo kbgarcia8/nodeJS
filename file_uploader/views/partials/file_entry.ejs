@@ -2,7 +2,7 @@
     <div class="file-entry-file-info">
         <h3 class="file-entry-title"><%= file.name %></h3>
         <h6 class="file-entry-size-and-type"><%= (file.size / 1024 / 1024).toFixed(3) %>MB (<%= file.fileType %>)</h6>
-        <% if (file.user.username === user.username || user.role === 'ADMIN') { %>
+        <% if ((file.user.username === user.username) || user.role === 'ADMIN' || file.privacy === 'PUBLIC') { %>
             <div class="file-entry-button-space">
                 <form class="button-only" action="/files/view/<%= file.id %>" data-id="<%= file.id %>" method="GET">
                     <button class="open-file" type="submit" >

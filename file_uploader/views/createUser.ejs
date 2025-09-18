@@ -10,7 +10,6 @@
     <%- include("partials/errors.ejs") %>
     <%- include('partials/navbar2.ejs', {links: adminAuthenticatedLinks}) %>
     <h2 class="page-header">⤴️⤵️ File Uploader - Create User</h2>
-    <h3 class="welcome-header"><%= header %></h3>
   </header>
   <main class="create-user-page">
     <p class="create-user-instructions">
@@ -37,14 +36,13 @@
           <label for="createUserPassword">Password: </label>
           <input id="createUserPassword" name="createUserPassword" placeholder="Password" type="password" />
         </div>
-        <!--Change into a dropdown of what type of member to assign-->
         <div class="input-container create-user-input">
-          <label for="createUserMembershipCode">Membership Code: </label>
-          <select id="createUserMembershipCode" name="createUserMembershipCode">
-          <option value="" disabled selected>Select a Membership</option>
-          <option value="2">Guest</option>
-          <option value="3">Member</option>
-          <option value="1">Admin</option>
+          <label for="createUserMemberType">Member Type: </label>
+          <select id="createUserMemberType" name="createUserMemberType">
+          <option value="" disabled selected>Select Member Type</option>
+          <option value="GUEST">Guest</option>
+          <option value="USER">User</option>
+          <option value="ADMIN">Admin</option>
         </select>
         </div>
         <div class="create-user-submit-button-space">

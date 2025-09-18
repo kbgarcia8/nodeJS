@@ -14,7 +14,8 @@
     <% } else if (user.role === 'ADMIN') { %>
       <%- include('partials/navbar2.ejs', {links: adminAuthenticatedLinks}) %>
     <% } %>
-    <h1 class="page-header"><%= title %></h1>
+    <h2 class="page-header">⤴️⤵️ File Uploader - Search User</h2>
+    <h3 class="search-user-header"><%= title %></h3>
   </header>
   <form action="/users/search/result" method="GET">
     <div class="search-user-input">

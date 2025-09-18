@@ -96,6 +96,28 @@ export async function retrieveAllUsers(){
     });
   }
 }
+export async function retrieveUserById(userId){
+  try {
+    const retrievedUser = await prisma.user.findUnique({
+      where: {
+        id: userId
+      },
+      include:{
+        folder: true,
+        files: true
+      }
+    });
+
+    console.log(`User id ${userId} retrieved`);
+    return retrievedUser;
+
+  } catch(err){
+    console.error("Prisma Database error in retrieveUserById:", err);
+    throw new PrismaError("Failed to retrieve user", 409, "PRISMA_RETRIEVE_USER_BY_ID_FAILED", {
+        detail: err.error || err.message,
+    });
+  }
+}
 export async function retrieveSearchedUsers(searchUsername, searchFirstName, searchLastName, searchUserEmail){
   try{
     const matchedUsers = await prisma.user.findMany({
@@ -136,6 +158,81 @@ export async function retrieveSearchedUsers(searchUsername, searchFirstName, sea
     console.error("Prisma Database error in retrievedSearchedUsers:", err);
     throw new PrismaError(`Failed to retrieve users in database`, 409, "PRISMA_RETRIEVE_SEARCH_USERS_FAILED", {
       detail: err.error || err.message,
+    });
+  }
+}
+export async function updateUser(userId, updateUserFirstName, updateUserLastName, updateUserUsername, updateUserEmail, updateMemberType){
+  try{
+    const updatedUser = await prisma.user.update({
+      where: {
+        id: userId
+      },
+      data : {
+        ...(searchUsername && { //spread operator is used to add a confitional property. Then if left hand is false, becomes ..false -> means do nothing
+          username: updateUserUsername
+        }),
+        ...(searchFirstName && {
+          firstName: updateUserFirstName
+        }),
+        ...(searchLastName && {
+          lastName: updateUserLastName
+        }),
+        ...(searchUserEmail && {
+          email: updateUserEmail
+        }),
+        ...(updateMemberType && {
+          role: updateMemberType
+        })
+      },
+      include: {
+        files: true,
+        folder: true
+      }
+    })
+
+    return updatedUser;
+  } catch (err) {
+    console.error("Prisma Database error in updateUser:", err);
+    throw new PrismaError(`Failed to update user with user ID ${userId} in database`, 409, "PRISMA_UPDATE_USERS_FAILED", {
+      detail: err.error || err.message,
+    });
+  }
+}
+export async function changeMemberType(userId, newMemberType){
+  try {
+    const updatedUser = await prisma.user.update({
+      where: {
+        id: userId
+      },
+      data: {
+        role: newMemberType
+      }
+    });
+
+    console.log(`User id ${userId} member type changed to ${newMemberType}`);
+    return updatedUser;
+
+  } catch(err){
+    console.error("Prisma Database error in changeMemberType:", err);
+    throw new PrismaError("Failed to change member type", 409, "PRISMA_CHANGE_MEMBER_TYPE_FAILED", {
+        detail: err.error || err.message,
+    });
+  }
+}
+export async function deleteUserById(userId){
+  try {
+    const deleteUser = await prisma.user.delete({
+      where: {
+        id: userId
+      }
+    });
+
+    console.log(`User id ${userId} deleted successfully`);
+
+  } catch(err){
+    console.error("Prisma Database error in deleteUserById:", err);
+    throw new PrismaError("Failed to delete user", 409, "PRISMA_DELETE_USER_BY_ID_FAILED", {
+        detail: err.error || err.message,
     });
   }
 }

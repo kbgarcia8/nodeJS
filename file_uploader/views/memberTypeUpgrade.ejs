@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="upgrade-membership-page">
+    <%- include("partials/errors.ejs") %>
+    <% if(user.role === 'USER') { %>
+      <%- include('partials/navbar2.ejs', {links: memberAuthenticatedLinks}) %>
+    <% } else if (user.role === 'GUEST') { %>
+      <%- include('partials/navbar2.ejs', {links: guestAuthenticatedLinks}) %>
+    <% } else if (user.role === 'ADMIN') { %>
+      <%- include('partials/navbar2.ejs', {links: adminAuthenticatedLinks}) %>
+    <% } %>
+  <h2 class="page-header">⤴️⤵️ File Uploader - Member Type Upgrade</h2>
+  <h3 class="member-type-upgrade"><%= header %></h3>
+  </header>
+  <main class="upgrade-membership-page">
+    <p class="upgrade-membership-instructions">Input the secret code to be upgraded from Guest to User 💯</p>
+    <!--Include perks if upgraded from member to type-->
+    <form class="upgrade-membership" action="/users/upgrade" method="POST">
+        <div class="input-container upgrade-membership-input">
+          <label for="memberSecretCode">Upgrade Member Type: </label>
+          <input id="memberSecretCode" name="memberSecretCode" placeholder="Secret Code" type="password"></input>
+        </div>
+        <div class="upgrade-membership-submit-button-space">
+          <button type="submit" class="upgrade-membership-page-submit">Upgrade</button>
+        </div>
+    </form>
+  </main>
+</body>
+</html>
