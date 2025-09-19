@@ -347,21 +347,39 @@ export const fileSearchResult = [
     });
   }
 ];
-export async function downloadFile (req, res) {
+export async function downloadFile(req, res) {
+    try {
+        const fileId = parseInt(req.params.id);
+        const fileForDownload = await prisma.retrieveFileById(req.user, fileId);
 
-    const fileId = parseInt(req.params.id);
-    const fileForDownload = await prisma.retrieveFileById(req.user,fileId);
-    const filePath = path.join(process.cwd(), fileForDownload.path); //local storage for now
+        // Supabase path is stored in DB (e.g., "username/main/file.txt")
+        const supabasePath = fileForDownload.path;
 
-    res.download(filePath, (err) => {
-        if (err) {
-            throw new AppError("Failed to download file", 409, "DOWNLOAD_FILE_FAILED", {
-                detail: err.error || err.message,
+        // Fetch from Supabase
+        const { data, error } = await supabase.storage
+            .from("file_uploader") // bucket name
+            .download(supabasePath);
+
+        if (error) {
+            throw new FileUploadError("Failed to download file", 409, "DOWNLOAD_FILE_FAILED", {
+                detail: error.message,
             });
         }
-    });
-    res.redirect(`/view/${fileId}`);
-};
+
+        // `data` is a ReadableStream (browser) or Blob (Node)
+        const fileBuffer = Buffer.from(await data.arrayBuffer());
+
+        // Set headers and send file
+        res.setHeader("Content-Disposition", `attachment; filename="${fileForDownload.name}"`);
+        res.setHeader("Content-Type", fileForDownload.fileType);
+        res.send(fileBuffer);
+
+    } catch (err) {
+        throw new FileUploadError("Failed to download file", 409, "DOWNLOAD_FILE_FAILED", {
+        detail: err.message,
+        });
+    }
+}
 export async function changePrivacy (req,res) {
     const fileId = parseInt(req.params.id);
     const currentPrivacy = req.params.privacy;
