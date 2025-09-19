@@ -176,8 +176,6 @@ export const usersUpdateGet = async (req, res) => {
   });
 };
 const updateUserValidation = [
-    check('updateUserId')
-        .notEmpty(),
     check('updateUserEmail')
         .isEmail().withMessage('Please provide a valid email address!').bail()
         .normalizeEmail(),
@@ -203,27 +201,26 @@ export const usersUpdatePost = [
   asyncHandler(async (req,res) =>{
         const errors = validationResult(req);
 
+        const userId = parseInt(req.params.id);
+        const userToUpdate = await prisma.retrieveUserById(userId);
         const { updateUserEmail, updateUserUsername, updateUserFirstName, updateUserLastName, updateUserMemberType } = req.body;
-        
         
         if (!errors.isEmpty()) {
             return res.render("updateUser", {
                 title: "Update user",
-                user: req.user,
-                userInfo,
+                user: userToUpdate,
                 memberAuthenticatedLinks,
                 guestAuthenticatedLinks,
                 adminAuthenticatedLinks,
                 errors: errors.array()
             });
         }
-        const userId = req.params.id;
 
         if(updateUserUsername !== "") {
-            await db.updateUser(userId, updateUserFirstName, updateUserLastName, updateUserUsername, updateUserEmail, updateUserMemberType);
+            await prisma.updateUser(userId, updateUserFirstName, updateUserLastName, updateUserUsername, updateUserEmail, updateUserMemberType);
         } else {
             const extractedUsername = updateUserEmail.split('@')[0];
-            await db.updateUser(userId, updateUserFirstName, updateUserLastName, extractedUsername, updateUserEmail, updateUserMemberType);
+            await prisma.updateUser(userId, updateUserFirstName, updateUserLastName, extractedUsername, updateUserEmail, updateUserMemberType);
         }
         
         res.redirect("/users");

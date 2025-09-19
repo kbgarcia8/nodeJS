@@ -18,7 +18,7 @@
     <form action="/users/update/<%= user.id %>" method="POST">
         <div class="input-container update-user-input">
           <label for="updateUserEmail">Email: </label>
-          <input id="updateUserEmail" name="updateUserEmail" placeholder="Email Address" type="text" value="<%= user.email %>"/>
+          <input id="updateUserEmail" name="updateUserEmail" placeholder="Email Address" type="text" value="<%= user.email %>" readonly/>
         </div>
         <div class="input-container update-user-input">
           <label for="updateUserUsername">Username: </label>

@@ -168,16 +168,16 @@ export async function updateUser(userId, updateUserFirstName, updateUserLastName
         id: userId
       },
       data : {
-        ...(searchUsername && { //spread operator is used to add a confitional property. Then if left hand is false, becomes ..false -> means do nothing
+        ...(updateUserUsername && { //spread operator is used to add a confitional property. Then if left hand is false, becomes ..false -> means do nothing
           username: updateUserUsername
         }),
-        ...(searchFirstName && {
+        ...(updateUserFirstName && {
           firstName: updateUserFirstName
         }),
-        ...(searchLastName && {
+        ...(updateUserLastName && {
           lastName: updateUserLastName
         }),
-        ...(searchUserEmail && {
+        ...(updateUserEmail && {
           email: updateUserEmail
         }),
         ...(updateMemberType && {
