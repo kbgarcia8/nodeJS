@@ -18,6 +18,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  //directUrl = env("DIRECT_URL") //uncomment if database will be migrated from aiven to supabase
   schemas  = ["file_uploader"]
 }
 

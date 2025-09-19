@@ -9,6 +9,7 @@ import * as prisma from "../prisma/prisma.js";
 //File upload
 import multer from 'multer';
 import { FileUploadError } from "../utils/errors.js";
+import { supabase } from "../supabase/supabase.js";
 //fs
 import fs from 'fs';
 
@@ -50,6 +51,31 @@ export async function uploadFileGet(req,res){
 };
 // * Ensure file type is supported by multer
 // ! Note: cb () here is like next ()
+
+/* Used for local stroage only
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        //Note that this is folder creation on server/storage side
+        const userFolder = `./uploads/${req.user.username}`;
+
+        if (!fs.existsSync(userFolder)) {
+            fs.mkdirSync(userFolder, { recursive: true });
+        }
+
+        const userFolderMain = `./uploads/${req.user.username}/main`;
+
+        if (!fs.existsSync(userFolderMain)) {
+            fs.mkdirSync(userFolderMain, { recursive: true });
+        }
+
+        cb(null, userFolderMain);
+    },
+    filename: (req, file, cb) => {
+        cb(null, file.originalname); 
+    }
+});
+*/
+/* -- multer configuration -- */
 const fileFilter = (req, file, cb) => {
     const imageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
     if(imageTypes.includes(file.mimetype)) {
@@ -76,28 +102,9 @@ const fileFilter = (req, file, cb) => {
         false)
     }
 }
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        //Note that this is folder creation on server/storage side
-        const userFolder = `./uploads/${req.user.username}`;
-
-        if (!fs.existsSync(userFolder)) {
-            fs.mkdirSync(userFolder, { recursive: true });
-        }
-
-        const userFolderMain = `./uploads/${req.user.username}/main`;
-
-        if (!fs.existsSync(userFolderMain)) {
-            fs.mkdirSync(userFolderMain, { recursive: true });
-        }
-
-        cb(null, userFolderMain);
-    },
-    filename: (req, file, cb) => {
-        cb(null, file.originalname); 
-    }
-});
+const storage = multer.memoryStorage();
 const upload = multer({fileFilter: fileFilter, storage: storage}).single('uploadedFile');
+
 const fileUploadValidation = [
     check('uploadedFile')
         .custom((value, { req }) => !!req.file)
@@ -124,7 +131,6 @@ export const uploadFilePost = [
     asyncHandler(async (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            await fs.promises.unlink(currentFile.path); //Manually delete file since its already uploaded on multer call above
             return res.render("fileUpload", {
                 title: "Upload a File",
                 header: `Hi ${req.user.username}, you can upload your files below.`,
@@ -138,6 +144,7 @@ export const uploadFilePost = [
         }
 
         const currentFile = req.file;
+        if(!currentFile) return;
         
         if (currentFile) {
             const type = currentFile.mimetype;
@@ -158,7 +165,6 @@ export const uploadFilePost = [
             const maxAllowed = Object.entries(limits).find(([key]) => type.includes(key))?.[1];
             //File size limit check
             if (maxAllowed && size > maxAllowed) {
-                await fs.promises.unlink(currentFile.path); //Manually delete file since its already uploaded on multer call above
                 throw new FileUploadError(
                 `File too large for ${type} uploaded file type. Max size is ${maxAllowed / 1024 / 1024}MB`,
                 409,
@@ -167,43 +173,49 @@ export const uploadFilePost = [
                 );
             }
             //Change file destination from default (main) to folderName
-            const destinationFolder = req.body.newfolderName || req.body.existingFolderName;
+            const destinationFolder = req.body.newfolderName || req.body.existingFolderName || "main";
             const filePrivacy = req.body.filePrivacy || "PUBLIC";
-            const currentFilePath = req.file.path;
-            //const currentFileDestination = req.file.destination;
-            const currentFileName = req.file.filename;
+            const currentFileName = req.file.originalname;
+            const currentFileType = req.file.mimetype;
 
-            if(destinationFolder !== "" && destinationFolder !== "main") {
-                //File is already uploaded to upload/{username}/main. If a custom folder is specified it needs to be moved there
-                const newDest = `uploads/${req.user.username}/${destinationFolder}`;
-                const newPath = `${newDest}/${currentFileName}`;
-                if (fs.existsSync(newPath)) {
-                    throw new FileUploadError("File already exists", 409, "FILE_ALREADY_EXISTS", {
-                        detail: `A file named ${currentFileName} already exists in ${destinationFolder}`
-                    });
-                }
-                await fs.promises.mkdir(`${newDest}`, { recursive: true });
-                await fs.promises.rename(currentFilePath, newPath);
-                //Overwrite current file's destination
-                req.file.destination = newDest;
-                req.file.path = newPath;
-                
-                /* --Create folder record in prisma if is not yet existing, then link in currently logged user -- */
-                let folderRecord = await prisma.retrievedFolderByName(destinationFolder, req.user.id)
-                console.log(folderRecord)
-                //If folder is not existing then create
-                if(!folderRecord) {
-                    folderRecord = await prisma.createFolder(destinationFolder, req.user.id)
-                }
-                /* --Create file record in prisma, then link in logged user and current destinationFolder -- */
-                const { mimetype, size, filename, path } = req.file
-
-                await prisma.createFileRecord(mimetype, filename, path, size, req.user.id, filePrivacy, folderRecord.id)
-                
-            } else { //If no destinationFolder specified - destinationFolder is main by default, also main is expected to be initiated in createUser
-                const { mimetype, size, filename, path } = req.file
-                await prisma.createFileRecord(mimetype, filename, path, size, req.user.id, filePrivacy)
+            const supabasePath = `${req.user.username}/${destinationFolder}/${currentFileName}`;
+            //Check if file already exist in supabase
+            const { data: existing, error: listError } = await supabase.storage
+                .from("file_uploader")
+                .list(`${req.user.username}/${destinationFolder}`, {
+                    search: currentFileName,
+                });
+            if (listError) {
+                throw new FileUploadError("Failed to check existing files", 500, "SUPABASE_LIST_ERROR", {
+                    detail: listError.message,
+                });
             }
+            if (existing && existing.length > 0) {
+                throw new FileUploadError("File already exists", 409, "FILE_ALREADY_EXISTS", {
+                    detail: `A file named ${currentFileName} already exists in ${destinationFolder}`,
+                });
+            }
+            //Upload to supabase
+            const { error: uploadError } = await supabase.storage
+                .from("user-files")
+                .upload(supabasePath, req.file.buffer, {
+                    contentType: req.file.mimetype,
+                    upsert: false,
+                });
+
+            if (uploadError) {
+                throw new FileUploadError("Failed to upload file", 409, "SUPABASE_UPLOAD_ERROR", {
+                    detail: uploadError.message,
+                });
+            }
+            /* --Create folder record in prisma if is not yet existing, then link in currently logged user -- */
+            let folderRecord = await prisma.retrievedFolderByName(destinationFolder, req.user.id)
+            //If folder is not existing then create
+            if(!folderRecord) {
+                folderRecord = await prisma.createFolder(destinationFolder, req.user.id)
+            }
+            /* --Create file record in prisma, then link in logged user and current destinationFolder -- */
+            await prisma.createFileRecord(currentFileType, currentFileName, supabasePath, size, req.user.id, filePrivacy, folderRecord.id);
         }
         res.redirect("/dashboard");
     }),

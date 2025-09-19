@@ -24,6 +24,8 @@
   },
   "dependencies": {
     "@quixo3/prisma-session-store": "^3.1.13",
+    "@supabase/supabase-js": "^2.57.4",
+    "buffer-from": "^1.1.2",
     "express-session": "^1.18.2",
     "multer": "^2.0.2"
   }
