@@ -197,7 +197,7 @@ export const uploadFilePost = [
             }
             //Upload to supabase
             const { error: uploadError } = await supabase.storage
-                .from("user-files")
+                .from("file_uploader") //bucket name in supabase
                 .upload(supabasePath, req.file.buffer, {
                     contentType: req.file.mimetype,
                     upsert: false,

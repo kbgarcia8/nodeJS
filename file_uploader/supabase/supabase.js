@@ -9,8 +9,8 @@ export const supabase = createClient(supabaseUrl, supabaseKey);
   const { data, error } = await supabase.auth.admin.listUsers({ limit: 1 });
 
   if (error) {
-    console.error("❌ Connection failed:", error.message);
+    console.error("❌ Connection to Supabse failed:", error.message);
   } else {
-    console.log("✅ Connected! to Supabase, no. of users:", data.users.length);
+    console.log("✅ Connection to Supabase successful, no. of users:", data.users.length);
   }
 })();
